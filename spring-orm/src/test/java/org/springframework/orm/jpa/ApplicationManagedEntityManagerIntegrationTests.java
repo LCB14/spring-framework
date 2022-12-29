@@ -72,8 +72,7 @@ public class ApplicationManagedEntityManagerIntegrationTests extends AbstractEnt
 		try {
 			doInstantiateAndSave(em);
 			fail("Should have thrown TransactionRequiredException");
-		}
-		catch (TransactionRequiredException ex) {
+		} catch (TransactionRequiredException ex) {
 			// expected
 		}
 
@@ -123,7 +122,7 @@ public class ApplicationManagedEntityManagerIntegrationTests extends AbstractEnt
 
 		doInstantiateAndSave(em);
 		setComplete();
-		endTransaction();	// Should rollback
+		endTransaction();    // Should rollback
 		assertEquals("Tx must have committed back", 1, countRowsInTable(em, "person"));
 
 		// Now clean up the database
@@ -143,7 +142,7 @@ public class ApplicationManagedEntityManagerIntegrationTests extends AbstractEnt
 		EntityManager em = entityManagerFactory.createEntityManager();
 		em.joinTransaction();
 		doInstantiateAndSave(em);
-		endTransaction();	// Should rollback
+		endTransaction();    // Should rollback
 		assertEquals("Tx must have been rolled back", 0, countRowsInTable(em, "person"));
 	}
 
@@ -154,7 +153,7 @@ public class ApplicationManagedEntityManagerIntegrationTests extends AbstractEnt
 		doInstantiateAndSave(em);
 
 		setComplete();
-		endTransaction();	// Should rollback
+		endTransaction();    // Should rollback
 		assertEquals("Tx must have committed back", 1, countRowsInTable(em, "person"));
 
 		// Now clean up the database

@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 
 /**
  * Unit tests for {@link LimitedDataBufferList}.
+ *
  * @author Rossen Stoyanchev
  * @since 5.1.11
  */
@@ -36,8 +37,7 @@ public class LimitedDataBufferListTests {
 		try {
 			new LimitedDataBufferList(5).add(toDataBuffer("123456"));
 			fail();
-		}
-		catch (DataBufferLimitException ex) {
+		} catch (DataBufferLimitException ex) {
 			// Expected
 		}
 	}

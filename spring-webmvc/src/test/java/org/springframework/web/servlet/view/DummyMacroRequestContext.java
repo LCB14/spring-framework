@@ -30,8 +30,8 @@ import org.springframework.web.util.UriTemplate;
  *
  * @author Darren Davison
  * @author Juergen Hoeller
- * @since 25.01.2005
  * @see org.springframework.web.servlet.support.RequestContext
+ * @since 25.01.2005
  */
 public class DummyMacroRequestContext {
 
@@ -139,7 +139,7 @@ public class DummyMacroRequestContext {
 	/**
 	 * @see org.springframework.web.servlet.support.RequestContext#getContextUrl(String, Map)
 	 */
-	public String getContextUrl(String relativeUrl, Map<String,String> params) {
+	public String getContextUrl(String relativeUrl, Map<String, String> params) {
 		UriTemplate template = new UriTemplate(relativeUrl);
 		return getContextPath() + template.expand(params).toASCIIString();
 	}

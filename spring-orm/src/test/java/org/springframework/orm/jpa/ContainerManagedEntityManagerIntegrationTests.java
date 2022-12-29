@@ -79,8 +79,7 @@ public class ContainerManagedEntityManagerIntegrationTests extends AbstractEntit
 		try {
 			em.close();
 			fail("Close should not work on container managed EM");
-		}
-		catch (IllegalStateException ex) {
+		} catch (IllegalStateException ex) {
 			// OK
 		}
 		assertTrue(em.isOpen());
@@ -92,8 +91,7 @@ public class ContainerManagedEntityManagerIntegrationTests extends AbstractEntit
 		try {
 			createContainerManagedEntityManager().getTransaction();
 			fail("Should have thrown an IllegalStateException");
-		}
-		catch (IllegalStateException ex) {
+		} catch (IllegalStateException ex) {
 			// expected
 		}
 	}
@@ -114,8 +112,7 @@ public class ContainerManagedEntityManagerIntegrationTests extends AbstractEntit
 		try {
 			createContainerManagedEntityManager().joinTransaction();
 			fail("Should have thrown a TransactionRequiredException");
-		}
-		catch (TransactionRequiredException ex) {
+		} catch (TransactionRequiredException ex) {
 			// expected
 		}
 	}
@@ -153,7 +150,7 @@ public class ContainerManagedEntityManagerIntegrationTests extends AbstractEntit
 
 		doInstantiateAndSave(em);
 		setComplete();
-		endTransaction();	// Should rollback
+		endTransaction();    // Should rollback
 		assertEquals("Tx must have committed back", 1, countRowsInTable(em, "person"));
 
 		// Now clean up the database
@@ -164,7 +161,7 @@ public class ContainerManagedEntityManagerIntegrationTests extends AbstractEntit
 	public void testRollbackOccurs() {
 		EntityManager em = createContainerManagedEntityManager();
 		doInstantiateAndSave(em);
-		endTransaction();	// Should rollback
+		endTransaction();    // Should rollback
 		assertEquals("Tx must have been rolled back", 0, countRowsInTable(em, "person"));
 	}
 
@@ -173,7 +170,7 @@ public class ContainerManagedEntityManagerIntegrationTests extends AbstractEntit
 		EntityManager em = createContainerManagedEntityManager();
 		doInstantiateAndSave(em);
 		setComplete();
-		endTransaction();	// Should rollback
+		endTransaction();    // Should rollback
 		assertEquals("Tx must have committed back", 1, countRowsInTable(em, "person"));
 
 		// Now clean up the database

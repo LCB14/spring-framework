@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
  * @since 08 九月 2019
  */
 @Component
-public class CommonHouse implements House{
-    @Override
-    public void sOut() {
-        System.out.println("common house");
-    }
+public class CommonHouse implements House {
+	@Override
+	public void sOut() {
+		System.out.println("common house");
+	}
 }

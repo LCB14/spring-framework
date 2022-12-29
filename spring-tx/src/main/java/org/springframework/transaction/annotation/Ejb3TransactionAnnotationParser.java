@@ -42,8 +42,7 @@ public class Ejb3TransactionAnnotationParser implements TransactionAnnotationPar
 		javax.ejb.TransactionAttribute ann = element.getAnnotation(javax.ejb.TransactionAttribute.class);
 		if (ann != null) {
 			return parseTransactionAnnotation(ann);
-		}
-		else {
+		} else {
 			return null;
 		}
 	}

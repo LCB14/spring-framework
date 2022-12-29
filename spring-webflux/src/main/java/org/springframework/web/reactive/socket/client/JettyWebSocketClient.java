@@ -103,8 +103,7 @@ public class JettyWebSocketClient implements WebSocketClient, Lifecycle {
 		if (!this.externallyManaged) {
 			try {
 				this.jettyClient.start();
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				throw new IllegalStateException("Failed to start Jetty WebSocketClient", ex);
 			}
 		}
@@ -115,8 +114,7 @@ public class JettyWebSocketClient implements WebSocketClient, Lifecycle {
 		if (!this.externallyManaged) {
 			try {
 				this.jettyClient.stop();
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				throw new IllegalStateException("Error stopping Jetty WebSocketClient", ex);
 			}
 		}
@@ -141,16 +139,16 @@ public class JettyWebSocketClient implements WebSocketClient, Lifecycle {
 	private Mono<Void> executeInternal(URI url, HttpHeaders headers, WebSocketHandler handler) {
 		MonoProcessor<Void> completionMono = MonoProcessor.create();
 		return Mono.fromCallable(
-				() -> {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Connecting to " + url);
-					}
-					Object jettyHandler = createHandler(url, handler, completionMono);
-					ClientUpgradeRequest request = new ClientUpgradeRequest();
-					request.setSubProtocols(handler.getSubProtocols());
-					UpgradeListener upgradeListener = new DefaultUpgradeListener(headers);
-					return this.jettyClient.connect(jettyHandler, url, request, upgradeListener);
-				})
+						() -> {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Connecting to " + url);
+							}
+							Object jettyHandler = createHandler(url, handler, completionMono);
+							ClientUpgradeRequest request = new ClientUpgradeRequest();
+							request.setSubProtocols(handler.getSubProtocols());
+							UpgradeListener upgradeListener = new DefaultUpgradeListener(headers);
+							return this.jettyClient.connect(jettyHandler, url, request, upgradeListener);
+						})
 				.then(completionMono);
 	}
 

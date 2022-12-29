@@ -55,8 +55,8 @@ import org.springframework.util.MimeType;
  * @author Sebastien Deleuze
  * @author Rossen Stoyanchev
  * @author Arjen Poutsma
- * @since 5.0
  * @see <a href="https://github.com/FasterXML/jackson-core/issues/57" target="_blank">Add support for non-blocking ("async") JSON parsing</a>
+ * @since 5.0
  */
 public abstract class AbstractJackson2Decoder extends Jackson2CodecSupport implements HttpMessageDecoder<Object> {
 
@@ -87,6 +87,7 @@ public abstract class AbstractJackson2Decoder extends Jackson2CodecSupport imple
 	 * is exceeded, {@link DataBufferLimitException} is raised.
 	 * <p>By default in 5.1 this is set to -1, unlimited. In 5.2 the default
 	 * value for this limit is set to 256K.
+	 *
 	 * @param byteCount the max number of bytes to buffer, or -1 for unlimited
 	 * @since 5.1.11
 	 */
@@ -96,6 +97,7 @@ public abstract class AbstractJackson2Decoder extends Jackson2CodecSupport imple
 
 	/**
 	 * Return the {@link #setMaxInMemorySize configured} byte count limit.
+	 *
 	 * @since 5.1.11
 	 */
 	public int getMaxInMemorySize() {
@@ -113,7 +115,7 @@ public abstract class AbstractJackson2Decoder extends Jackson2CodecSupport imple
 
 	@Override
 	public Flux<Object> decode(Publisher<DataBuffer> input, ResolvableType elementType,
-			@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+							   @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		boolean forceUseOfBigDecimal = getObjectMapper().isEnabled(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
 		if (BigDecimal.class.equals(elementType.getType())) {
@@ -130,22 +132,23 @@ public abstract class AbstractJackson2Decoder extends Jackson2CodecSupport imple
 	 * Process the input publisher into a flux. Default implementation returns
 	 * {@link Flux#from(Publisher)}, but subclasses can choose to to customize
 	 * this behaviour.
-	 * @param input the {@code DataBuffer} input stream to process
+	 *
+	 * @param input       the {@code DataBuffer} input stream to process
 	 * @param elementType the expected type of elements in the output stream
-	 * @param mimeType the MIME type associated with the input stream (optional)
-	 * @param hints additional information about how to do encode
+	 * @param mimeType    the MIME type associated with the input stream (optional)
+	 * @param hints       additional information about how to do encode
 	 * @return the processed flux
 	 * @since 5.1.14
 	 */
 	protected Flux<DataBuffer> processInput(Publisher<DataBuffer> input, ResolvableType elementType,
-				@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+											@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		return Flux.from(input);
 	}
 
 	@Override
 	public Mono<Object> decodeToMono(Publisher<DataBuffer> input, ResolvableType elementType,
-			@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+									 @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		boolean forceUseOfBigDecimal = getObjectMapper().isEnabled(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
 		if (BigDecimal.class.equals(elementType.getType())) {
@@ -159,7 +162,7 @@ public abstract class AbstractJackson2Decoder extends Jackson2CodecSupport imple
 	}
 
 	private Flux<Object> decodeInternal(Flux<TokenBuffer> tokens, ResolvableType elementType,
-			@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+										@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		Assert.notNull(tokens, "'tokens' must not be null");
 		Assert.notNull(elementType, "'elementType' must not be null");
@@ -183,14 +186,11 @@ public abstract class AbstractJackson2Decoder extends Jackson2CodecSupport imple
 					});
 				}
 				return Mono.justOrEmpty(value);
-			}
-			catch (InvalidDefinitionException ex) {
+			} catch (InvalidDefinitionException ex) {
 				return Mono.error(new CodecException("Type definition error: " + ex.getType(), ex));
-			}
-			catch (JsonProcessingException ex) {
+			} catch (JsonProcessingException ex) {
 				return Mono.error(new DecodingException("JSON decoding error: " + ex.getOriginalMessage(), ex));
-			}
-			catch (IOException ex) {
+			} catch (IOException ex) {
 				return Mono.error(new DecodingException("I/O error while parsing input stream", ex));
 			}
 		});
@@ -201,7 +201,7 @@ public abstract class AbstractJackson2Decoder extends Jackson2CodecSupport imple
 
 	@Override
 	public Map<String, Object> getDecodeHints(ResolvableType actualType, ResolvableType elementType,
-			ServerHttpRequest request, ServerHttpResponse response) {
+											  ServerHttpRequest request, ServerHttpResponse response) {
 
 		return getHints(actualType);
 	}

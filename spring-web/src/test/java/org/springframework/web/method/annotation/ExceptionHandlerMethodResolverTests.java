@@ -98,7 +98,8 @@ public class ExceptionHandlerMethodResolverTests {
 	@Controller
 	static class ExceptionController {
 
-		public void handle() {}
+		public void handle() {
+		}
 
 		@ExceptionHandler(IOException.class)
 		public void handleIOException() {
@@ -118,7 +119,7 @@ public class ExceptionHandlerMethodResolverTests {
 	static class InheritedController extends ExceptionController {
 
 		@Override
-		public void handleIOException()	{
+		public void handleIOException() {
 		}
 	}
 
@@ -126,7 +127,8 @@ public class ExceptionHandlerMethodResolverTests {
 	@Controller
 	static class AmbiguousController {
 
-		public void handle() {}
+		public void handle() {
+		}
 
 		@ExceptionHandler({BindException.class, IllegalArgumentException.class})
 		public String handle1(Exception ex, HttpServletRequest request, HttpServletResponse response)

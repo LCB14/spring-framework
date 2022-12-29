@@ -124,15 +124,13 @@ public class ProxyFactoryTests {
 		// Check out of bounds
 		try {
 			pf.removeAdvisor(-1);
-		}
-		catch (AopConfigException ex) {
+		} catch (AopConfigException ex) {
 			// Ok
 		}
 
 		try {
 			pf.removeAdvisor(2);
-		}
-		catch (AopConfigException ex) {
+		} catch (AopConfigException ex) {
 			// Ok
 		}
 
@@ -276,8 +274,7 @@ public class ProxyFactoryTests {
 			// Existing reference will fail
 			ts.getTimeStamp();
 			fail("Existing object won't implement this interface any more");
-		}
-		catch (RuntimeException ex) {
+		} catch (RuntimeException ex) {
 		}
 
 		assertFalse("Should no longer implement TimeStamped",
@@ -415,7 +412,7 @@ public class ProxyFactoryTests {
 
 
 	@Order(1)
-	public static class B implements Runnable{
+	public static class B implements Runnable {
 
 		@Override
 		public void run() {

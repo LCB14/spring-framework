@@ -636,7 +636,9 @@ public class MvcNamespaceTests {
 		assertEquals(404, response.getStatus());
 	}
 
-	/** WebSphere gives trailing servlet path slashes by default!! */
+	/**
+	 * WebSphere gives trailing servlet path slashes by default!!
+	 */
 	@Test
 	public void testViewControllersOnWebSphere() throws Exception {
 		loadBeanDefinitions("mvc-config-view-controllers.xml");
@@ -770,7 +772,7 @@ public class MvcNamespaceTests {
 		accessor = new DirectFieldAccessor(resolver);
 		assertEquals("freemarker-", accessor.getPropertyValue("prefix"));
 		assertEquals(".freemarker", accessor.getPropertyValue("suffix"));
-		assertArrayEquals(new String[] {"my*", "*Report"}, (String[]) accessor.getPropertyValue("viewNames"));
+		assertArrayEquals(new String[]{"my*", "*Report"}, (String[]) accessor.getPropertyValue("viewNames"));
 		assertEquals(1024, accessor.getPropertyValue("cacheLimit"));
 
 		resolver = resolvers.get(4);
@@ -805,7 +807,7 @@ public class MvcNamespaceTests {
 		FreeMarkerConfigurer freeMarkerConfigurer = appContext.getBean(FreeMarkerConfigurer.class);
 		assertNotNull(freeMarkerConfigurer);
 		accessor = new DirectFieldAccessor(freeMarkerConfigurer);
-		assertArrayEquals(new String[] {"/", "/test"}, (String[]) accessor.getPropertyValue("templateLoaderPaths"));
+		assertArrayEquals(new String[]{"/", "/test"}, (String[]) accessor.getPropertyValue("templateLoaderPaths"));
 
 		GroovyMarkupConfigurer groovyMarkupConfigurer = appContext.getBean(GroovyMarkupConfigurer.class);
 		assertNotNull(groovyMarkupConfigurer);
@@ -820,7 +822,7 @@ public class MvcNamespaceTests {
 		assertEquals(StandardCharsets.ISO_8859_1, scriptTemplateConfigurer.getCharset());
 		assertEquals("classpath:", scriptTemplateConfigurer.getResourceLoaderPath());
 		assertFalse(scriptTemplateConfigurer.isSharedEngine());
-		String[] scripts = { "org/springframework/web/servlet/view/script/nashorn/render.js" };
+		String[] scripts = {"org/springframework/web/servlet/view/script/nashorn/render.js"};
 		accessor = new DirectFieldAccessor(scriptTemplateConfigurer);
 		assertArrayEquals(scripts, (String[]) accessor.getPropertyValue("scripts"));
 	}
@@ -887,7 +889,7 @@ public class MvcNamespaceTests {
 		String[] beanNames = appContext.getBeanNamesForType(AbstractHandlerMapping.class);
 		assertEquals(2, beanNames.length);
 		for (String beanName : beanNames) {
-			AbstractHandlerMapping handlerMapping = (AbstractHandlerMapping)appContext.getBean(beanName);
+			AbstractHandlerMapping handlerMapping = (AbstractHandlerMapping) appContext.getBean(beanName);
 			assertNotNull(handlerMapping);
 			DirectFieldAccessor accessor = new DirectFieldAccessor(handlerMapping);
 			Map<String, CorsConfiguration> configs = ((UrlBasedCorsConfigurationSource) accessor
@@ -912,7 +914,7 @@ public class MvcNamespaceTests {
 		String[] beanNames = appContext.getBeanNamesForType(AbstractHandlerMapping.class);
 		assertEquals(2, beanNames.length);
 		for (String beanName : beanNames) {
-			AbstractHandlerMapping handlerMapping = (AbstractHandlerMapping)appContext.getBean(beanName);
+			AbstractHandlerMapping handlerMapping = (AbstractHandlerMapping) appContext.getBean(beanName);
 			assertNotNull(handlerMapping);
 			DirectFieldAccessor accessor = new DirectFieldAccessor(handlerMapping);
 			Map<String, CorsConfiguration> configs = ((UrlBasedCorsConfigurationSource) accessor
@@ -976,8 +978,8 @@ public class MvcNamespaceTests {
 
 		@RequestMapping
 		public void testBind(@RequestParam @IsoDate Date date,
-				@RequestParam(required = false) @PercentNumber Double percent,
-				@MyValid TestBean bean, BindingResult result) {
+							 @RequestParam(required = false) @PercentNumber Double percent,
+							 @MyValid TestBean bean, BindingResult result) {
 
 			this.date = date;
 			this.percent = percent;
@@ -1030,8 +1032,7 @@ public class MvcNamespaceTests {
 		public RequestDispatcher getNamedDispatcher(String path) {
 			if (path.equals("default") || path.equals("custom")) {
 				return new MockRequestDispatcher("/");
-			}
-			else {
+			} else {
 				return null;
 			}
 		}

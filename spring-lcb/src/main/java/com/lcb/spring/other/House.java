@@ -7,5 +7,5 @@ import org.springframework.stereotype.Component;
  * @since 08 九月 2019
  */
 public interface House {
-    public void sOut();
+	public void sOut();
 }

@@ -65,15 +65,17 @@ public class ServletWebRequest extends ServletRequestAttributes implements Nativ
 
 	/**
 	 * Pattern matching ETag multiple field values in headers such as "If-Match", "If-None-Match".
+	 *
 	 * @see <a href="https://tools.ietf.org/html/rfc7232#section-2.3">Section 2.3 of RFC 7232</a>
 	 */
 	private static final Pattern ETAG_HEADER_VALUE_PATTERN = Pattern.compile("\\*|\\s*((W\\/)?(\"[^\"]*\"))\\s*,?");
 
 	/**
 	 * Date formats as specified in the HTTP RFC.
+	 *
 	 * @see <a href="https://tools.ietf.org/html/rfc7231#section-7.1.1.1">Section 7.1.1.1 of RFC 7231</a>
 	 */
-	private static final String[] DATE_FORMATS = new String[] {
+	private static final String[] DATE_FORMATS = new String[]{
 			"EEE, dd MMM yyyy HH:mm:ss zzz",
 			"EEE, dd-MMM-yy HH:mm:ss zzz",
 			"EEE MMM dd HH:mm:ss yyyy"
@@ -86,6 +88,7 @@ public class ServletWebRequest extends ServletRequestAttributes implements Nativ
 
 	/**
 	 * Create a new ServletWebRequest instance for the given request.
+	 *
 	 * @param request current HTTP request
 	 */
 	public ServletWebRequest(HttpServletRequest request) {
@@ -94,7 +97,8 @@ public class ServletWebRequest extends ServletRequestAttributes implements Nativ
 
 	/**
 	 * Create a new ServletWebRequest instance for the given request/response pair.
-	 * @param request current HTTP request
+	 *
+	 * @param request  current HTTP request
 	 * @param response current HTTP response (for automatic last-modified handling)
 	 */
 	public ServletWebRequest(HttpServletRequest request, @Nullable HttpServletResponse response) {
@@ -125,6 +129,7 @@ public class ServletWebRequest extends ServletRequestAttributes implements Nativ
 
 	/**
 	 * Return the HTTP method of the request.
+	 *
 	 * @since 4.0.2
 	 */
 	@Nullable
@@ -278,8 +283,7 @@ public class ServletWebRequest extends ServletRequestAttributes implements Nativ
 		Enumeration<String> ifNoneMatch;
 		try {
 			ifNoneMatch = getRequest().getHeaders(IF_NONE_MATCH);
-		}
-		catch (IllegalArgumentException ex) {
+		} catch (IllegalArgumentException ex) {
 			return false;
 		}
 		if (!ifNoneMatch.hasMoreElements()) {
@@ -337,8 +341,7 @@ public class ServletWebRequest extends ServletRequestAttributes implements Nativ
 		long dateValue = -1;
 		try {
 			dateValue = getRequest().getDateHeader(headerName);
-		}
-		catch (IllegalArgumentException ex) {
+		} catch (IllegalArgumentException ex) {
 			String headerValue = getHeader(headerName);
 			// Possibly an IE 10 style value: "Wed, 09 Apr 2014 09:57:42 GMT; length=13774"
 			if (headerValue != null) {
@@ -365,8 +368,7 @@ public class ServletWebRequest extends ServletRequestAttributes implements Nativ
 				simpleDateFormat.setTimeZone(GMT);
 				try {
 					return simpleDateFormat.parse(headerValue).getTime();
-				}
-				catch (ParseException ex) {
+				} catch (ParseException ex) {
 					// ignore
 				}
 			}

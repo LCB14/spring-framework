@@ -46,7 +46,6 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
- *
  * @author Stephane Nicoll
  */
 public abstract class AbstractJmsAnnotationDrivenTests {
@@ -172,7 +171,7 @@ public abstract class AbstractJmsAnnotationDrivenTests {
 	/**
 	 * Test for {@link ValidationBean} with a validator ({@link TestValidator}) specified
 	 * in a custom {@link org.springframework.messaging.handler.annotation.support.MessageHandlerMethodFactory}.
-	 *
+	 * <p>
 	 * The test should throw a {@link org.springframework.jms.listener.adapter.ListenerExecutionFailedException}
 	 */
 	public void testJmsHandlerMethodFactoryConfiguration(ApplicationContext context) throws JMSException {

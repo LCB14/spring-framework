@@ -60,10 +60,10 @@ import static org.springframework.core.annotation.AnnotationUtilsTests.*;
  * @author Sam Brannen
  * @author Rossen Stoyanchev
  * @author Juergen Hoeller
- * @since 4.0.3
  * @see AnnotationUtilsTests
  * @see MultipleComposedAnnotationsOnSingleAnnotatedElementTests
  * @see ComposedRepeatableAnnotationsTests
+ * @since 4.0.3
  */
 public class AnnotatedElementUtilsTests {
 
@@ -197,7 +197,7 @@ public class AnnotatedElementUtilsTests {
 
 	@Test
 	public void getAllAnnotationAttributesFavorsInheritedComposedAnnotationsOverMoreLocallyDeclaredComposedAnnotations() {
-		MultiValueMap<String, Object> attributes = getAllAnnotationAttributes( SubSubClassWithInheritedComposedAnnotation.class, TX_NAME);
+		MultiValueMap<String, Object> attributes = getAllAnnotationAttributes(SubSubClassWithInheritedComposedAnnotation.class, TX_NAME);
 		assertNotNull("Annotation attributes map for @Transactional on SubSubClassWithInheritedComposedAnnotation", attributes);
 		assertEquals(asList("composed1"), attributes.get("qualifier"));
 	}
@@ -208,6 +208,7 @@ public class AnnotatedElementUtilsTests {
 	 * type within the class hierarchy. Such undesirable behavior would cause the
 	 * logic in {@link org.springframework.context.annotation.ProfileCondition}
 	 * to fail.
+	 *
 	 * @see org.springframework.core.env.EnvironmentSystemIntegrationTests#mostSpecificDerivedClassDrivesEnvironment_withDevEnvAndDerivedDevConfigClass
 	 */
 	@Test
@@ -219,6 +220,7 @@ public class AnnotatedElementUtilsTests {
 
 	/**
 	 * Note: this functionality is required by {@link org.springframework.context.annotation.ProfileCondition}.
+	 *
 	 * @see org.springframework.core.env.EnvironmentSystemIntegrationTests
 	 */
 	@Test
@@ -587,6 +589,7 @@ public class AnnotatedElementUtilsTests {
 	/**
 	 * Bridge/bridged method setup code copied from
 	 * {@link org.springframework.core.BridgeMethodResolverTests#testWithGenericParameter()}.
+	 *
 	 * @since 4.2
 	 */
 	@Test
@@ -599,8 +602,7 @@ public class AnnotatedElementUtilsTests {
 			if ("getFor".equals(method.getName()) && !method.getParameterTypes()[0].equals(Integer.class)) {
 				if (method.getReturnType().equals(Object.class)) {
 					bridgeMethod = method;
-				}
-				else {
+				} else {
 					bridgedMethod = method;
 				}
 			}
@@ -729,7 +731,7 @@ public class AnnotatedElementUtilsTests {
 		assertArrayEquals("locations for " + element, EMPTY, contextConfig.locations());
 		// 'value' in @SpringAppConfig should not override 'value' in @ContextConfig
 		assertArrayEquals("value for " + element, EMPTY, contextConfig.value());
-		assertArrayEquals("classes for " + element, new Class<?>[] {Number.class}, contextConfig.classes());
+		assertArrayEquals("classes for " + element, new Class<?>[]{Number.class}, contextConfig.classes());
 	}
 
 	@Test
@@ -1082,7 +1084,7 @@ public class AnnotatedElementUtilsTests {
 	 * requires a value for the aliased 'locations', this does not result in
 	 * an error since 'locations' effectively <em>shadows</em> the 'value'
 	 * attribute (which cannot be set via the composed annotation anyway).
-	 *
+	 * <p>
 	 * If 'value' were not shadowed, such a declaration would not make sense.
 	 */
 	@ContextConfig(value = "duplicateDeclaration")

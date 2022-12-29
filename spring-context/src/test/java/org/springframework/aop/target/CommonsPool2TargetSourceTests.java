@@ -156,8 +156,7 @@ public class CommonsPool2TargetSourceTests {
 		try {
 			targetSource.getTarget();
 			fail("Should throw NoSuchElementException");
-		}
-		catch (NoSuchElementException ex) {
+		} catch (NoSuchElementException ex) {
 			// desired
 		}
 
@@ -189,8 +188,7 @@ public class CommonsPool2TargetSourceTests {
 		try {
 			targetSource.getTarget();
 			fail("Should throw NoSuchElementException");
-		}
-		catch (NoSuchElementException ex) {
+		} catch (NoSuchElementException ex) {
 			// desired
 		}
 

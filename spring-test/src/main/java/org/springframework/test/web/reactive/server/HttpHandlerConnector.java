@@ -73,7 +73,7 @@ public class HttpHandlerConnector implements ClientHttpConnector {
 
 	@Override
 	public Mono<ClientHttpResponse> connect(HttpMethod httpMethod, URI uri,
-			Function<? super ClientHttpRequest, Mono<Void>> requestCallback) {
+											Function<? super ClientHttpRequest, Mono<Void>> requestCallback) {
 
 		MonoProcessor<ClientHttpResponse> result = MonoProcessor.create();
 
@@ -84,7 +84,8 @@ public class HttpHandlerConnector implements ClientHttpConnector {
 			log("Invoking HttpHandler for ", httpMethod, uri);
 			ServerHttpRequest mockServerRequest = adaptRequest(mockClientRequest, requestBody);
 			ServerHttpResponse responseToUse = prepareResponse(mockServerResponse, mockServerRequest);
-			this.handler.handle(mockServerRequest, responseToUse).subscribe(aVoid -> {}, result::onError);
+			this.handler.handle(mockServerRequest, responseToUse).subscribe(aVoid -> {
+			}, result::onError);
 			return Mono.empty();
 		});
 
@@ -95,7 +96,8 @@ public class HttpHandlerConnector implements ClientHttpConnector {
 				}));
 
 		log("Writing client request for ", httpMethod, uri);
-		requestCallback.apply(mockClientRequest).subscribe(aVoid -> {}, result::onError);
+		requestCallback.apply(mockClientRequest).subscribe(aVoid -> {
+		}, result::onError);
 
 		return result;
 	}

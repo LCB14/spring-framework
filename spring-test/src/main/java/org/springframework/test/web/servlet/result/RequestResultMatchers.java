@@ -70,6 +70,7 @@ public class RequestResultMatchers {
 
 	/**
 	 * Assert that asynchronous processing was not started.
+	 *
 	 * @see #asyncStarted()
 	 */
 	public ResultMatcher asyncNotStarted() {

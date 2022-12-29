@@ -303,8 +303,7 @@ public class AnnotationDrivenEventListenerTests {
 		try {
 			load(CglibProxyWithPrivateMethod.class);
 			fail("Should have thrown BeanInitializationException");
-		}
-		catch (BeanInitializationException ex) {
+		} catch (BeanInitializationException ex) {
 			assertTrue(ex.getCause() instanceof IllegalStateException);
 		}
 	}
@@ -336,8 +335,7 @@ public class AnnotationDrivenEventListenerTests {
 			customScope.active = false;
 			this.context.publishEvent(new TestEvent());
 			fail("Should have thrown IllegalStateException");
-		}
-		catch (BeanCreationException ex) {
+		} catch (BeanCreationException ex) {
 			// expected
 			assertTrue(ex.getCause() instanceof IllegalStateException);
 		}
@@ -397,8 +395,7 @@ public class AnnotationDrivenEventListenerTests {
 		try {
 			this.context.publishEvent(event);
 			fail("An exception should have thrown");
-		}
-		catch (IllegalStateException e) {
+		} catch (IllegalStateException e) {
 			assertEquals("Wrong exception", "Test exception", e.getMessage());
 			this.eventCollector.assertEvent(listener, event);
 			this.eventCollector.assertTotalEventsCount(1);
@@ -565,7 +562,8 @@ public class AnnotationDrivenEventListenerTests {
 		assertThat(listener.order, contains("first", "second", "third"));
 	}
 
-	@Test @Ignore  // SPR-15122
+	@Test
+	@Ignore  // SPR-15122
 	public void listenersReceiveEarlyEvents() {
 		load(EventOnPostConstruct.class, OrderedTestListener.class);
 		OrderedTestListener listener = this.context.getBean(OrderedTestListener.class);
@@ -698,13 +696,11 @@ public class AnnotationDrivenEventListenerTests {
 			collectEvent(event);
 			if (event.content == null) {
 				return null;
-			}
-			else if (event.content instanceof String) {
+			} else if (event.content instanceof String) {
 				String s = (String) event.content;
 				if (s.equals("String")) {
 					return event.content;
-				}
-				else {
+				} else {
 					return new TestEvent(this, event.getId(), s);
 				}
 			}

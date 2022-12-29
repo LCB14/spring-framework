@@ -7,12 +7,12 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @version $
  */
 public class SpringTransaction {
-    public static void main(String[] args) {
-        /**
-         *  TransactionDefinition  -- 事务定义
-         *  PlatformTransactionManager -- 事务管理器
-         *  TransactionStatus -- 事务运行状态
-         */
-        TransactionTemplate transactionTemplate = new TransactionTemplate();
-    }
+	public static void main(String[] args) {
+		/**
+		 *  TransactionDefinition  -- 事务定义
+		 *  PlatformTransactionManager -- 事务管理器
+		 *  TransactionStatus -- 事务运行状态
+		 */
+		TransactionTemplate transactionTemplate = new TransactionTemplate();
+	}
 }

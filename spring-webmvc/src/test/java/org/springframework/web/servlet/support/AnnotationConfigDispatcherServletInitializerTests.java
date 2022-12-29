@@ -148,8 +148,9 @@ public class AnnotationConfigDispatcherServletInitializerTests {
 		initializer = new MyAnnotationConfigDispatcherServletInitializer() {
 			@Override
 			protected Class<?>[] getRootConfigClasses() {
-				return new Class<?>[] {MyConfiguration.class};
+				return new Class<?>[]{MyConfiguration.class};
 			}
+
 			@Override
 			protected Class<?>[] getServletConfigClasses() {
 				return null;
@@ -226,7 +227,7 @@ public class AnnotationConfigDispatcherServletInitializerTests {
 
 		@Override
 		protected Class<?>[] getServletConfigClasses() {
-			return new Class<?>[] {MyConfiguration.class};
+			return new Class<?>[]{MyConfiguration.class};
 		}
 
 		@Override
@@ -236,7 +237,7 @@ public class AnnotationConfigDispatcherServletInitializerTests {
 
 		@Override
 		protected Filter[] getServletFilters() {
-			return new Filter[] {
+			return new Filter[]{
 					new HiddenHttpMethodFilter(),
 					new DelegatingFilterProxy("a"),
 					new DelegatingFilterProxy("b"),

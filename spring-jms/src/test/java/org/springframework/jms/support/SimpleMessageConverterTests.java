@@ -167,8 +167,7 @@ public class SimpleMessageConverterTests {
 		try {
 			converter.toMessage(content, session);
 			fail("expected MessageConversionException");
-		}
-		catch (MessageConversionException ex) { /* expected */ }
+		} catch (MessageConversionException ex) { /* expected */ }
 	}
 
 	@Test
@@ -184,8 +183,7 @@ public class SimpleMessageConverterTests {
 		try {
 			converter.toMessage(content, session);
 			fail("expected MessageConversionException");
-		}
-		catch (MessageConversionException ex) { /* expected */ }
+		} catch (MessageConversionException ex) { /* expected */ }
 	}
 
 }

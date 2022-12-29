@@ -86,7 +86,7 @@ public class CssLinkResourceTransformerTests {
 				"body { background: url(\"/static/images/image-f448cd1d5dba82b774f3202c878230b3.png?#iefix\") }\n";
 
 		StepVerifier.create(this.transformerChain.transform(exchange, css)
-				.cast(TransformedResource.class))
+						.cast(TransformedResource.class))
 				.consumeNextWith(transformedResource -> {
 					String result = new String(transformedResource.getByteArray(), StandardCharsets.UTF_8);
 					result = StringUtils.deleteAny(result, "\r");
@@ -120,7 +120,7 @@ public class CssLinkResourceTransformerTests {
 				"figure { background: url(\"//example.org/style.css\")}";
 
 		StepVerifier.create(chain.transform(exchange, resource)
-				.cast(TransformedResource.class))
+						.cast(TransformedResource.class))
 				.consumeNextWith(transformedResource -> {
 					String result = new String(transformedResource.getByteArray(), StandardCharsets.UTF_8);
 					result = StringUtils.deleteAny(result, "\r");
@@ -167,11 +167,11 @@ public class CssLinkResourceTransformerTests {
 		Resource css = getResource("empty_url_function.css");
 		String expected =
 				".fooStyle {\n" +
-				"\tbackground: transparent url() no-repeat left top;\n" +
-				"}";
+						"\tbackground: transparent url() no-repeat left top;\n" +
+						"}";
 
 		StepVerifier.create(this.transformerChain.transform(exchange, css)
-				.cast(TransformedResource.class))
+						.cast(TransformedResource.class))
 				.consumeNextWith(transformedResource -> {
 					String result = new String(transformedResource.getByteArray(), StandardCharsets.UTF_8);
 					result = StringUtils.deleteAny(result, "\r");

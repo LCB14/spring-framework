@@ -83,8 +83,7 @@ public class QuartzSupportTests {
 			Scheduler returnedScheduler = schedulerFactoryBean.getObject();
 			assertEquals(tb, returnedScheduler.getContext().get("testBean"));
 			assertEquals(ac, returnedScheduler.getContext().get("appCtx"));
-		}
-		finally {
+		} finally {
 			schedulerFactoryBean.destroy();
 		}
 
@@ -127,7 +126,7 @@ public class QuartzSupportTests {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void jobDetailWithRunnableInsteadOfJob() {
 		JobDetailImpl jobDetail = new JobDetailImpl();
 		jobDetail.setJobClass((Class) DummyRunnable.class);
@@ -302,8 +301,7 @@ public class QuartzSupportTests {
 			assertNotSame(scheduler1, scheduler2);
 			assertEquals("quartz1", scheduler1.getSchedulerName());
 			assertEquals("quartz2", scheduler2.getSchedulerName());
-		}
-		finally {
+		} finally {
 			ctx.close();
 		}
 	}
@@ -317,8 +315,7 @@ public class QuartzSupportTests {
 			assertNotSame(scheduler1, scheduler2);
 			assertEquals("quartz1", scheduler1.getSchedulerName());
 			assertEquals("quartz2", scheduler2.getSchedulerName());
-		}
-		finally {
+		} finally {
 			ctx.close();
 		}
 	}
@@ -336,8 +333,7 @@ public class QuartzSupportTests {
 			assertEquals("doExport not called on exportService", 2, exportService.getExportCount());
 			assertEquals("doImport not called on importService", 2, importService.getImportCount());
 			assertEquals("doExport called on importService", 0, importService.getExportCount());
-		}
-		finally {
+		} finally {
 			ctx.close();
 		}
 	}
@@ -355,8 +351,7 @@ public class QuartzSupportTests {
 			assertEquals("doExport not called on exportService", 2, exportService.getExportCount());
 			assertEquals("doImport not called on importService", 2, importService.getImportCount());
 			assertEquals("doExport called on importService", 0, importService.getExportCount());
-		}
-		finally {
+		} finally {
 			ctx.close();
 		}
 	}

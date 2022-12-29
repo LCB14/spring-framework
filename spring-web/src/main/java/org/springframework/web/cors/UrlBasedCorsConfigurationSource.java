@@ -50,6 +50,7 @@ public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource 
 	/**
 	 * Set the PathMatcher implementation to use for matching URL paths
 	 * against registered URL patterns. Default is AntPathMatcher.
+	 *
 	 * @see org.springframework.util.AntPathMatcher
 	 */
 	public void setPathMatcher(PathMatcher pathMatcher) {
@@ -59,6 +60,7 @@ public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource 
 
 	/**
 	 * Shortcut to same property on underlying {@link #setUrlPathHelper UrlPathHelper}.
+	 *
 	 * @see org.springframework.web.util.UrlPathHelper#setAlwaysUseFullPath
 	 */
 	public void setAlwaysUseFullPath(boolean alwaysUseFullPath) {
@@ -67,6 +69,7 @@ public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource 
 
 	/**
 	 * Shortcut to same property on underlying {@link #setUrlPathHelper UrlPathHelper}.
+	 *
 	 * @see org.springframework.web.util.UrlPathHelper#setUrlDecode
 	 */
 	public void setUrlDecode(boolean urlDecode) {
@@ -75,6 +78,7 @@ public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource 
 
 	/**
 	 * Shortcut to same property on underlying {@link #setUrlPathHelper UrlPathHelper}.
+	 *
 	 * @see org.springframework.web.util.UrlPathHelper#setRemoveSemicolonContent(boolean)
 	 */
 	public void setRemoveSemicolonContent(boolean removeSemicolonContent) {

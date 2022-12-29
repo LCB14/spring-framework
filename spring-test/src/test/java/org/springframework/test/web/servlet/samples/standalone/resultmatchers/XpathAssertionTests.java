@@ -54,7 +54,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class XpathAssertionTests {
 
 	private static final Map<String, String> musicNamespace =
-		Collections.singletonMap("ns", "https://example.org/music/people");
+			Collections.singletonMap("ns", "https://example.org/music/people");
 
 	private MockMvc mockMvc;
 
@@ -74,13 +74,13 @@ public class XpathAssertionTests {
 		String performer = "/ns:people/performers/performer[%s]";
 
 		this.mockMvc.perform(get("/music/people"))
-			.andExpect(xpath(composer, musicNamespace, 1).exists())
-			.andExpect(xpath(composer, musicNamespace, 2).exists())
-			.andExpect(xpath(composer, musicNamespace, 3).exists())
-			.andExpect(xpath(composer, musicNamespace, 4).exists())
-			.andExpect(xpath(performer, musicNamespace, 1).exists())
-			.andExpect(xpath(performer, musicNamespace, 2).exists())
-			.andExpect(xpath(composer, musicNamespace, 1).node(notNullValue()));
+				.andExpect(xpath(composer, musicNamespace, 1).exists())
+				.andExpect(xpath(composer, musicNamespace, 2).exists())
+				.andExpect(xpath(composer, musicNamespace, 3).exists())
+				.andExpect(xpath(composer, musicNamespace, 4).exists())
+				.andExpect(xpath(performer, musicNamespace, 1).exists())
+				.andExpect(xpath(performer, musicNamespace, 2).exists())
+				.andExpect(xpath(composer, musicNamespace, 1).node(notNullValue()));
 	}
 
 	@Test
@@ -90,11 +90,11 @@ public class XpathAssertionTests {
 		String performer = "/ns:people/performers/performer[%s]";
 
 		this.mockMvc.perform(get("/music/people"))
-			.andExpect(xpath(composer, musicNamespace, 0).doesNotExist())
-			.andExpect(xpath(composer, musicNamespace, 5).doesNotExist())
-			.andExpect(xpath(performer, musicNamespace, 0).doesNotExist())
-			.andExpect(xpath(performer, musicNamespace, 3).doesNotExist())
-			.andExpect(xpath(composer, musicNamespace, 0).node(nullValue()));
+				.andExpect(xpath(composer, musicNamespace, 0).doesNotExist())
+				.andExpect(xpath(composer, musicNamespace, 5).doesNotExist())
+				.andExpect(xpath(performer, musicNamespace, 0).doesNotExist())
+				.andExpect(xpath(performer, musicNamespace, 3).doesNotExist())
+				.andExpect(xpath(composer, musicNamespace, 0).node(nullValue()));
 	}
 
 	@Test
@@ -104,15 +104,15 @@ public class XpathAssertionTests {
 		String performerName = "/ns:people/performers/performer[%s]/name";
 
 		this.mockMvc.perform(get("/music/people"))
-			.andExpect(xpath(composerName, musicNamespace, 1).string("Johann Sebastian Bach"))
-			.andExpect(xpath(composerName, musicNamespace, 2).string("Johannes Brahms"))
-			.andExpect(xpath(composerName, musicNamespace, 3).string("Edvard Grieg"))
-			.andExpect(xpath(composerName, musicNamespace, 4).string("Robert Schumann"))
-			.andExpect(xpath(performerName, musicNamespace, 1).string("Vladimir Ashkenazy"))
-			.andExpect(xpath(performerName, musicNamespace, 2).string("Yehudi Menuhin"))
-			.andExpect(xpath(composerName, musicNamespace, 1).string(equalTo("Johann Sebastian Bach"))) // Hamcrest..
-			.andExpect(xpath(composerName, musicNamespace, 1).string(startsWith("Johann")))
-			.andExpect(xpath(composerName, musicNamespace, 1).string(notNullValue()));
+				.andExpect(xpath(composerName, musicNamespace, 1).string("Johann Sebastian Bach"))
+				.andExpect(xpath(composerName, musicNamespace, 2).string("Johannes Brahms"))
+				.andExpect(xpath(composerName, musicNamespace, 3).string("Edvard Grieg"))
+				.andExpect(xpath(composerName, musicNamespace, 4).string("Robert Schumann"))
+				.andExpect(xpath(performerName, musicNamespace, 1).string("Vladimir Ashkenazy"))
+				.andExpect(xpath(performerName, musicNamespace, 2).string("Yehudi Menuhin"))
+				.andExpect(xpath(composerName, musicNamespace, 1).string(equalTo("Johann Sebastian Bach"))) // Hamcrest..
+				.andExpect(xpath(composerName, musicNamespace, 1).string(startsWith("Johann")))
+				.andExpect(xpath(composerName, musicNamespace, 1).string(notNullValue()));
 	}
 
 	@Test
@@ -121,12 +121,12 @@ public class XpathAssertionTests {
 		String composerDouble = "/ns:people/composers/composer[%s]/someDouble";
 
 		this.mockMvc.perform(get("/music/people"))
-			.andExpect(xpath(composerDouble, musicNamespace, 1).number(21d))
-			.andExpect(xpath(composerDouble, musicNamespace, 2).number(.0025))
-			.andExpect(xpath(composerDouble, musicNamespace, 3).number(1.6035))
-			.andExpect(xpath(composerDouble, musicNamespace, 4).number(Double.NaN))
-			.andExpect(xpath(composerDouble, musicNamespace, 1).number(equalTo(21d)))  // Hamcrest..
-			.andExpect(xpath(composerDouble, musicNamespace, 3).number(closeTo(1.6, .01)));
+				.andExpect(xpath(composerDouble, musicNamespace, 1).number(21d))
+				.andExpect(xpath(composerDouble, musicNamespace, 2).number(.0025))
+				.andExpect(xpath(composerDouble, musicNamespace, 3).number(1.6035))
+				.andExpect(xpath(composerDouble, musicNamespace, 4).number(Double.NaN))
+				.andExpect(xpath(composerDouble, musicNamespace, 1).number(equalTo(21d)))  // Hamcrest..
+				.andExpect(xpath(composerDouble, musicNamespace, 3).number(closeTo(1.6, .01)));
 	}
 
 	@Test
@@ -135,18 +135,18 @@ public class XpathAssertionTests {
 		String performerBooleanValue = "/ns:people/performers/performer[%s]/someBoolean";
 
 		this.mockMvc.perform(get("/music/people"))
-			.andExpect(xpath(performerBooleanValue, musicNamespace, 1).booleanValue(false))
-			.andExpect(xpath(performerBooleanValue, musicNamespace, 2).booleanValue(true));
+				.andExpect(xpath(performerBooleanValue, musicNamespace, 1).booleanValue(false))
+				.andExpect(xpath(performerBooleanValue, musicNamespace, 2).booleanValue(true));
 	}
 
 	@Test
 	public void testNodeCount() throws Exception {
 
 		this.mockMvc.perform(get("/music/people"))
-			.andExpect(xpath("/ns:people/composers/composer", musicNamespace).nodeCount(4))
-			.andExpect(xpath("/ns:people/performers/performer", musicNamespace).nodeCount(2))
-			.andExpect(xpath("/ns:people/composers/composer", musicNamespace).nodeCount(equalTo(4))) // Hamcrest..
-			.andExpect(xpath("/ns:people/performers/performer", musicNamespace).nodeCount(equalTo(2)));
+				.andExpect(xpath("/ns:people/composers/composer", musicNamespace).nodeCount(4))
+				.andExpect(xpath("/ns:people/performers/performer", musicNamespace).nodeCount(2))
+				.andExpect(xpath("/ns:people/composers/composer", musicNamespace).nodeCount(equalTo(4))) // Hamcrest..
+				.andExpect(xpath("/ns:people/performers/performer", musicNamespace).nodeCount(equalTo(2)));
 	}
 
 	// SPR-10704
@@ -157,7 +157,7 @@ public class XpathAssertionTests {
 //		Map<String, String> namespace = Collections.singletonMap("ns", "");
 
 		standaloneSetup(new BlogFeedController()).build()
-			.perform(get("/blog.atom").accept(MediaType.APPLICATION_ATOM_XML))
+				.perform(get("/blog.atom").accept(MediaType.APPLICATION_ATOM_XML))
 				.andExpect(status().isOk())
 				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_ATOM_XML))
 				.andExpect(xpath("//feed/title").string("Test Feed"))
@@ -168,7 +168,7 @@ public class XpathAssertionTests {
 	@Controller
 	private static class MusicController {
 
-		@RequestMapping(value="/music/people")
+		@RequestMapping(value = "/music/people")
 		public @ResponseBody PeopleWrapper getPeople() {
 
 			List<Person> composers = Arrays.asList(
@@ -186,16 +186,16 @@ public class XpathAssertionTests {
 	}
 
 	@SuppressWarnings("unused")
-	@XmlRootElement(name="people", namespace="https://example.org/music/people")
+	@XmlRootElement(name = "people", namespace = "https://example.org/music/people")
 	@XmlAccessorType(XmlAccessType.FIELD)
 	private static class PeopleWrapper {
 
-		@XmlElementWrapper(name="composers")
-		@XmlElement(name="composer")
+		@XmlElementWrapper(name = "composers")
+		@XmlElement(name = "composer")
 		private List<Person> composers;
 
-		@XmlElementWrapper(name="performers")
-		@XmlElement(name="performer")
+		@XmlElementWrapper(name = "performers")
+		@XmlElement(name = "performer")
 		private List<Person> performers;
 
 		public PeopleWrapper() {
@@ -219,7 +219,7 @@ public class XpathAssertionTests {
 	@Controller
 	public class BlogFeedController {
 
-		@RequestMapping(value="/blog.atom", method = { GET, HEAD })
+		@RequestMapping(value = "/blog.atom", method = {GET, HEAD})
 		@ResponseBody
 		public String listPublishedPosts() {
 			return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n"

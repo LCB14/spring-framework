@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
  * @author Juergen Hoeller
  * @author Jeremy Grelle
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class CheckboxTagTests extends AbstractFormTagTests {
 
 	private CheckboxTag tag;
@@ -617,8 +617,7 @@ public class CheckboxTagTests extends AbstractFormTagTests {
 			this.tag.setPath("name");
 			this.tag.doStartTag();
 			fail("Should not be able to render with a null value when binding to a non-boolean.");
-		}
-		catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			// success
 		}
 	}
@@ -651,8 +650,7 @@ public class CheckboxTagTests extends AbstractFormTagTests {
 		try {
 			this.tag.setDynamicAttribute(null, "type", "email");
 			fail("Expected exception");
-		}
-		catch (IllegalArgumentException e) {
+		} catch (IllegalArgumentException e) {
 			assertEquals("Attribute type=\"email\" is not allowed", e.getMessage());
 		}
 	}
@@ -694,8 +692,8 @@ public class CheckboxTagTests extends AbstractFormTagTests {
 		this.bean.setName("Rob Harrop");
 		this.bean.setJedi(true);
 		this.bean.setSomeBoolean(Boolean.TRUE);
-		this.bean.setStringArray(new String[] {"bar", "foo"});
-		this.bean.setSomeIntegerArray(new Integer[] {new Integer(2), new Integer(1)});
+		this.bean.setStringArray(new String[]{"bar", "foo"});
+		this.bean.setSomeIntegerArray(new Integer[]{new Integer(2), new Integer(1)});
 		this.bean.setOtherColours(colours);
 		this.bean.setPets(pets);
 		this.bean.setSomeList(someList);

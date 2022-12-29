@@ -53,7 +53,7 @@ import static org.junit.Assert.*;
  * @author Scott Andrews
  * @author Jeremy Grelle
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class OptionsTagTests extends AbstractHtmlElementTagTests {
 
 	private static final String COMMAND_NAME = "testBean";
@@ -75,6 +75,7 @@ public class OptionsTagTests extends AbstractHtmlElementTagTests {
 			protected TagWriter createTagWriter() {
 				return new TagWriter(getWriter());
 			}
+
 			@Override
 			public String getName() {
 				// Should not be used other than to delegate to

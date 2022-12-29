@@ -59,8 +59,7 @@ public class JCacheCacheManagerTests extends AbstractTransactionSupportingCacheM
 	protected JCacheCacheManager getCacheManager(boolean transactionAware) {
 		if (transactionAware) {
 			return transactionalCacheManager;
-		}
-		else {
+		} else {
 			return cacheManager;
 		}
 	}

@@ -242,8 +242,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
 					this.characterEncoding = mediaType.getCharset().name();
 					this.charset = true;
 				}
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				// Try to get charset value anyway
 				int charsetIndex = contentType.toLowerCase().indexOf(CHARSET_PREFIX);
 				if (charsetIndex != -1) {
@@ -350,8 +349,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
 			ZonedDateTime expires = (cookie instanceof MockCookie ? ((MockCookie) cookie).getExpires() : null);
 			if (expires != null) {
 				buf.append(expires.format(DateTimeFormatter.RFC_1123_DATE_TIME));
-			}
-			else {
+			} else {
 				HttpHeaders headers = new HttpHeaders();
 				headers.setExpires(maxAge > 0 ? System.currentTimeMillis() + 1000L * maxAge : 0);
 				buf.append(headers.getFirst(HttpHeaders.EXPIRES));
@@ -396,6 +394,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	/**
 	 * Return the names of all specified headers as a Set of Strings.
 	 * <p>As of Servlet 3.0, this method is also defined HttpServletResponse.
+	 *
 	 * @return the {@code Set} of header name {@code Strings}, or an empty {@code Set} if none
 	 */
 	@Override
@@ -409,6 +408,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	 * <p>As of Servlet 3.0, this method is also defined in HttpServletResponse.
 	 * As of Spring 3.1, it returns a stringified value for Servlet 3.0 compatibility.
 	 * Consider using {@link #getHeaderValue(String)} for raw Object access.
+	 *
 	 * @param name the name of the header
 	 * @return the associated header value, or {@code null} if none
 	 */
@@ -424,6 +424,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	 * <p>As of Servlet 3.0, this method is also defined in HttpServletResponse.
 	 * As of Spring 3.1, it returns a List of stringified values for Servlet 3.0 compatibility.
 	 * Consider using {@link #getHeaderValues(String)} for raw Object access.
+	 *
 	 * @param name the name of the header
 	 * @return the associated header values, or an empty List if none
 	 */
@@ -432,8 +433,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
 		HeaderValueHolder header = this.headers.get(name);
 		if (header != null) {
 			return header.getStringValues();
-		}
-		else {
+		} else {
 			return Collections.emptyList();
 		}
 	}
@@ -441,6 +441,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	/**
 	 * Return the primary value for the given header, if any.
 	 * <p>Will return the first value in case of multiple values.
+	 *
 	 * @param name the name of the header
 	 * @return the associated header value, or {@code null} if none
 	 */
@@ -452,6 +453,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * Return all values for the given header as a List of value objects.
+	 *
 	 * @param name the name of the header
 	 * @return the associated header values, or an empty List if none
 	 */
@@ -459,8 +461,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
 		HeaderValueHolder header = this.headers.get(name);
 		if (header != null) {
 			return header.getValues();
-		}
-		else {
+		} else {
 			return Collections.emptyList();
 		}
 	}
@@ -545,8 +546,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
 		}
 		try {
 			return newDateFormat().parse(getHeader(name)).getTime();
-		}
-		catch (ParseException ex) {
+		} catch (ParseException ex) {
 			throw new IllegalArgumentException(
 					"Value for header '" + name + "' is not a valid Date: " + headerValue);
 		}
@@ -602,30 +602,25 @@ public class MockHttpServletResponse implements HttpServletResponse {
 		if (HttpHeaders.CONTENT_TYPE.equalsIgnoreCase(name)) {
 			setContentType(value.toString());
 			return true;
-		}
-		else if (HttpHeaders.CONTENT_LENGTH.equalsIgnoreCase(name)) {
+		} else if (HttpHeaders.CONTENT_LENGTH.equalsIgnoreCase(name)) {
 			setContentLength(value instanceof Number ? ((Number) value).intValue() :
 					Integer.parseInt(value.toString()));
 			return true;
-		}
-		else if (HttpHeaders.CONTENT_LANGUAGE.equalsIgnoreCase(name)) {
+		} else if (HttpHeaders.CONTENT_LANGUAGE.equalsIgnoreCase(name)) {
 			HttpHeaders headers = new HttpHeaders();
 			headers.add(HttpHeaders.CONTENT_LANGUAGE, value.toString());
 			Locale language = headers.getContentLanguage();
 			setLocale(language != null ? language : Locale.getDefault());
 			return true;
-		}
-		else if (HttpHeaders.SET_COOKIE.equalsIgnoreCase(name)) {
+		} else if (HttpHeaders.SET_COOKIE.equalsIgnoreCase(name)) {
 			MockCookie cookie = MockCookie.parse(value.toString());
 			if (replaceHeader) {
 				setCookie(cookie);
-			}
-			else {
+			} else {
 				addCookie(cookie);
 			}
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
@@ -639,8 +634,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
 		}
 		if (replace) {
 			header.setValue(value);
-		}
-		else {
+		} else {
 			header.addValue(value);
 		}
 	}
@@ -648,9 +642,10 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	/**
 	 * Set the {@code Set-Cookie} header to the supplied {@link Cookie},
 	 * overwriting any previous cookies.
+	 *
 	 * @param cookie the {@code Cookie} to set
-	 * @since 5.1.10
 	 * @see #addCookie(Cookie)
+	 * @since 5.1.10
 	 */
 	private void setCookie(Cookie cookie) {
 		Assert.notNull(cookie, "Cookie must not be null");

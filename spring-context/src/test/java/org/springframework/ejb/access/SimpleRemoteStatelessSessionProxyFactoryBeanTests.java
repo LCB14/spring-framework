@@ -155,8 +155,7 @@ public class SimpleRemoteStatelessSessionProxyFactoryBeanTests extends SimpleRem
 		try {
 			mbm.getValue();
 			fail("Should've thrown remote exception");
-		}
-		catch (RemoteException ex) {
+		} catch (RemoteException ex) {
 			assertSame("Threw expected RemoteException", rex, ex);
 		}
 		verify(myEjb).remove();
@@ -195,8 +194,7 @@ public class SimpleRemoteStatelessSessionProxyFactoryBeanTests extends SimpleRem
 		try {
 			mbm.getValue();
 			fail("Should have failed to create EJB");
-		}
-		catch (RemoteException ex) {
+		} catch (RemoteException ex) {
 			// expected
 		}
 	}
@@ -234,8 +232,7 @@ public class SimpleRemoteStatelessSessionProxyFactoryBeanTests extends SimpleRem
 		try {
 			mbm.getValue();
 			fail("Should have failed to create EJB");
-		}
-		catch (RemoteAccessException ex) {
+		} catch (RemoteAccessException ex) {
 			assertTrue(ex.getCause() == cex);
 		}
 	}
@@ -269,8 +266,7 @@ public class SimpleRemoteStatelessSessionProxyFactoryBeanTests extends SimpleRem
 		try {
 			fb.afterPropertiesSet();
 			fail("Should have failed to create EJB");
-		}
-		catch (IllegalArgumentException ex) {
+		} catch (IllegalArgumentException ex) {
 			// TODO more appropriate exception?
 			assertTrue(ex.getMessage().indexOf("businessInterface") != 1);
 		}
@@ -286,13 +282,13 @@ public class SimpleRemoteStatelessSessionProxyFactoryBeanTests extends SimpleRem
 	}
 
 
-	protected interface MyBusinessMethods  {
+	protected interface MyBusinessMethods {
 
 		int getValue() throws RemoteException;
 	}
 
 
-	protected interface MyLocalBusinessMethods  {
+	protected interface MyLocalBusinessMethods {
 
 		int getValue();
 	}

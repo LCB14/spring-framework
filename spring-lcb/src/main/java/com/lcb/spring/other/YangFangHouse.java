@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
  * @since 08 九月 2019
  */
 @Component
-public class YangFangHouse implements House{
-    @Override
-    public void sOut() {
-        System.out.println("洋房");
-    }
+public class YangFangHouse implements House {
+	@Override
+	public void sOut() {
+		System.out.println("洋房");
+	}
 }

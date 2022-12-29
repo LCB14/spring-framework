@@ -103,18 +103,20 @@ public class ControlFlowPointcutTests {
 	@Test
 	public void testToString() {
 		assertEquals(ControlFlowPointcut.class.getName() + ": class = " + One.class.getName() + "; methodName = null",
-			new ControlFlowPointcut(One.class).toString());
+				new ControlFlowPointcut(One.class).toString());
 		assertEquals(ControlFlowPointcut.class.getName() + ": class = " + One.class.getName() + "; methodName = getAge",
-			new ControlFlowPointcut(One.class, "getAge").toString());
+				new ControlFlowPointcut(One.class, "getAge").toString());
 	}
 
 	public class One {
 		int getAge(ITestBean proxied) {
 			return proxied.getAge();
 		}
+
 		int nomatch(ITestBean proxied) {
 			return proxied.getAge();
 		}
+
 		void set(ITestBean proxied) {
 			proxied.setAge(5);
 		}

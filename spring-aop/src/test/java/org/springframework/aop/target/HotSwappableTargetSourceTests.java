@@ -40,7 +40,9 @@ import static org.springframework.tests.TestResourceUtils.*;
  */
 public class HotSwappableTargetSourceTests {
 
-	/** Initial count value set in bean factory XML */
+	/**
+	 * Initial count value set in bean factory XML
+	 */
 	private static final int INITIAL_COUNT = 10;
 
 	private DefaultListableBeanFactory beanFactory;
@@ -112,8 +114,7 @@ public class HotSwappableTargetSourceTests {
 		try {
 			swapper.swap(null);
 			fail("Shouldn't be able to swap to invalid value");
-		}
-		catch (IllegalArgumentException ex) {
+		} catch (IllegalArgumentException ex) {
 			// Ok
 			aopex = ex;
 		}

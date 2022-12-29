@@ -55,17 +55,21 @@ import org.springframework.util.MimeTypeUtils;
  * @author Brian Clozel
  * @author Arjen Poutsma
  * @author Mark Paluch
- * @since 5.0
  * @see CharSequenceEncoder
+ * @since 5.0
  */
 public final class StringDecoder extends AbstractDataBufferDecoder<String> {
 
 	private static final DataBuffer END_FRAME = new DefaultDataBufferFactory().wrap(new byte[0]);
 
-	/** The default charset to use, i.e. "UTF-8". */
+	/**
+	 * The default charset to use, i.e. "UTF-8".
+	 */
 	public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
 
-	/** The default delimiter strings to use, i.e. {@code \r\n} and {@code \n}. */
+	/**
+	 * The default delimiter strings to use, i.e. {@code \r\n} and {@code \n}.
+	 */
 	public static final List<String> DEFAULT_DELIMITERS = Arrays.asList("\r\n", "\n");
 
 
@@ -91,7 +95,7 @@ public final class StringDecoder extends AbstractDataBufferDecoder<String> {
 
 	@Override
 	public Flux<String> decode(Publisher<DataBuffer> input, ResolvableType elementType,
-			@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+							   @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		List<byte[]> delimiterBytes = getDelimiterBytes(mimeType);
 
@@ -113,8 +117,7 @@ public final class StringDecoder extends AbstractDataBufferDecoder<String> {
 						.bufferUntil(buffer -> buffer == END_FRAME)
 						.map(StringDecoder::joinUntilEndFrame)
 						.doOnDiscard(PooledDataBuffer.class, DataBufferUtils::release);
-			}
-			else {
+			} else {
 
 				// When the decoder is unlimited (-1), concatMapIterable will cache buffers that may not
 				// be released if cancel is signalled before they are turned into String lines
@@ -180,8 +183,7 @@ public final class StringDecoder extends AbstractDataBufferDecoder<String> {
 						limiter.add(frame); // enforce the limit
 						limiter.clear();
 					}
-				}
-				else {
+				} else {
 					frame = buffer.slice(readPosition, buffer.readableByteCount());
 					buffer.readPosition(readPosition + buffer.readableByteCount());
 					frames.add(DataBufferUtils.retain(frame));
@@ -191,20 +193,17 @@ public final class StringDecoder extends AbstractDataBufferDecoder<String> {
 				}
 			}
 			while (buffer.readableByteCount() > 0);
-		}
-		catch (DataBufferLimitException ex) {
+		} catch (DataBufferLimitException ex) {
 			if (limiter != null) {
 				limiter.releaseAndClear();
 			}
 			throw ex;
-		}
-		catch (Throwable ex) {
+		} catch (Throwable ex) {
 			for (DataBuffer frame : frames) {
 				DataBufferUtils.release(frame);
 			}
 			throw ex;
-		}
-		finally {
+		} finally {
 			DataBufferUtils.release(buffer);
 		}
 		return frames;
@@ -212,6 +211,7 @@ public final class StringDecoder extends AbstractDataBufferDecoder<String> {
 
 	/**
 	 * Find the given delimiter in the given data buffer.
+	 *
 	 * @return the index of the delimiter, or -1 if not found.
 	 */
 	private static int indexOf(DataBuffer buffer, byte[] delimiter) {
@@ -221,8 +221,7 @@ public final class StringDecoder extends AbstractDataBufferDecoder<String> {
 			while (delimiterPos < delimiter.length) {
 				if (buffer.getByte(bufferPos) != delimiter[delimiterPos]) {
 					break;
-				}
-				else {
+				} else {
 					bufferPos++;
 					boolean endOfBuffer = bufferPos == buffer.writePosition();
 					boolean endOfDelimiter = delimiterPos == delimiter.length - 1;
@@ -254,7 +253,7 @@ public final class StringDecoder extends AbstractDataBufferDecoder<String> {
 
 	@Override
 	protected String decodeDataBuffer(DataBuffer dataBuffer, ResolvableType elementType,
-			@Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
+									  @Nullable MimeType mimeType, @Nullable Map<String, Object> hints) {
 
 		Charset charset = getCharset(mimeType);
 		CharBuffer charBuffer = charset.decode(dataBuffer.asByteBuffer());
@@ -270,8 +269,7 @@ public final class StringDecoder extends AbstractDataBufferDecoder<String> {
 	private static Charset getCharset(@Nullable MimeType mimeType) {
 		if (mimeType != null && mimeType.getCharset() != null) {
 			return mimeType.getCharset();
-		}
-		else {
+		} else {
 			return DEFAULT_CHARSET;
 		}
 	}
@@ -279,6 +277,7 @@ public final class StringDecoder extends AbstractDataBufferDecoder<String> {
 
 	/**
 	 * Create a {@code StringDecoder} for {@code "text/plain"}.
+	 *
 	 * @param ignored ignored
 	 * @deprecated as of Spring 5.0.4, in favor of {@link #textPlainOnly()} or
 	 * {@link #textPlainOnly(List, boolean)}
@@ -297,9 +296,10 @@ public final class StringDecoder extends AbstractDataBufferDecoder<String> {
 
 	/**
 	 * Create a {@code StringDecoder} for {@code "text/plain"}.
-	 * @param delimiters delimiter strings to use to split the input stream
+	 *
+	 * @param delimiters     delimiter strings to use to split the input stream
 	 * @param stripDelimiter whether to remove delimiters from the resulting
-	 * input strings
+	 *                       input strings
 	 */
 	public static StringDecoder textPlainOnly(List<String> delimiters, boolean stripDelimiter) {
 		return new StringDecoder(delimiters, stripDelimiter, new MimeType("text", "plain", DEFAULT_CHARSET));
@@ -307,6 +307,7 @@ public final class StringDecoder extends AbstractDataBufferDecoder<String> {
 
 	/**
 	 * Create a {@code StringDecoder} that supports all MIME types.
+	 *
 	 * @param ignored ignored
 	 * @deprecated as of Spring 5.0.4, in favor of {@link #allMimeTypes()} or
 	 * {@link #allMimeTypes(List, boolean)}
@@ -325,9 +326,10 @@ public final class StringDecoder extends AbstractDataBufferDecoder<String> {
 
 	/**
 	 * Create a {@code StringDecoder} that supports all MIME types.
-	 * @param delimiters delimiter strings to use to split the input stream
+	 *
+	 * @param delimiters     delimiter strings to use to split the input stream
 	 * @param stripDelimiter whether to remove delimiters from the resulting
-	 * input strings
+	 *                       input strings
 	 */
 	public static StringDecoder allMimeTypes(List<String> delimiters, boolean stripDelimiter) {
 		return new StringDecoder(delimiters, stripDelimiter,
@@ -355,8 +357,7 @@ public final class StringDecoder extends AbstractDataBufferDecoder<String> {
 			this.buffers.forEach(buffer -> {
 				try {
 					DataBufferUtils.release(buffer);
-				}
-				catch (Throwable ex) {
+				} catch (Throwable ex) {
 					// Keep going..
 				}
 			});

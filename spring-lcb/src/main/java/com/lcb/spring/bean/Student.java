@@ -12,51 +12,51 @@ import javax.annotation.PostConstruct;
 @Component
 public class Student {
 
-    private String name = "图灵";
+	private String name = "图灵";
 
-    private School school;
+	private School school;
 
-    private int age;
+	private int age;
 
-    public Student(School school) {
-        this.school = school;
-    }
+	public Student(School school) {
+		this.school = school;
+	}
 
-    @PostConstruct
-    public void init(){
-        System.out.println("init");
-    }
+	@PostConstruct
+	public void init() {
+		System.out.println("init");
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public School getSchool() {
-        return school;
-    }
+	public School getSchool() {
+		return school;
+	}
 
-    public void setSchool(School school) {
-        this.school = school;
-    }
+	public void setSchool(School school) {
+		this.school = school;
+	}
 
-    public int getAge() {
-        return age;
-    }
+	public int getAge() {
+		return age;
+	}
 
-    public void setAge(int age) {
-        this.age = age;
-    }
+	public void setAge(int age) {
+		this.age = age;
+	}
 
-    @Override
-    public String toString() {
-        return "Student{" +
-                "name='" + name + '\'' +
-                ", school=" + school +
-                ", age=" + age +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "Student{" +
+				"name='" + name + '\'' +
+				", school=" + school +
+				", age=" + age +
+				'}';
+	}
 }

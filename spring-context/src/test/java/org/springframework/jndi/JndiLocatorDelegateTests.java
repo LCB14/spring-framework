@@ -42,8 +42,7 @@ public class JndiLocatorDelegateTests {
 
 		try {
 			assertThat(JndiLocatorDelegate.isDefaultJndiEnvironmentAvailable(), equalTo(false));
-		}
-		finally {
+		} finally {
 			builderField.set(null, oldBuilder);
 		}
 	}

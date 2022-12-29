@@ -65,8 +65,7 @@ public class BeanUtilsTests {
 			// give interface
 			BeanUtils.instantiateClass(List.class);
 			fail("Should have thrown FatalBeanException");
-		}
-		catch (FatalBeanException ex) {
+		} catch (FatalBeanException ex) {
 			// expected
 		}
 
@@ -74,8 +73,7 @@ public class BeanUtilsTests {
 			// give class without default constructor
 			BeanUtils.instantiateClass(CustomDateEditor.class);
 			fail("Should have thrown FatalBeanException");
-		}
-		catch (FatalBeanException ex) {
+		} catch (FatalBeanException ex) {
 			// expected
 		}
 	}
@@ -222,16 +220,14 @@ public class BeanUtilsTests {
 		try {
 			BeanUtils.resolveSignature("doSomething(", MethodSignatureBean.class);
 			fail("Should not be able to parse with opening but no closing paren.");
-		}
-		catch (IllegalArgumentException ex) {
+		} catch (IllegalArgumentException ex) {
 			// success
 		}
 
 		try {
 			BeanUtils.resolveSignature("doSomething)", MethodSignatureBean.class);
 			fail("Should not be able to parse with closing but no opening paren.");
-		}
-		catch (IllegalArgumentException ex) {
+		} catch (IllegalArgumentException ex) {
 			// success
 		}
 	}
@@ -302,7 +298,7 @@ public class BeanUtilsTests {
 		).forEach(this::assertIsSimpleValueType);
 
 		Stream.of(int[].class, Object.class, List.class, void.class, Void.class)
-			.forEach(this::assertIsNotSimpleValueType);
+				.forEach(this::assertIsNotSimpleValueType);
 	}
 
 	@Test
@@ -322,7 +318,7 @@ public class BeanUtilsTests {
 		).forEach(this::assertIsSimpleProperty);
 
 		Stream.of(Object.class, List.class, void.class, Void.class)
-			.forEach(this::assertIsNotSimpleProperty);
+				.forEach(this::assertIsNotSimpleProperty);
 	}
 
 	private void assertIsSimpleValueType(Class<?> type) {

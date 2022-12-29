@@ -135,8 +135,7 @@ public class HeaderAssertionTests {
 					.andExpect(header().longValue("X-Custom-Header", 99L));
 
 			fail(ERROR_MESSAGE);
-		}
-		catch (AssertionError err) {
+		} catch (AssertionError err) {
 			if (ERROR_MESSAGE.equals(err.getMessage())) {
 				throw err;
 			}
@@ -184,12 +183,11 @@ public class HeaderAssertionTests {
 	private void assertIncorrectResponseHeader(ResultMatcher matcher, String expected) throws Exception {
 		try {
 			this.mockMvc.perform(get("/persons/1")
-					.header(IF_MODIFIED_SINCE, minuteAgo))
+							.header(IF_MODIFIED_SINCE, minuteAgo))
 					.andExpect(matcher);
 
 			fail(ERROR_MESSAGE);
-		}
-		catch (AssertionError err) {
+		} catch (AssertionError err) {
 			if (ERROR_MESSAGE.equals(err.getMessage())) {
 				throw err;
 			}

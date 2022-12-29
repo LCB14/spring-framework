@@ -76,22 +76,19 @@ public class MethodValidationTests {
 		try {
 			assertNotNull(proxy.myValidMethod("value", 15));
 			fail("Should have thrown ValidationException");
-		}
-		catch (javax.validation.ValidationException ex) {
+		} catch (javax.validation.ValidationException ex) {
 			// expected
 		}
 		try {
 			assertNotNull(proxy.myValidMethod(null, 5));
 			fail("Should have thrown ValidationException");
-		}
-		catch (javax.validation.ValidationException ex) {
+		} catch (javax.validation.ValidationException ex) {
 			// expected
 		}
 		try {
 			assertNotNull(proxy.myValidMethod("value", 0));
 			fail("Should have thrown ValidationException");
-		}
-		catch (javax.validation.ValidationException ex) {
+		} catch (javax.validation.ValidationException ex) {
 			// expected
 		}
 
@@ -99,15 +96,13 @@ public class MethodValidationTests {
 		try {
 			proxy.myValidAsyncMethod("value", 15);
 			fail("Should have thrown ValidationException");
-		}
-		catch (javax.validation.ValidationException ex) {
+		} catch (javax.validation.ValidationException ex) {
 			// expected
 		}
 		try {
 			proxy.myValidAsyncMethod(null, 5);
 			fail("Should have thrown ValidationException");
-		}
-		catch (javax.validation.ValidationException ex) {
+		} catch (javax.validation.ValidationException ex) {
 			// expected
 		}
 
@@ -115,8 +110,7 @@ public class MethodValidationTests {
 		try {
 			proxy.myGenericMethod(null);
 			fail("Should have thrown ValidationException");
-		}
-		catch (javax.validation.ValidationException ex) {
+		} catch (javax.validation.ValidationException ex) {
 			// expected
 		}
 	}
@@ -191,7 +185,8 @@ public class MethodValidationTests {
 		@NotNull Object myValidMethod(@NotNull(groups = MyGroup.class) String arg1, @Max(10) int arg2);
 
 		@MyValid
-		@Async void myValidAsyncMethod(@NotNull(groups = OtherGroup.class) String arg1, @Max(10) int arg2);
+		@Async
+		void myValidAsyncMethod(@NotNull(groups = OtherGroup.class) String arg1, @Max(10) int arg2);
 
 		T myGenericMethod(@NotNull T value);
 	}

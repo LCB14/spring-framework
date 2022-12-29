@@ -31,6 +31,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Unit tests for {@link HttpHeadResponseDecorator}.
+ *
  * @author Rossen Stoyanchev
  */
 public class HttpHeadResponseDecoratorTests {

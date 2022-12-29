@@ -45,6 +45,7 @@ import static org.junit.Assert.fail;
 
 /**
  * Unit tests for {@link HttpMessageWriterView}.
+ *
  * @author Rossen Stoyanchev
  */
 public class HttpMessageWriterViewTests {
@@ -59,8 +60,8 @@ public class HttpMessageWriterViewTests {
 	@Test
 	public void supportedMediaTypes() throws Exception {
 		assertEquals(Arrays.asList(
-				MediaType.parseMediaType("application/json;charset=UTF-8"),
-				MediaType.parseMediaType("application/*+json;charset=UTF-8")),
+						MediaType.parseMediaType("application/json;charset=UTF-8"),
+						MediaType.parseMediaType("application/*+json;charset=UTF-8")),
 				this.view.getSupportedMediaTypes());
 	}
 
@@ -111,8 +112,7 @@ public class HttpMessageWriterViewTests {
 		try {
 			doRender();
 			fail();
-		}
-		catch (IllegalStateException ex) {
+		} catch (IllegalStateException ex) {
 			String message = ex.getMessage();
 			assertTrue(message, message.contains("Map rendering is not supported"));
 		}
@@ -142,7 +142,6 @@ public class HttpMessageWriterViewTests {
 		this.view.render(this.model, MediaType.APPLICATION_JSON, this.exchange).block(Duration.ZERO);
 		return this.exchange.getResponse().getBodyAsString().block(Duration.ZERO);
 	}
-
 
 
 	@SuppressWarnings("unused")

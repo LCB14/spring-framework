@@ -33,6 +33,7 @@ import static org.springframework.http.ContentDisposition.builder;
 
 /**
  * Unit tests for {@link ContentDisposition}
+ *
  * @author Sebastien Deleuze
  * @author Rossen Stoyanchev
  */
@@ -89,8 +90,7 @@ public class ContentDispositionTests {
 			try {
 				parse(input);
 				fail();
-			}
-			catch (IllegalArgumentException ex) {
+			} catch (IllegalArgumentException ex) {
 				// expected
 			}
 		};

@@ -315,8 +315,7 @@ public class JavaMailSenderTests {
 		simpleMessage.setFrom("");
 		try {
 			sender.send(simpleMessage);
-		}
-		catch (MailParseException ex) {
+		} catch (MailParseException ex) {
 			// expected
 			assertTrue(ex.getCause() instanceof AddressException);
 		}
@@ -333,8 +332,7 @@ public class JavaMailSenderTests {
 		};
 		try {
 			sender.send(preparator);
-		}
-		catch (MailParseException ex) {
+		} catch (MailParseException ex) {
 			// expected
 			assertTrue(ex.getCause() instanceof AddressException);
 		}
@@ -407,8 +405,7 @@ public class JavaMailSenderTests {
 		try {
 			sender.send(simpleMessage1);
 			fail("Should have thrown MailSendException");
-		}
-		catch (MailSendException ex) {
+		} catch (MailSendException ex) {
 			// expected
 			ex.printStackTrace();
 			assertTrue(ex.getFailedMessages() != null);
@@ -428,8 +425,7 @@ public class JavaMailSenderTests {
 		try {
 			sender.send(simpleMessage1);
 			fail("Should have thrown MailSendException");
-		}
-		catch (MailSendException ex) {
+		} catch (MailSendException ex) {
 			// expected
 			ex.printStackTrace();
 			assertTrue(ex.getFailedMessages() != null);
@@ -452,8 +448,7 @@ public class JavaMailSenderTests {
 
 		try {
 			sender.send(simpleMessage1, simpleMessage2);
-		}
-		catch (MailSendException ex) {
+		} catch (MailSendException ex) {
 			ex.printStackTrace();
 			assertEquals("host", sender.transport.getConnectedHost());
 			assertEquals("username", sender.transport.getConnectedUsername());
@@ -484,8 +479,7 @@ public class JavaMailSenderTests {
 
 		try {
 			sender.send(mimeMessage1, mimeMessage2);
-		}
-		catch (MailSendException ex) {
+		} catch (MailSendException ex) {
 			ex.printStackTrace();
 			assertEquals("host", sender.transport.getConnectedHost());
 			assertEquals("username", sender.transport.getConnectedUsername());

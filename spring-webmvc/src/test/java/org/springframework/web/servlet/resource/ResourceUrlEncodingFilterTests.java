@@ -165,18 +165,17 @@ public class ResourceUrlEncodingFilterTests {
 		request.setRequestURI("/a/b/../logo.png");
 		request.setServletPath("/a/logo.png");
 
-			this.filter.doFilter(request, new MockHttpServletResponse(), (req, res) -> {
-				try {
-					ResourceUrlProviderExposingInterceptor interceptor =
-							new ResourceUrlProviderExposingInterceptor(this.urlProvider);
+		this.filter.doFilter(request, new MockHttpServletResponse(), (req, res) -> {
+			try {
+				ResourceUrlProviderExposingInterceptor interceptor =
+						new ResourceUrlProviderExposingInterceptor(this.urlProvider);
 
-					interceptor.preHandle((HttpServletRequest) req, (HttpServletResponse) res, new Object());
-					fail();
-				}
-				catch (Exception ex) {
-					assertEquals(ServletRequestBindingException.class, ex.getClass());
-				}
-			});
+				interceptor.preHandle((HttpServletRequest) req, (HttpServletResponse) res, new Object());
+				fail();
+			} catch (Exception ex) {
+				assertEquals(ServletRequestBindingException.class, ex.getClass());
+			}
+		});
 	}
 
 	private void testEncodeUrl(MockHttpServletRequest request, String url, String expected)

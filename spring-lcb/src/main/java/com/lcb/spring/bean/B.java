@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class B {
-    public A a;
+	public A a;
 
-    public B(A a){
-        this.a = a;
-    }
+	public B(A a) {
+		this.a = a;
+	}
 }

@@ -258,8 +258,7 @@ public class ConfigurationClassPostProcessorTests {
 		try {
 			beanFactory.getBean(SimpleComponent.class);
 			fail("Should have thrown NoSuchBeanDefinitionException");
-		}
-		catch (NoSuchBeanDefinitionException ex) {
+		} catch (NoSuchBeanDefinitionException ex) {
 			// expected
 		}
 	}
@@ -314,8 +313,7 @@ public class ConfigurationClassPostProcessorTests {
 		try {
 			pp.postProcessBeanFactory(beanFactory);
 			fail("Should have thrown BeanDefinitionStoreException");
-		}
-		catch (BeanDefinitionStoreException ex) {
+		} catch (BeanDefinitionStoreException ex) {
 			assertTrue(ex.getMessage().contains("bar"));
 			assertTrue(ex.getMessage().contains("SingletonBeanConfig"));
 			assertTrue(ex.getMessage().contains(TestBean.class.getName()));
@@ -360,8 +358,7 @@ public class ConfigurationClassPostProcessorTests {
 		try {
 			beanFactory.getBean(Bar.class);
 			fail("Should have thrown BeanCreationException");
-		}
-		catch (BeanCreationException ex) {
+		} catch (BeanCreationException ex) {
 			assertTrue(ex.getMessage().contains("OverridingSingletonBeanConfig.foo"));
 			assertTrue(ex.getMessage().contains(ExtendedFoo.class.getName()));
 			assertTrue(ex.getMessage().contains(Foo.class.getName()));
@@ -419,15 +416,13 @@ public class ConfigurationClassPostProcessorTests {
 		try {
 			pp.postProcessBeanFactory(bf1); // second invocation for bf1 -- should throw
 			fail("expected exception");
-		}
-		catch (IllegalStateException ex) {
+		} catch (IllegalStateException ex) {
 		}
 		pp.postProcessBeanFactory(bf2); // first invocation for bf2 -- should succeed
 		try {
 			pp.postProcessBeanFactory(bf2); // second invocation for bf2 -- should throw
 			fail("expected exception");
-		}
-		catch (IllegalStateException ex) {
+		} catch (IllegalStateException ex) {
 		}
 	}
 
@@ -925,8 +920,7 @@ public class ConfigurationClassPostProcessorTests {
 		try {
 			beanFactory.preInstantiateSingletons();
 			fail("Should have thrown BeanCreationException");
-		}
-		catch (BeanCreationException ex) {
+		} catch (BeanCreationException ex) {
 			assertTrue(ex.getMessage().contains("Circular reference"));
 		}
 	}
@@ -936,8 +930,7 @@ public class ConfigurationClassPostProcessorTests {
 		try {
 			new AnnotationConfigApplicationContext(A.class, AStrich.class);
 			fail("Should have thrown BeanCreationException");
-		}
-		catch (BeanCreationException ex) {
+		} catch (BeanCreationException ex) {
 			assertTrue(ex.getMessage().contains("Circular reference"));
 		}
 	}
@@ -1210,7 +1203,9 @@ public class ConfigurationClassPostProcessorTests {
 	@Configuration
 	public static class ScopedProxyConfigurationClass {
 
-		@Bean @Lazy @Scope(proxyMode = ScopedProxyMode.INTERFACES)
+		@Bean
+		@Lazy
+		@Scope(proxyMode = ScopedProxyMode.INTERFACES)
 		public ITestBean scopedClass() {
 			return new TestBean();
 		}
@@ -1728,7 +1723,8 @@ public class ConfigurationClassPostProcessorTests {
 	@Configuration
 	static class BeanArgumentConfigWithSingleton {
 
-		@Bean @Lazy
+		@Bean
+		@Lazy
 		public DependingFoo foo(BarArgument bar) {
 			return new DependingFoo(bar);
 		}
@@ -1752,7 +1748,8 @@ public class ConfigurationClassPostProcessorTests {
 			return foo(null);
 		}
 
-		@Bean @Lazy
+		@Bean
+		@Lazy
 		public DependingFoo foo(BarArgument bar) {
 			return new DependingFoo(bar);
 		}
@@ -1846,12 +1843,13 @@ public class ConfigurationClassPostProcessorTests {
 
 		@Bean(autowireCandidate = false)
 		Runnable testBean(Map<String, Runnable> testBeans,
-				@Qualifier("systemProperties") Map<String, String> sysprops,
-				@Qualifier("systemEnvironment") Map<String, String> sysenv) {
+						  @Qualifier("systemProperties") Map<String, String> sysprops,
+						  @Qualifier("systemEnvironment") Map<String, String> sysenv) {
 			this.testBeans = testBeans;
 			assertSame(env.getSystemProperties(), sysprops);
 			assertSame(env.getSystemEnvironment(), sysenv);
-			return () -> {};
+			return () -> {
+			};
 		}
 
 		// Unrelated, not to be considered as a factory method
@@ -1880,7 +1878,8 @@ public class ConfigurationClassPostProcessorTests {
 
 		@Bean
 		Runnable testBean() {
-			return () -> {};
+			return () -> {
+			};
 		}
 
 		// Unrelated, not to be considered as a factory method
@@ -1911,6 +1910,7 @@ public class ConfigurationClassPostProcessorTests {
 				public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
 					registry.registerBeanDefinition("myTestBean", new RootBeanDefinition(TestBean.class));
 				}
+
 				@Override
 				public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
 				}

@@ -12,14 +12,14 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public class Test {
 
-    public static void main(String[] args) {
-        AnnotationConfigApplicationContext annotationConfigApplicationContext =
-                new AnnotationConfigApplicationContext(AppConfig.class);
+	public static void main(String[] args) {
+		AnnotationConfigApplicationContext annotationConfigApplicationContext =
+				new AnnotationConfigApplicationContext(AppConfig.class);
 
-        Student student = annotationConfigApplicationContext.getBean(Student.class);
-        System.out.println(student);
+		Student student = annotationConfigApplicationContext.getBean(Student.class);
+		System.out.println(student);
 
-        School school = (School)annotationConfigApplicationContext.getBean("school");
-        System.out.println(school);
-    }
+		School school = (School) annotationConfigApplicationContext.getBean("school");
+		System.out.println(school);
+	}
 }

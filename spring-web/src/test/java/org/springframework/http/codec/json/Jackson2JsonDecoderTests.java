@@ -201,7 +201,7 @@ public class Jackson2JsonDecoderTests extends AbstractDecoderTestCase<Jackson2Js
 	}
 
 	@Test  // SPR-15975
-	public void  customDeserializer() {
+	public void customDeserializer() {
 		Mono<DataBuffer> input = stringBuffer("{\"test\": 1}");
 
 		testDecode(input, TestObject.class, step -> step
@@ -224,12 +224,13 @@ public class Jackson2JsonDecoderTests extends AbstractDecoderTestCase<Jackson2Js
 	public void decodeNonUtf8Encoding() {
 		Mono<DataBuffer> input = stringBuffer("{\"foo\":\"bar\"}", StandardCharsets.UTF_16);
 
-		testDecode(input, ResolvableType.forType(new ParameterizedTypeReference<Map<String, String>>() {}),
+		testDecode(input, ResolvableType.forType(new ParameterizedTypeReference<Map<String, String>>() {
+				}),
 				step -> step.assertNext(o -> {
-					Map<String, String> map = (Map<String, String>) o;
-					assertEquals("bar", map.get("foo"));
-				})
-				.verifyComplete(),
+							Map<String, String> map = (Map<String, String>) o;
+							assertEquals("bar", map.get("foo"));
+						})
+						.verifyComplete(),
 				MediaType.parseMediaType("application/json; charset=utf-16"),
 				null);
 	}
@@ -241,10 +242,10 @@ public class Jackson2JsonDecoderTests extends AbstractDecoderTestCase<Jackson2Js
 		testDecodeToMono(input, ResolvableType.forType(new ParameterizedTypeReference<Map<String, String>>() {
 				}),
 				step -> step.assertNext(o -> {
-					Map<String, String> map = (Map<String, String>) o;
-					assertEquals("bar", map.get("foo"));
-				})
-				.verifyComplete(),
+							Map<String, String> map = (Map<String, String>) o;
+							assertEquals("bar", map.get("foo"));
+						})
+						.verifyComplete(),
 				MediaType.parseMediaType("application/json; charset=utf-16"),
 				null);
 	}
@@ -292,6 +293,7 @@ public class Jackson2JsonDecoderTests extends AbstractDecoderTestCase<Jackson2Js
 		public int getTest() {
 			return this.test;
 		}
+
 		public void setTest(int test) {
 			this.test = test;
 		}

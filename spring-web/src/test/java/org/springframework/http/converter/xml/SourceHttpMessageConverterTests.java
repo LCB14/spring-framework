@@ -228,8 +228,7 @@ public class SourceHttpMessageConverterTests {
 		try {
 			s = streamReader.getElementText();
 			assertNotEquals("Foo Bar", s);
-		}
-		catch (XMLStreamException ex) {
+		} catch (XMLStreamException ex) {
 			// Some parsers raise a parse exception
 		}
 		streamReader.close();

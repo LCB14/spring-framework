@@ -84,7 +84,6 @@ public class ImportedConfigurationClassEnhancementTests {
 	}
 
 
-
 	@Configuration
 	static class ConfigToBeAutowired {
 
@@ -95,7 +94,8 @@ public class ImportedConfigurationClassEnhancementTests {
 
 	static class Config {
 
-		@Autowired ConfigToBeAutowired autowiredConfig;
+		@Autowired
+		ConfigToBeAutowired autowiredConfig;
 	}
 
 	@Import(ConfigToBeAutowired.class)
@@ -111,7 +111,8 @@ public class ImportedConfigurationClassEnhancementTests {
 	@Import(TestBean.class)
 	static class ConfigThatImportsNonConfigClass {
 
-		@Autowired TestBean testBean;
+		@Autowired
+		TestBean testBean;
 	}
 
 }

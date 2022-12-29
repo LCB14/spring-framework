@@ -628,8 +628,7 @@ public class BindTagTests extends AbstractTagTests {
 		try {
 			tag.doStartTag();
 			fail("Should have thrown JspException");
-		}
-		catch (JspException ex) {
+		} catch (JspException ex) {
 			// expected
 		}
 	}
@@ -905,8 +904,7 @@ public class BindTagTests extends AbstractTagTests {
 		try {
 			transform.doStartTag();
 			fail("Tag can be executed outside BindTag");
-		}
-		catch (JspException e) {
+		} catch (JspException e) {
 			// this is ok!
 		}
 
@@ -921,8 +919,7 @@ public class BindTagTests extends AbstractTagTests {
 		try {
 			transform.doStartTag();
 			fail("Tag can be executed outside BindTag and inside messagetag");
-		}
-		catch (JspException e) {
+		} catch (JspException e) {
 			// this is ok!
 		}
 	}

@@ -204,15 +204,13 @@ public class ResourceTests {
 		try {
 			relative4.contentLength();
 			fail("Should have thrown FileNotFoundException");
-		}
-		catch (FileNotFoundException ex) {
+		} catch (FileNotFoundException ex) {
 			// expected
 		}
 		try {
 			relative4.lastModified();
 			fail("Should have thrown FileNotFoundException");
-		}
-		catch (FileNotFoundException ex) {
+		} catch (FileNotFoundException ex) {
 			// expected
 		}
 	}
@@ -238,7 +236,8 @@ public class ResourceTests {
 		assertEquals(new UrlResource("file:dir/subdir"), relative);
 	}
 
-	@Ignore @Test // this test is quite slow. TODO: re-enable with JUnit categories
+	@Ignore
+	@Test // this test is quite slow. TODO: re-enable with JUnit categories
 	public void testNonFileResourceExists() throws Exception {
 		Resource resource = new UrlResource("https://www.springframework.org");
 		assertTrue(resource.exists());
@@ -253,6 +252,7 @@ public class ResourceTests {
 			public String getDescription() {
 				return name;
 			}
+
 			@Override
 			public InputStream getInputStream() throws IOException {
 				throw new FileNotFoundException();
@@ -262,22 +262,19 @@ public class ResourceTests {
 		try {
 			resource.getURL();
 			fail("FileNotFoundException should have been thrown");
-		}
-		catch (FileNotFoundException ex) {
+		} catch (FileNotFoundException ex) {
 			assertTrue(ex.getMessage().contains(name));
 		}
 		try {
 			resource.getFile();
 			fail("FileNotFoundException should have been thrown");
-		}
-		catch (FileNotFoundException ex) {
+		} catch (FileNotFoundException ex) {
 			assertTrue(ex.getMessage().contains(name));
 		}
 		try {
 			resource.createRelative("/testing");
 			fail("FileNotFoundException should have been thrown");
-		}
-		catch (FileNotFoundException ex) {
+		} catch (FileNotFoundException ex) {
 			assertTrue(ex.getMessage().contains(name));
 		}
 
@@ -289,8 +286,9 @@ public class ResourceTests {
 		AbstractResource resource = new AbstractResource() {
 			@Override
 			public InputStream getInputStream() {
-				return new ByteArrayInputStream(new byte[] { 'a', 'b', 'c' });
+				return new ByteArrayInputStream(new byte[]{'a', 'b', 'c'});
 			}
+
 			@Override
 			public String getDescription() {
 				return "";
@@ -309,8 +307,7 @@ public class ResourceTests {
 			channel.read(buffer);
 			buffer.rewind();
 			assertTrue(buffer.limit() > 0);
-		}
-		finally {
+		} finally {
 			if (channel != null) {
 				channel.close();
 			}

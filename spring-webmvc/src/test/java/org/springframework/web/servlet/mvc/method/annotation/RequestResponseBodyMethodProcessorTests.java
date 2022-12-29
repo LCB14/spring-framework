@@ -295,7 +295,7 @@ public class RequestResponseBodyMethodProcessorTests {
 
 	@Test
 	public void handleReturnValueString() throws Exception {
-		List<HttpMessageConverter<?>>converters = new ArrayList<>();
+		List<HttpMessageConverter<?>> converters = new ArrayList<>();
 		converters.add(new ByteArrayHttpMessageConverter());
 		converters.add(new StringHttpMessageConverter());
 
@@ -308,7 +308,7 @@ public class RequestResponseBodyMethodProcessorTests {
 
 	@Test  // SPR-13423
 	public void handleReturnValueCharSequence() throws Exception {
-		List<HttpMessageConverter<?>>converters = new ArrayList<>();
+		List<HttpMessageConverter<?>> converters = new ArrayList<>();
 		converters.add(new ByteArrayHttpMessageConverter());
 		converters.add(new StringHttpMessageConverter());
 
@@ -549,7 +549,7 @@ public class RequestResponseBodyMethodProcessorTests {
 
 		@SuppressWarnings("unchecked")
 		HttpEntity<JacksonViewBean> result = (HttpEntity<JacksonViewBean>)
-				processor.resolveArgument( methodParameter, this.container, this.request, this.factory);
+				processor.resolveArgument(methodParameter, this.container, this.request, this.factory);
 
 		assertNotNull(result);
 		assertNotNull(result.getBody());
@@ -730,7 +730,7 @@ public class RequestResponseBodyMethodProcessorTests {
 	}
 
 	private void assertContentDisposition(RequestResponseBodyMethodProcessor processor,
-			boolean expectContentDisposition, String requestURI, String comment) throws Exception {
+										  boolean expectContentDisposition, String requestURI, String comment) throws Exception {
 
 		this.servletRequest.setRequestURI(requestURI);
 		processor.handleReturnValue("body", this.returnTypeString, this.container, this.request);
@@ -739,8 +739,7 @@ public class RequestResponseBodyMethodProcessorTests {
 		if (expectContentDisposition) {
 			assertEquals("Expected 'Content-Disposition' header. Use case: '" + comment + "'",
 					"inline;filename=f.txt", header);
-		}
-		else {
+		} else {
 			assertNull("Did not expect 'Content-Disposition' header. Use case: '" + comment + "'", header);
 		}
 
@@ -772,7 +771,8 @@ public class RequestResponseBodyMethodProcessorTests {
 	private static abstract class MyParameterizedController<DTO extends Identifiable> {
 
 		@SuppressWarnings("unused")
-		public void handleDto(@RequestBody DTO dto) {}
+		public void handleDto(@RequestBody DTO dto) {
+		}
 	}
 
 
@@ -801,7 +801,7 @@ public class RequestResponseBodyMethodProcessorTests {
 	}
 
 
-	@SuppressWarnings({ "serial" })
+	@SuppressWarnings({"serial"})
 	private static class SimpleBean implements Identifiable {
 
 		private Long id;
@@ -866,9 +866,11 @@ public class RequestResponseBodyMethodProcessorTests {
 	}
 
 
-	private interface MyJacksonView1 {}
+	private interface MyJacksonView1 {
+	}
 
-	private interface MyJacksonView2 {}
+	private interface MyJacksonView2 {
+	}
 
 
 	private static class JacksonViewBean {
@@ -1037,28 +1039,28 @@ public class RequestResponseBodyMethodProcessorTests {
 
 		@Override
 		public boolean supports(MethodParameter methodParameter, Type targetType,
-				Class<? extends HttpMessageConverter<?>> converterType) {
+								Class<? extends HttpMessageConverter<?>> converterType) {
 
 			return StringHttpMessageConverter.class.equals(converterType);
 		}
 
 		@Override
 		public HttpInputMessage beforeBodyRead(HttpInputMessage inputMessage, MethodParameter parameter,
-				Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
+											   Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
 
 			return inputMessage;
 		}
 
 		@Override
 		public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter,
-				Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
+									Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
 
 			return body;
 		}
 
 		@Override
 		public Object handleEmptyBody(@Nullable Object body, HttpInputMessage inputMessage, MethodParameter parameter,
-				Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
+									  Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
 
 			return "default value for empty body";
 		}

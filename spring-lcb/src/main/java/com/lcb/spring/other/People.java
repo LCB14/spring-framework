@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class People {
 
-    @Autowired
-    House commonHouse;
+	@Autowired
+	House commonHouse;
 
-    public void sOut(){
-        commonHouse.sOut();
-    }
+	public void sOut() {
+		commonHouse.sOut();
+	}
 }

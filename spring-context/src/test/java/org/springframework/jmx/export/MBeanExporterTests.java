@@ -109,8 +109,7 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 			start(exporter);
 			fail("Must have thrown an MBeanExportException when registering a " +
 					"NotificationListener on a non-existent MBean.");
-		}
-		catch (MBeanExportException expected) {
+		} catch (MBeanExportException expected) {
 			assertTrue(expected.contains(InstanceNotFoundException.class));
 		}
 	}
@@ -124,8 +123,7 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 			start(exporter);
 			assertIsRegistered("The bean was not registered with the MBeanServer",
 					ObjectNameManager.getInstance(OBJECT_NAME));
-		}
-		finally {
+		} finally {
 			exporter.destroy();
 		}
 	}
@@ -147,8 +145,7 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 			Object name = server.getAttribute(ObjectNameManager.getInstance("spring:name=dynBean"), "Name");
 			assertEquals("The name attribute is incorrect", "Rob Harrop", name);
 			assertFalse("Assembler should not have been invoked", asm.invoked);
-		}
-		finally {
+		} finally {
 			exporter.destroy();
 		}
 	}
@@ -165,8 +162,7 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 			assertNotNull(instance);
 			instance = server.getObjectInstance(ObjectNameManager.getInstance("spring:mbean3=true"));
 			assertNotNull(instance);
-		}
-		finally {
+		} finally {
 			ctx.close();
 		}
 	}
@@ -182,8 +178,7 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 
 			thrown.expect(InstanceNotFoundException.class);
 			server.getObjectInstance(ObjectNameManager.getInstance("spring:mbean=false"));
-		}
-		finally {
+		} finally {
 			ctx.close();
 		}
 	}
@@ -204,8 +199,7 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 			assertNotNull(server.getObjectInstance(oname));
 			name = (String) server.getAttribute(oname, "Name");
 			assertEquals("Invalid name returned", "Juergen Hoeller", name);
-		}
-		finally {
+		} finally {
 			ctx.close();
 		}
 	}
@@ -215,8 +209,7 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 		ConfigurableApplicationContext ctx = load("autodetectNoMBeans.xml");
 		try {
 			ctx.getBean("exporter");
-		}
-		finally {
+		} finally {
 			ctx.close();
 		}
 	}
@@ -365,7 +358,7 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 
 		assertIsRegistered("Bean instance not registered", objectName);
 
-		Object result = server.invoke(objectName, "add", new Object[] {new Integer(2), new Integer(3)}, new String[] {
+		Object result = server.invoke(objectName, "add", new Object[]{new Integer(2), new Integer(3)}, new String[]{
 				int.class.getName(), int.class.getName()});
 
 		assertEquals("Incorrect result return from add", result, new Integer(5));
@@ -620,8 +613,7 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 		try {
 			start(exporter);
 			fail("Must have failed during creation of RuntimeExceptionThrowingConstructorBean");
-		}
-		catch (RuntimeException expected) {
+		} catch (RuntimeException expected) {
 		}
 
 		assertIsNotRegistered("Must have unregistered all previously registered MBeans due to RuntimeException",
@@ -816,22 +808,27 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 	}
 
 
-	public interface SomethingMBean {}
+	public interface SomethingMBean {
+	}
 
-	public static class Something implements SomethingMBean {}
+	public static class Something implements SomethingMBean {
+	}
 
 
 	public static class ProperSomethingFactoryBean implements FactoryBean<Something> {
 
-		@Override public Something getObject() {
+		@Override
+		public Something getObject() {
 			return new Something();
 		}
 
-		@Override public Class<?> getObjectType() {
+		@Override
+		public Class<?> getObjectType() {
 			return Something.class;
 		}
 
-		@Override public boolean isSingleton() {
+		@Override
+		public boolean isSingleton() {
 			return true;
 		}
 	}
@@ -839,15 +836,18 @@ public class MBeanExporterTests extends AbstractMBeanServerTests {
 
 	public static class NullSomethingFactoryBean implements FactoryBean<Something> {
 
-		@Override public Something getObject() {
+		@Override
+		public Something getObject() {
 			return null;
 		}
 
-		@Override public Class<?> getObjectType() {
+		@Override
+		public Class<?> getObjectType() {
 			return Something.class;
 		}
 
-		@Override public boolean isSingleton() {
+		@Override
+		public boolean isSingleton() {
 			return true;
 		}
 	}

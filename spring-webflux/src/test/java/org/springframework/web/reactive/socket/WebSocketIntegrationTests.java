@@ -65,10 +65,10 @@ public class WebSocketIntegrationTests extends AbstractWebSocketIntegrationTests
 		ReplayProcessor<Object> output = ReplayProcessor.create(count);
 
 		this.client.execute(getUrl("/echo"), session -> session
-				.send(input.map(session::textMessage))
-				.thenMany(session.receive().take(count).map(WebSocketMessage::getPayloadAsText))
-				.subscribeWith(output)
-				.then())
+						.send(input.map(session::textMessage))
+						.thenMany(session.receive().take(count).map(WebSocketMessage::getPayloadAsText))
+						.subscribeWith(output)
+						.then())
 				.block(TIMEOUT);
 
 		assertEquals(input.collectList().block(TIMEOUT), output.collectList().block(TIMEOUT));
@@ -81,20 +81,21 @@ public class WebSocketIntegrationTests extends AbstractWebSocketIntegrationTests
 		MonoProcessor<Object> output = MonoProcessor.create();
 
 		this.client.execute(getUrl("/sub-protocol"),
-				new WebSocketHandler() {
-					@Override
-					public List<String> getSubProtocols() {
-						return Collections.singletonList(protocol);
-					}
-					@Override
-					public Mono<Void> handle(WebSocketSession session) {
-						infoRef.set(session.getHandshakeInfo());
-						return session.receive()
-								.map(WebSocketMessage::getPayloadAsText)
-								.subscribeWith(output)
-								.then();
-					}
-				})
+						new WebSocketHandler() {
+							@Override
+							public List<String> getSubProtocols() {
+								return Collections.singletonList(protocol);
+							}
+
+							@Override
+							public Mono<Void> handle(WebSocketSession session) {
+								infoRef.set(session.getHandshakeInfo());
+								return session.receive()
+										.map(WebSocketMessage::getPayloadAsText)
+										.subscribeWith(output)
+										.then();
+							}
+						})
 				.block(TIMEOUT);
 
 		HandshakeInfo info = infoRef.get();
@@ -111,10 +112,10 @@ public class WebSocketIntegrationTests extends AbstractWebSocketIntegrationTests
 		MonoProcessor<Object> output = MonoProcessor.create();
 
 		this.client.execute(getUrl("/custom-header"), headers,
-				session -> session.receive()
-						.map(WebSocketMessage::getPayloadAsText)
-						.subscribeWith(output)
-						.then())
+						session -> session.receive()
+								.map(WebSocketMessage::getPayloadAsText)
+								.subscribeWith(output)
+								.then())
 				.block(TIMEOUT);
 
 		assertEquals("my-header:my-value", output.block(TIMEOUT));
@@ -123,15 +124,15 @@ public class WebSocketIntegrationTests extends AbstractWebSocketIntegrationTests
 	@Test
 	public void sessionClosing() throws Exception {
 		this.client.execute(getUrl("/close"),
-				session -> {
-					logger.debug("Starting..");
-					return session.receive()
-							.doOnNext(s -> logger.debug("inbound " + s))
-							.then()
-							.doFinally(signalType -> {
-								logger.debug("Completed with: " + signalType);
-							});
-				})
+						session -> {
+							logger.debug("Starting..");
+							return session.receive()
+									.doOnNext(s -> logger.debug("inbound " + s))
+									.then()
+									.doFinally(signalType -> {
+										logger.debug("Completed with: " + signalType);
+									});
+						})
 				.block(TIMEOUT);
 	}
 

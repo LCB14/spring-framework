@@ -12,29 +12,30 @@ import org.springframework.stereotype.Component;
 @Component
 public class AspectJConfig {
 
-    @Pointcut("execution(* *.test(..))")
-    public void test(){}
+	@Pointcut("execution(* *.test(..))")
+	public void test() {
+	}
 
-    @Before("test()")
-    public void beforeTest(){
-        System.out.println("beforeInformTest");
-    }
+	@Before("test()")
+	public void beforeTest() {
+		System.out.println("beforeInformTest");
+	}
 
-    @After("test()")
-    public void afterTest(){
-        System.out.println("afterInformTest");
-    }
+	@After("test()")
+	public void afterTest() {
+		System.out.println("afterInformTest");
+	}
 
-    @Around("test()")
-    public Object arountTest(ProceedingJoinPoint proceedingJoinPoint){
-        System.out.println("beforeArround");
-        Object object = null;
-        try{
-            object = proceedingJoinPoint.proceed();
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-        System.out.println("afterArround");
-        return object;
-    }
+	@Around("test()")
+	public Object arountTest(ProceedingJoinPoint proceedingJoinPoint) {
+		System.out.println("beforeArround");
+		Object object = null;
+		try {
+			object = proceedingJoinPoint.proceed();
+		} catch (Throwable throwable) {
+			throwable.printStackTrace();
+		}
+		System.out.println("afterArround");
+		return object;
+	}
 }

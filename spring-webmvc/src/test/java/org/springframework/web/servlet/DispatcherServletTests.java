@@ -286,8 +286,7 @@ public class DispatcherServletTests {
 			complexDispatcherServlet.service(request, response);
 			assertEquals(200, response.getStatus());
 			assertTrue("forwarded to failed", "failed1.jsp".equals(response.getForwardedUrl()));
-		}
-		catch (ServletException ex) {
+		} catch (ServletException ex) {
 			fail("Should not have thrown ServletException: " + ex.getMessage());
 		}
 	}
@@ -406,8 +405,7 @@ public class DispatcherServletTests {
 		try {
 			complexDispatcherServlet.service(request, response);
 			assertTrue("Not forwarded", response.getForwardedUrl() == null);
-		}
-		catch (ServletException ex) {
+		} catch (ServletException ex) {
 			fail("Should not have thrown ServletException: " + ex.getMessage());
 		}
 	}
@@ -420,8 +418,7 @@ public class DispatcherServletTests {
 		try {
 			complexDispatcherServlet.service(request, response);
 			assertTrue("Correct response", response.getStatus() == HttpServletResponse.SC_FORBIDDEN);
-		}
-		catch (ServletException ex) {
+		} catch (ServletException ex) {
 			fail("Should not have thrown ServletException: " + ex.getMessage());
 		}
 	}
@@ -562,8 +559,7 @@ public class DispatcherServletTests {
 		try {
 			complexDispatcherServlet.service(request, response);
 			fail("Should have thrown ServletException");
-		}
-		catch (ServletException ex) {
+		} catch (ServletException ex) {
 			// expected
 			assertTrue(ex.getMessage().contains("No adapter for handler"));
 		}
@@ -582,8 +578,7 @@ public class DispatcherServletTests {
 		try {
 			complexDispatcherServlet.service(request, response);
 			fail("Should have thrown ServletException");
-		}
-		catch (ServletException ex) {
+		} catch (ServletException ex) {
 			// expected
 			assertTrue(ex.getMessage().contains("failed0"));
 		}
@@ -723,8 +718,7 @@ public class DispatcherServletTests {
 		try {
 			complexDispatcherServlet.service(request, response);
 			fail("Should have thrown ServletException");
-		}
-		catch (ServletException ex) {
+		} catch (ServletException ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -802,10 +796,10 @@ public class DispatcherServletTests {
 		try {
 			servlet.setEnvironment(new DummyEnvironment());
 			fail("expected IllegalArgumentException for non-configurable Environment");
+		} catch (IllegalArgumentException ex) {
 		}
-		catch (IllegalArgumentException ex) {
+		class CustomServletEnvironment extends StandardServletEnvironment {
 		}
-		class CustomServletEnvironment extends StandardServletEnvironment { }
 		@SuppressWarnings("serial")
 		DispatcherServlet custom = new DispatcherServlet() {
 			@Override

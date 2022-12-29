@@ -162,12 +162,12 @@ public class DataBufferUtilsTests extends AbstractDataBufferAllocatingTestCase {
 			completionHandler.completed(3, dataBuffer);
 			return null;
 		}).doAnswer(invocation -> {
-			DataBuffer dataBuffer = invocation.getArgument(2);
-			CompletionHandler<Integer, DataBuffer> completionHandler = invocation.getArgument(3);
-			completionHandler.failed(new IOException(), dataBuffer);
-			return null;
-		})
-		.when(channel).read(any(), anyLong(), any(), any());
+					DataBuffer dataBuffer = invocation.getArgument(2);
+					CompletionHandler<Integer, DataBuffer> completionHandler = invocation.getArgument(3);
+					completionHandler.failed(new IOException(), dataBuffer);
+					return null;
+				})
+				.when(channel).read(any(), anyLong(), any(), any());
 
 		Flux<DataBuffer> result =
 				DataBufferUtils.readAsynchronousFileChannel(() -> channel, this.bufferFactory, 3);
@@ -247,7 +247,7 @@ public class DataBufferUtilsTests extends AbstractDataBufferAllocatingTestCase {
 
 	@Test
 	public void readByteArrayResourcePositionAndTakeUntil() throws Exception {
-		Resource resource = new ByteArrayResource("foobarbazqux" .getBytes());
+		Resource resource = new ByteArrayResource("foobarbazqux".getBytes());
 		Flux<DataBuffer> flux = DataBufferUtils.read(resource, 3, this.bufferFactory, 3);
 
 		flux = DataBufferUtils.takeUntilByteCount(flux, 5);
@@ -441,7 +441,7 @@ public class DataBufferUtilsTests extends AbstractDataBufferAllocatingTestCase {
 					return null;
 				})
 				.when(channel).write(isA(ByteBuffer.class), anyLong(), isA(ByteBuffer.class),
-				isA(CompletionHandler.class));
+						isA(CompletionHandler.class));
 
 		Flux<DataBuffer> writeResult = DataBufferUtils.write(flux, channel);
 		StepVerifier.create(writeResult)
@@ -498,11 +498,9 @@ public class DataBufferUtilsTests extends AbstractDataBufferAllocatingTestCase {
 
 								assertEquals(expected, result);
 
-							}
-							catch (IOException e) {
+							} catch (IOException e) {
 								fail(e.getMessage());
-							}
-							finally {
+							} finally {
 								DataBufferUtils.closeChannel(channel);
 							}
 						});
@@ -533,11 +531,9 @@ public class DataBufferUtilsTests extends AbstractDataBufferAllocatingTestCase {
 								assertEquals(expected, result);
 								latch.countDown();
 
-							}
-							catch (IOException e) {
+							} catch (IOException e) {
 								fail(e.getMessage());
-							}
-							finally {
+							} finally {
 								DataBufferUtils.closeChannel(channel);
 							}
 						});

@@ -122,7 +122,8 @@ public class ResponseEntityTests {
 		this.client.get().uri("?map=true")
 				.exchange()
 				.expectStatus().isOk()
-				.expectBody(new ParameterizedTypeReference<Map<String, Person>>() {}).isEqualTo(map);
+				.expectBody(new ParameterizedTypeReference<Map<String, Person>>() {
+				}).isEqualTo(map);
 	}
 
 	@Test

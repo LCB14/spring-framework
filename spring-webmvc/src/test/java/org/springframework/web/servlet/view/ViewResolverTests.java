@@ -274,7 +274,7 @@ public class ViewResolverTests {
 		Map<String, Object> map = new HashMap<>();
 		map.put("key2", new Integer(2));
 		vr.setAttributesMap(map);
-		vr.setExposedContextBeanNames(new String[] {"myBean2"});
+		vr.setExposedContextBeanNames(new String[]{"myBean2"});
 		vr.setApplicationContext(wac);
 
 		MockHttpServletRequest request = new MockHttpServletRequest(sc) {
@@ -438,8 +438,7 @@ public class ViewResolverTests {
 			vr.setApplicationContext(wac);
 			vr.afterPropertiesSet();
 			fail("Should have thrown BeanDefinitionStoreException");
-		}
-		catch (BeanDefinitionStoreException ex) {
+		} catch (BeanDefinitionStoreException ex) {
 			// expected
 		}
 	}
@@ -459,15 +458,13 @@ public class ViewResolverTests {
 		vr.setCache(false);
 		try {
 			vr.setApplicationContext(wac);
-		}
-		catch (ApplicationContextException ex) {
+		} catch (ApplicationContextException ex) {
 			fail("Should not have thrown ApplicationContextException: " + ex.getMessage());
 		}
 		try {
 			vr.resolveViewName("example1", Locale.getDefault());
 			fail("Should have thrown BeanDefinitionStoreException");
-		}
-		catch (BeanDefinitionStoreException ex) {
+		} catch (BeanDefinitionStoreException ex) {
 			// expected
 		}
 	}

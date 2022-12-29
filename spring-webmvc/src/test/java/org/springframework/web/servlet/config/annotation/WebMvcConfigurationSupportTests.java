@@ -232,8 +232,7 @@ public class WebMvcConfigurationSupportTests {
 			MockHttpServletResponse response = new MockHttpServletResponse();
 			rser.resolveException(request, response, context.getBean(TestController.class), new UserAlreadyExistsException());
 			assertEquals("User already exists!", response.getErrorMessage());
-		}
-		finally {
+		} finally {
 			LocaleContextHolder.resetLocaleContext();
 		}
 	}
@@ -381,7 +380,7 @@ public class WebMvcConfigurationSupportTests {
 
 		@RequestMapping("/foo/{id}/bar/{date}")
 		public HttpEntity<Void> methodWithTwoPathVariables(@PathVariable Integer id,
-				@DateTimeFormat(iso = ISO.DATE) @PathVariable DateTime date) {
+														   @DateTimeFormat(iso = ISO.DATE) @PathVariable DateTime date) {
 			return null;
 		}
 	}
@@ -421,7 +420,7 @@ public class WebMvcConfigurationSupportTests {
 
 		@Override
 		public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer container,
-				NativeWebRequest request, WebDataBinderFactory factory) {
+									  NativeWebRequest request, WebDataBinderFactory factory) {
 			return null;
 		}
 	}
@@ -435,7 +434,7 @@ public class WebMvcConfigurationSupportTests {
 
 		@Override
 		public void handleReturnValue(Object value, MethodParameter parameter,
-				ModelAndViewContainer container, NativeWebRequest request) {
+									  ModelAndViewContainer container, NativeWebRequest request) {
 		}
 	}
 

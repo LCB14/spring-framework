@@ -78,9 +78,11 @@ public class SendToMethodReturnValueHandlerTests {
 
 	private SendToMethodReturnValueHandler jsonHandler;
 
-	@Mock private MessageChannel messageChannel;
+	@Mock
+	private MessageChannel messageChannel;
 
-	@Captor private ArgumentCaptor<Message<?>> messageCaptor;
+	@Captor
+	private ArgumentCaptor<Message<?>> messageCaptor;
 
 	private MethodParameter noAnnotationsReturnType = param("handleNoAnnotations");
 	private MethodParameter sendToReturnType = param("handleAndSendTo");
@@ -106,8 +108,7 @@ public class SendToMethodReturnValueHandlerTests {
 	private static MethodParameter param(Class<?> clazz, String methodName) {
 		try {
 			return new SynthesizingMethodParameter(clazz.getDeclaredMethod(methodName), -1);
-		}
-		catch (NoSuchMethodException ex) {
+		} catch (NoSuchMethodException ex) {
 			throw new IllegalArgumentException("No such method", ex);
 		}
 	}
@@ -289,7 +290,7 @@ public class SendToMethodReturnValueHandlerTests {
 
 
 	private void assertResponse(MethodParameter methodParameter, String sessionId,
-			int index, String destination) {
+								int index, String destination) {
 
 		SimpMessageHeaderAccessor accessor = getCapturedAccessor(index);
 		assertEquals(sessionId, accessor.getSessionId());
@@ -605,7 +606,7 @@ public class SendToMethodReturnValueHandlerTests {
 		return PAYLOAD;
 	}
 
-	@SendToUser(destinations = { "/dest1", "/dest2" }, broadcast = false)
+	@SendToUser(destinations = {"/dest1", "/dest2"}, broadcast = false)
 	@SuppressWarnings("unused")
 	String handleAndSendToUserInSession() {
 		return PAYLOAD;
@@ -668,7 +669,8 @@ public class SendToMethodReturnValueHandlerTests {
 	}
 
 
-	@MySendTo(dest = "/dest-default") @SuppressWarnings("unused")
+	@MySendTo(dest = "/dest-default")
+	@SuppressWarnings("unused")
 	private static class SendToTestBean {
 
 		String handleNoAnnotation() {
@@ -687,7 +689,8 @@ public class SendToMethodReturnValueHandlerTests {
 	}
 
 
-	@MySendToUser(dest = "/dest-default") @SuppressWarnings("unused")
+	@MySendToUser(dest = "/dest-default")
+	@SuppressWarnings("unused")
 	private static class SendToUserTestBean {
 
 		String handleNoAnnotation() {
@@ -706,7 +709,8 @@ public class SendToMethodReturnValueHandlerTests {
 	}
 
 
-	@MySendToUser(dest = "/dest-default") @SuppressWarnings("unused")
+	@MySendToUser(dest = "/dest-default")
+	@SuppressWarnings("unused")
 	private static class SendToUserWithSendToOverrideTestBean {
 
 		@SendTo
@@ -721,9 +725,11 @@ public class SendToMethodReturnValueHandlerTests {
 	}
 
 
-	private interface MyJacksonView1 {}
+	private interface MyJacksonView1 {
+	}
 
-	private interface MyJacksonView2 {}
+	private interface MyJacksonView2 {
+	}
 
 
 	@SuppressWarnings("unused")
