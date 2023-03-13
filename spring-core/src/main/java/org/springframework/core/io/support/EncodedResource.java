@@ -141,6 +141,7 @@ public class EncodedResource implements InputStreamSource {
 	 * @see #getInputStream()
 	 */
 	public Reader getReader() throws IOException {
+		// InputStreamReader 就是Java SE IO流中将字节输入流转换为字符输入流的API
 		if (this.charset != null) {
 			return new InputStreamReader(this.resource.getInputStream(), this.charset);
 		} else if (this.encoding != null) {
