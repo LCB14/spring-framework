@@ -183,6 +183,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 */
 	public AbstractAutowireCapableBeanFactory() {
 		super();
+		/**
+		 * 如果一个bean实现了BeanNameAware、BeanFactoryAware或BeanClassLoaderAware接口，那这个bean中的
+		 * 属性如果想要通过spring进行自动装配赋值的话，这个属性对应的setter方法，就要避免和感知接口中声明的方法相同。
+		 * 如果相同的话，spring就不会为该属性自动装配赋值，而是让spring内部调用这些感知接口的方法，来为这些属性设置值。
+		 */
 		ignoreDependencyInterface(BeanNameAware.class);
 		ignoreDependencyInterface(BeanFactoryAware.class);
 		ignoreDependencyInterface(BeanClassLoaderAware.class);
