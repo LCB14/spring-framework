@@ -459,6 +459,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 		if (validationModeToUse != VALIDATION_AUTO) {
 			return validationModeToUse;
 		}
+
 		int detectedMode = detectValidationMode(resource);
 		if (detectedMode != VALIDATION_AUTO) {
 			return detectedMode;

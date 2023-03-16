@@ -68,6 +68,7 @@ public class BeansDtdResolver implements EntityResolver {
 					logger.trace("Trying to locate [" + dtdFile + "] in Spring jar on classpath");
 				}
 				try {
+					// 从 classpath 中，将spring-beans.dtd声明文件，封装为资源ClassPathResource
 					Resource resource = new ClassPathResource(dtdFile, getClass());
 					InputSource source = new InputSource(resource.getInputStream());
 					source.setPublicId(publicId);

@@ -100,10 +100,13 @@ public class XmlValidationModeDetector {
 				if (this.inComment || !StringUtils.hasText(content)) {
 					continue;
 				}
+
+				// xml 文本中是否包含"DOCTYPE"，如果包含，直接返回dtd校验
 				if (hasDoctype(content)) {
 					isDtdValidated = true;
 					break;
 				}
+
 				if (hasOpeningTag(content)) {
 					// End of meaningful data...
 					break;
