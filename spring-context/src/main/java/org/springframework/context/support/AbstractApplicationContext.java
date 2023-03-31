@@ -1059,7 +1059,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 			try {
 				// Publish shutdown event.
-				// 发布 ContextClosedEvent 事件
+				/**
+				 * 发布 ContextClosedEvent 事件
+				 */
 				publishEvent(new ContextClosedEvent(this));
 			} catch (Throwable ex) {
 				logger.warn("Exception thrown from ApplicationListener handling ContextClosedEvent", ex);
@@ -1076,7 +1078,13 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			}
 
 			// Destroy all cached singletons in the context's BeanFactory.
-			// 销毁bean
+			/**
+			 * 当 Spring 开始销毁容器中管理的 Bean 之前会
+			 * 1、回调所有实现 DestructionAwareBeanPostProcessor 接口的 Bean 中的 postProcessBeforeDestruction 方法。
+			 * 2、回调标注 @PreDestroy 注解的方法。
+			 * 3、回调 DisposableBean 接口中的 destroy 方法
+			 * 4、回调自定义的销毁方法：<bean id="Shutdown" class="com.test.netty.Shutdown"  destroy-method="doDestroy"/>
+			 */
 			destroyBeans();
 
 			// Close the state of this context itself.
