@@ -1048,21 +1048,25 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void doClose() {
 		// Check whether an actual close attempt is necessary...
+		// 更新上下文状态
 		if (this.active.get() && this.closed.compareAndSet(false, true)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Closing " + this);
 			}
 
+			// 取消 JMX 托管
 			LiveBeansView.unregisterApplicationContext(this);
 
 			try {
 				// Publish shutdown event.
+				// 发布 ContextClosedEvent 事件
 				publishEvent(new ContextClosedEvent(this));
 			} catch (Throwable ex) {
 				logger.warn("Exception thrown from ApplicationListener handling ContextClosedEvent", ex);
 			}
 
 			// Stop all Lifecycle beans, to avoid delays during individual destruction.
+			// 回调 Lifecycle beans,相关 stop 方法
 			if (this.lifecycleProcessor != null) {
 				try {
 					this.lifecycleProcessor.onClose();
@@ -1072,6 +1076,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			}
 
 			// Destroy all cached singletons in the context's BeanFactory.
+			// 销毁bean
 			destroyBeans();
 
 			// Close the state of this context itself.
