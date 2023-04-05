@@ -561,6 +561,7 @@ public class BeanDefinitionParserDelegate {
 	public AbstractBeanDefinition parseBeanDefinitionAttributes(Element ele, String beanName,
 																@Nullable BeanDefinition containingBean, AbstractBeanDefinition bd) {
 
+		// 获取属性singleton的值
 		if (ele.hasAttribute(SINGLETON_ATTRIBUTE)) {
 			error("Old 1.x 'singleton' attribute in use - upgrade to 'scope' declaration", ele);
 		} else if (ele.hasAttribute(SCOPE_ATTRIBUTE)) {
@@ -570,24 +571,29 @@ public class BeanDefinitionParserDelegate {
 			bd.setScope(containingBean.getScope());
 		}
 
+		// 获取属性abstract的值
 		if (ele.hasAttribute(ABSTRACT_ATTRIBUTE)) {
 			bd.setAbstract(TRUE_VALUE.equals(ele.getAttribute(ABSTRACT_ATTRIBUTE)));
 		}
 
+		// 获取属性lazy-init的值
 		String lazyInit = ele.getAttribute(LAZY_INIT_ATTRIBUTE);
 		if (isDefaultValue(lazyInit)) {
 			lazyInit = this.defaults.getLazyInit();
 		}
 		bd.setLazyInit(TRUE_VALUE.equals(lazyInit));
 
+		// 获取属性autowire的值
 		String autowire = ele.getAttribute(AUTOWIRE_ATTRIBUTE);
 		bd.setAutowireMode(getAutowireMode(autowire));
 
+		// 获取属性depends-on的值
 		if (ele.hasAttribute(DEPENDS_ON_ATTRIBUTE)) {
 			String dependsOn = ele.getAttribute(DEPENDS_ON_ATTRIBUTE);
 			bd.setDependsOn(StringUtils.tokenizeToStringArray(dependsOn, MULTI_VALUE_ATTRIBUTE_DELIMITERS));
 		}
 
+		// 获取属性autowire-candidate的值
 		String autowireCandidate = ele.getAttribute(AUTOWIRE_CANDIDATE_ATTRIBUTE);
 		if (isDefaultValue(autowireCandidate)) {
 			String candidatePattern = this.defaults.getAutowireCandidates();
@@ -599,10 +605,12 @@ public class BeanDefinitionParserDelegate {
 			bd.setAutowireCandidate(TRUE_VALUE.equals(autowireCandidate));
 		}
 
+		// 获取属性primary的值
 		if (ele.hasAttribute(PRIMARY_ATTRIBUTE)) {
 			bd.setPrimary(TRUE_VALUE.equals(ele.getAttribute(PRIMARY_ATTRIBUTE)));
 		}
 
+		// 获取属性init-method的值
 		if (ele.hasAttribute(INIT_METHOD_ATTRIBUTE)) {
 			String initMethodName = ele.getAttribute(INIT_METHOD_ATTRIBUTE);
 			bd.setInitMethodName(initMethodName);
@@ -611,6 +619,7 @@ public class BeanDefinitionParserDelegate {
 			bd.setEnforceInitMethod(false);
 		}
 
+		// 获取属性destroy-method的值
 		if (ele.hasAttribute(DESTROY_METHOD_ATTRIBUTE)) {
 			String destroyMethodName = ele.getAttribute(DESTROY_METHOD_ATTRIBUTE);
 			bd.setDestroyMethodName(destroyMethodName);
@@ -619,6 +628,7 @@ public class BeanDefinitionParserDelegate {
 			bd.setEnforceDestroyMethod(false);
 		}
 
+		// 获取属性factory-method的值
 		if (ele.hasAttribute(FACTORY_METHOD_ATTRIBUTE)) {
 			bd.setFactoryMethodName(ele.getAttribute(FACTORY_METHOD_ATTRIBUTE));
 		}
@@ -648,15 +658,23 @@ public class BeanDefinitionParserDelegate {
 	 * Parse the meta elements underneath the given element, if any.
 	 */
 	public void parseMetaElements(Element ele, BeanMetadataAttributeAccessor attributeAccessor) {
+		// 获取bean标签下的所有子节点
 		NodeList nl = ele.getChildNodes();
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
+			// 遍历找到meta标签
 			if (isCandidateElement(node) && nodeNameEquals(node, META_ELEMENT)) {
 				Element metaElement = (Element) node;
+				// 获取属性key的值
 				String key = metaElement.getAttribute(KEY_ATTRIBUTE);
+				// 获取属性value的值
 				String value = metaElement.getAttribute(VALUE_ATTRIBUTE);
+
+				// 将属性key和value的信息封装成BeanMetadataAttribute
 				BeanMetadataAttribute attribute = new BeanMetadataAttribute(key, value);
 				attribute.setSource(extractSource(metaElement));
+
+				// 将BeanMetadataAttribute记录到BeanMetadataAttributeAccessor中
 				attributeAccessor.addMetadataAttribute(attribute);
 			}
 		}
@@ -774,9 +792,14 @@ public class BeanDefinitionParserDelegate {
 	 * Parse a constructor-arg element.
 	 */
 	public void parseConstructorArgElement(Element ele, BeanDefinition bd) {
+		// 获取属性index值
 		String indexAttr = ele.getAttribute(INDEX_ATTRIBUTE);
+		// 获取属性type值
 		String typeAttr = ele.getAttribute(TYPE_ATTRIBUTE);
+		// 获取属性name值
 		String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);
+
+		// 处理属性index存在的情况
 		if (StringUtils.hasLength(indexAttr)) {
 			try {
 				int index = Integer.parseInt(indexAttr);
@@ -785,7 +808,9 @@ public class BeanDefinitionParserDelegate {
 				} else {
 					try {
 						this.parseState.push(new ConstructorArgumentEntry(index));
+						// 解析constructor-arg标签下的value标签值
 						Object value = parsePropertyValue(ele, bd, null);
+						// 将constructor-arg标签解析的属性值，封装在ValueHolder中
 						ConstructorArgumentValues.ValueHolder valueHolder = new ConstructorArgumentValues.ValueHolder(value);
 						if (StringUtils.hasLength(typeAttr)) {
 							valueHolder.setType(typeAttr);
@@ -794,9 +819,12 @@ public class BeanDefinitionParserDelegate {
 							valueHolder.setName(nameAttr);
 						}
 						valueHolder.setSource(extractSource(ele));
+
+						// index属性值不能重复，不然会混淆
 						if (bd.getConstructorArgumentValues().hasIndexedArgumentValue(index)) {
 							error("Ambiguous constructor-arg entries for index " + index, ele);
 						} else {
+							// 将constructor-arg标签（包括其子标签value）解析的所有值，封装在BeanDefinition中
 							bd.getConstructorArgumentValues().addIndexedArgumentValue(index, valueHolder);
 						}
 					} finally {
@@ -806,7 +834,7 @@ public class BeanDefinitionParserDelegate {
 			} catch (NumberFormatException ex) {
 				error("Attribute 'index' of tag 'constructor-arg' must be an integer", ele);
 			}
-		} else {
+		} else { // 处理属性name存在的情况
 			try {
 				this.parseState.push(new ConstructorArgumentEntry());
 				Object value = parsePropertyValue(ele, bd, null);
@@ -818,6 +846,7 @@ public class BeanDefinitionParserDelegate {
 					valueHolder.setName(nameAttr);
 				}
 				valueHolder.setSource(extractSource(ele));
+
 				bd.getConstructorArgumentValues().addGenericArgumentValue(valueHolder);
 			} finally {
 				this.parseState.pop();
@@ -905,6 +934,7 @@ public class BeanDefinitionParserDelegate {
 		Element subElement = null;
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
+			// 不处理description标签和meta标签
 			if (node instanceof Element && !nodeNameEquals(node, DESCRIPTION_ELEMENT) &&
 					!nodeNameEquals(node, META_ELEMENT)) {
 				// Child element is what we're looking for.
@@ -916,14 +946,18 @@ public class BeanDefinitionParserDelegate {
 			}
 		}
 
+		// 是否包含ref属性
 		boolean hasRefAttribute = ele.hasAttribute(REF_ATTRIBUTE);
+		// 是否包含value属性
 		boolean hasValueAttribute = ele.hasAttribute(VALUE_ATTRIBUTE);
+		// ref属性和value属性不能同时存在或者ref和value属性如果存在其中一个，就不能包含子标签
 		if ((hasRefAttribute && hasValueAttribute) ||
 				((hasRefAttribute || hasValueAttribute) && subElement != null)) {
 			error(elementName +
 					" is only allowed to contain either 'ref' attribute OR 'value' attribute OR sub-element", ele);
 		}
 
+		// 对ref属性的处理
 		if (hasRefAttribute) {
 			String refName = ele.getAttribute(REF_ATTRIBUTE);
 			if (!StringUtils.hasText(refName)) {
@@ -932,14 +966,16 @@ public class BeanDefinitionParserDelegate {
 			RuntimeBeanReference ref = new RuntimeBeanReference(refName);
 			ref.setSource(extractSource(ele));
 			return ref;
-		} else if (hasValueAttribute) {
+		} else if (hasValueAttribute) {// 对value属性的处理
 			TypedStringValue valueHolder = new TypedStringValue(ele.getAttribute(VALUE_ATTRIBUTE));
 			valueHolder.setSource(extractSource(ele));
 			return valueHolder;
 		} else if (subElement != null) {
+			// 解析标签ele下的所有子标签的属性
 			return parsePropertySubElement(subElement, bd);
 		} else {
 			// Neither child element nor "ref" or "value" attribute found.
+			// ref属性和value属性不能都不设置
 			error(elementName + " must specify a ref or value", ele);
 			return null;
 		}
