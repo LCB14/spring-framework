@@ -128,6 +128,9 @@ public abstract class ApplicationObjectSupport implements ApplicationContextAwar
 	 * @see #setApplicationContext
 	 */
 	protected void initApplicationContext(ApplicationContext context) throws BeansException {
+		/**
+		 * @see org.springframework.web.servlet.handler.AbstractDetectingUrlHandlerMapping#initApplicationContext()
+		 */
 		initApplicationContext();
 	}
 
