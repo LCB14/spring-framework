@@ -283,6 +283,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 								"Resolution of declared constructors on bean Class [" + beanClass.getName() +
 										"] from ClassLoader [" + beanClass.getClassLoader() + "] failed", ex);
 					}
+
 					List<Constructor<?>> candidates = new ArrayList<>(rawCandidates.length);
 					Constructor<?> requiredConstructor = null;
 					Constructor<?> defaultConstructor = null;
@@ -294,19 +295,25 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 						} else if (primaryConstructor != null) {
 							continue;
 						}
+
+						// 寻找加了 @Autowired 注解的构造方法
 						AnnotationAttributes ann = findAutowiredAnnotation(candidate);
+
+						// 处理未被 @Autowired 修饰的构造方法
 						if (ann == null) {
 							Class<?> userClass = ClassUtils.getUserClass(beanClass);
 							if (userClass != beanClass) {
 								try {
-									Constructor<?> superCtor =
-											userClass.getDeclaredConstructor(candidate.getParameterTypes());
+									// 判断 beanClass 的子类是否存在被 @Autowired 修饰的构造方法
+									Constructor<?> superCtor = userClass.getDeclaredConstructor(candidate.getParameterTypes());
 									ann = findAutowiredAnnotation(superCtor);
 								} catch (NoSuchMethodException ex) {
 									// Simply proceed, no equivalent superclass constructor found...
 								}
 							}
 						}
+
+						// 处理被 @Autowired 修饰的构造方法
 						if (ann != null) {
 							if (requiredConstructor != null) {
 								throw new BeanCreationException(beanName,
@@ -316,6 +323,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 							}
 							boolean required = determineRequiredStatus(ann);
 							if (required) {
+								// 一个类的所有构造方法中，只能有一个构造方法被 @Autowired(require = true) 修饰
 								if (!candidates.isEmpty()) {
 									throw new BeanCreationException(beanName,
 											"Invalid autowire-marked constructors: " + candidates +
@@ -325,10 +333,13 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 								requiredConstructor = candidate;
 							}
 							candidates.add(candidate);
-						} else if (candidate.getParameterCount() == 0) {
+						} else if (candidate.getParameterCount() == 0) { // 处理未被 @Autowired 修饰的构造方法
+							// 根据下面代码可知，如果类中只有一个无参构造方法，determineCandidateConstructors 方法只会返回一个空数组
 							defaultConstructor = candidate;
 						}
 					}
+
+					// 如果该分支成立，说明整个类中存在被 @Autowired修饰的构造方法。
 					if (!candidates.isEmpty()) {
 						// Add default constructor to list of optional constructors, as fallback.
 						if (requiredConstructor == null) {
@@ -343,6 +354,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 						}
 						candidateConstructors = candidates.toArray(new Constructor<?>[0]);
 					} else if (rawCandidates.length == 1 && rawCandidates[0].getParameterCount() > 0) {
+						// 如果类中只有一个带参的构造方法，则determineCandidateConstructors方法直接将该构造方法返回。
 						candidateConstructors = new Constructor<?>[]{rawCandidates[0]};
 					} else if (nonSyntheticConstructors == 2 && primaryConstructor != null &&
 							defaultConstructor != null && !primaryConstructor.equals(defaultConstructor)) {
@@ -350,12 +362,15 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 					} else if (nonSyntheticConstructors == 1 && primaryConstructor != null) {
 						candidateConstructors = new Constructor<?>[]{primaryConstructor};
 					} else {
+						// 结合上面代码可知，如果类中只有一个无参构造方法，determineCandidateConstructors 方法只会返回一个空数组
 						candidateConstructors = new Constructor<?>[0];
 					}
+
 					this.candidateConstructorsCache.put(beanClass, candidateConstructors);
 				}
 			}
 		}
+
 		return (candidateConstructors.length > 0 ? candidateConstructors : null);
 	}
 
