@@ -126,12 +126,14 @@ class ConstructorResolver {
 		ArgumentsHolder argsHolderToUse = null;
 		Object[] argsToUse = null;
 
+		// explicitArgs 存放的是通过getBean()方法指定的构造方法参数值
 		if (explicitArgs != null) {
 			argsToUse = explicitArgs;
 		} else {
 			Object[] argsToResolve = null;
 			synchronized (mbd.constructorArgumentLock) {
 				constructorToUse = (Constructor<?>) mbd.resolvedConstructorOrFactoryMethod;
+
 				if (constructorToUse != null && mbd.constructorArgumentsResolved) {
 					// Found a cached constructor...
 					argsToUse = mbd.resolvedConstructorArguments;
@@ -140,6 +142,8 @@ class ConstructorResolver {
 					}
 				}
 			}
+
+			// 如果存在构造方法参数值，则对参数值进行类型转化
 			if (argsToResolve != null) {
 				argsToUse = resolvePreparedArguments(beanName, mbd, bw, constructorToUse, argsToResolve, true);
 			}
@@ -188,6 +192,7 @@ class ConstructorResolver {
 			}
 
 			AutowireUtils.sortConstructors(candidates);
+
 			int minTypeDiffWeight = Integer.MAX_VALUE;
 			Set<Constructor<?>> ambiguousConstructors = null;
 			LinkedList<UnsatisfiedDependencyException> causes = null;

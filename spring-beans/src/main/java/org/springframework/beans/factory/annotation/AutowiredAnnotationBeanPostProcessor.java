@@ -277,6 +277,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 				if (candidateConstructors == null) {
 					Constructor<?>[] rawCandidates;
 					try {
+						// 获取beanClass中所有声明的构造方法
 						rawCandidates = beanClass.getDeclaredConstructors();
 					} catch (Throwable ex) {
 						throw new BeanCreationException(beanName,
@@ -287,6 +288,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 					List<Constructor<?>> candidates = new ArrayList<>(rawCandidates.length);
 					Constructor<?> requiredConstructor = null;
 					Constructor<?> defaultConstructor = null;
+					// Java 项目中可以认为primaryConstructor一直为空，该方法仅针对Kotlin语言环境
 					Constructor<?> primaryConstructor = BeanUtils.findPrimaryConstructor(beanClass);
 					int nonSyntheticConstructors = 0;
 					for (Constructor<?> candidate : rawCandidates) {
@@ -298,13 +300,12 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 
 						// 寻找加了 @Autowired 注解的构造方法
 						AnnotationAttributes ann = findAutowiredAnnotation(candidate);
-
-						// 处理未被 @Autowired 修饰的构造方法
 						if (ann == null) {
+							// 获取 beanClass 的父类信息（有父类的情况下）
 							Class<?> userClass = ClassUtils.getUserClass(beanClass);
 							if (userClass != beanClass) {
 								try {
-									// 判断 beanClass 的子类是否存在被 @Autowired 修饰的构造方法
+									// 判断 beanClass 的父类是否存在被 @Autowired 修饰的构造方法
 									Constructor<?> superCtor = userClass.getDeclaredConstructor(candidate.getParameterTypes());
 									ann = findAutowiredAnnotation(superCtor);
 								} catch (NoSuchMethodException ex) {
@@ -321,6 +322,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 												". Found constructor with 'required' Autowired annotation already: " +
 												requiredConstructor);
 							}
+							// 返回true的情况，@Autowired 注解没有指定 required 属性或指定了required属性且值为true
 							boolean required = determineRequiredStatus(ann);
 							if (required) {
 								// 一个类的所有构造方法中，只能有一个构造方法被 @Autowired(require = true) 修饰
