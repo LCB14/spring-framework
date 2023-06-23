@@ -133,11 +133,18 @@ class ConstructorResolver {
 			Object[] argsToResolve = null;
 			synchronized (mbd.constructorArgumentLock) {
 				constructorToUse = (Constructor<?>) mbd.resolvedConstructorOrFactoryMethod;
-
 				if (constructorToUse != null && mbd.constructorArgumentsResolved) {
 					// Found a cached constructor...
 					argsToUse = mbd.resolvedConstructorArguments;
 					if (argsToUse == null) {
+						/**
+						 * preparedConstructorArguments 属性的初始化方式如下：
+						 * BeanDefinition beanDefinition = applicationContext.getBeanDefinition("beanName");
+						 * ConstructorArgumentValues constructorArgumentValues = new ConstructorArgumentValues();
+						 * constructorArgumentValues.addIndexedArgumentValue(0, "arg1");
+						 * constructorArgumentValues.addGenericArgumentValue("arg2");
+						 * beanDefinition.setPreparedConstructorArguments(constructorArgumentValues);
+						 */
 						argsToResolve = mbd.preparedConstructorArguments;
 					}
 				}
@@ -155,8 +162,7 @@ class ConstructorResolver {
 			if (candidates == null) {
 				Class<?> beanClass = mbd.getBeanClass();
 				try {
-					candidates = (mbd.isNonPublicAccessAllowed() ?
-							beanClass.getDeclaredConstructors() : beanClass.getConstructors());
+					candidates = (mbd.isNonPublicAccessAllowed() ? beanClass.getDeclaredConstructors() : beanClass.getConstructors());
 				} catch (Throwable ex) {
 					throw new BeanCreationException(mbd.getResourceDescription(), beanName,
 							"Resolution of declared constructors on bean Class [" + beanClass.getName() +
@@ -164,6 +170,7 @@ class ConstructorResolver {
 				}
 			}
 
+			// 如果只有一个候选构造方法，并且没有指定所要使用的构造方法参数值，并且该构造方法是无参的，那就直接用这个无参构造方法进行实例化了
 			if (candidates.length == 1 && explicitArgs == null && !mbd.hasConstructorArgumentValues()) {
 				Constructor<?> uniqueCandidate = candidates[0];
 				if (uniqueCandidate.getParameterCount() == 0) {
@@ -182,6 +189,7 @@ class ConstructorResolver {
 					mbd.getResolvedAutowireMode() == AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR);
 			ConstructorArgumentValues resolvedValues = null;
 
+			// minNrOfArgs 表示实例化beanClass，将要使用的构造方法最少需要几个参数。
 			int minNrOfArgs;
 			if (explicitArgs != null) {
 				minNrOfArgs = explicitArgs.length;
@@ -191,6 +199,7 @@ class ConstructorResolver {
 				minNrOfArgs = resolveConstructorArguments(beanName, mbd, bw, cargs, resolvedValues);
 			}
 
+			// 对候选构造方法进行排序，public的方法排在最前面，都是public的情况下参数个数越多越靠前
 			AutowireUtils.sortConstructors(candidates);
 
 			int minTypeDiffWeight = Integer.MAX_VALUE;
@@ -771,8 +780,7 @@ class ConstructorResolver {
 
 		TypeConverter customConverter = this.beanFactory.getCustomTypeConverter();
 		TypeConverter converter = (customConverter != null ? customConverter : bw);
-		BeanDefinitionValueResolver valueResolver =
-				new BeanDefinitionValueResolver(this.beanFactory, beanName, mbd, converter);
+		BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this.beanFactory, beanName, mbd, converter);
 		Class<?>[] paramTypes = executable.getParameterTypes();
 
 		Object[] resolvedArgs = new Object[argsToResolve.length];
@@ -787,6 +795,7 @@ class ConstructorResolver {
 			} else if (argValue instanceof String) {
 				argValue = this.beanFactory.evaluateBeanDefinitionString((String) argValue, mbd);
 			}
+
 			Class<?> paramType = paramTypes[argIndex];
 			try {
 				resolvedArgs[argIndex] = converter.convertIfNecessary(argValue, paramType, methodParam);

@@ -1170,6 +1170,17 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					"Bean class isn't public, and non-public access not allowed: " + beanClass.getName());
 		}
 
+		/**
+		 * spring 为推断构造方法提供的一种机制，存在的时候会调用Supplier重写的get方法去作为构造方法。
+		 *
+		 * 例如：BeanDefinition中添加了Supplier，则调用Supplier重写的get方法来得到 beanClass 对象。
+		 * beanDefinition.setInstanceSupplier(new Supplier<Object>() {
+		 *        @Override
+		 *    public Object get() {
+		 * 		new Object();
+		 *    }
+		 * });
+		 */
 		Supplier<?> instanceSupplier = mbd.getInstanceSupplier();
 		if (instanceSupplier != null) {
 			return obtainFromSupplier(instanceSupplier, beanName);
@@ -1212,6 +1223,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		 * 5、如果beanClass既有无参构造方法又有有参构造方法，则返回null；
 		 */
 		Constructor<?>[] ctors = determineConstructorsFromBeanPostProcessors(beanClass, beanName);
+
+		/**
+		 * 1、如果推断出来了构造方法，则需要给构造方法赋值，也就是给构造方法参数赋值，也就是构造方法注入；
+		 * 2、如果没有推断出来构造方法，但是 autowireMode 为 AUTOWIRE_CONSTRUCTOR，则也可能需要给构造方法赋值，因为不确定是用无参的还是有参的构造方法；
+		 * 3、如果通过BeanDefinition指定了构造方法参数值，那肯定就是要进行构造方法注入了；
+		 * 4、如果调用getBean的时候传入了构造方法参数值，那肯定就是要进行构造方法注入了；
+		 */
 		if (ctors != null || mbd.getResolvedAutowireMode() == AUTOWIRE_CONSTRUCTOR ||
 				mbd.hasConstructorArgumentValues() || !ObjectUtils.isEmpty(args)) {
 			// autowireConstructor 方法进行真正的构造方法推断。
