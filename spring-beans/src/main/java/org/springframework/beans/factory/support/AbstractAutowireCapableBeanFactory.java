@@ -584,7 +584,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		synchronized (mbd.postProcessingLock) {
 			if (!mbd.postProcessed) {
 				try {
-					// Spring 第三次调用bean的后置处理器  -- third
+					// Spring 第三次调用bean的后置处理器  -- third （寻找beanClass后期需要注入的属性和方法）
 					applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
 				} catch (Throwable ex) {
 					throw new BeanCreationException(mbd.getResourceDescription(), beanName,
