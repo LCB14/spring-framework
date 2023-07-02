@@ -1171,11 +1171,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		/**
-		 * spring 为推断构造方法提供的一种机制，存在的时候会调用Supplier重写的get方法去作为构造方法。
+		 * spring 为推断构造方法提供的一种机制，存在 Supplier 对象的时候会调用Supplier重写的get方法去作为构造方法。
 		 *
 		 * 例如：BeanDefinition中添加了Supplier，则调用Supplier重写的get方法来得到 beanClass 对象。
 		 * beanDefinition.setInstanceSupplier(new Supplier<Object>() {
-		 *        @Override
+		 *    @Override
 		 *    public Object get() {
 		 * 		new Object();
 		 *    }
@@ -1195,8 +1195,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		boolean autowireNecessary = false;
 		if (args == null) {
 			synchronized (mbd.constructorArgumentLock) {
+				// 缓存当前的BeanDefinition使用的是那个构造方法，method对象
 				if (mbd.resolvedConstructorOrFactoryMethod != null) {
+					// 标志可以用缓存
 					resolved = true;
+					/**
+					 * autowireNecessary 表示有没有必要要进行注入，比如当前BeanDefinition用的是无参构造方法，
+					 * 那么autowireNecessary为false，否则为true，表示需要给构造方法参数注入值。
+					 */
 					autowireNecessary = mbd.constructorArgumentsResolved;
 				}
 			}
@@ -1212,7 +1218,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Candidate constructors for autowiring?
 		// Spring 第二次调用bean的后置处理器（推断构造方法） -- second
 		/**
-		 * 寻找候选构造方法
+		 * 寻找候选构造方法（拓展点之一，自己可以实现寻找构造方法策略）
 		 * @see AutowiredAnnotationBeanPostProcessor#determineCandidateConstructors(Class, String)
 		 *
 		 * 寻找逻辑：
@@ -1344,6 +1350,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			} else {
 				beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, parent);
 			}
+
 			BeanWrapper bw = new BeanWrapperImpl(beanInstance);
 			initBeanWrapper(bw);
 			return bw;
