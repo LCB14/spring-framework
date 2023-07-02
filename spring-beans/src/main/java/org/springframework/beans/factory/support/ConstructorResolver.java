@@ -220,6 +220,10 @@ class ConstructorResolver {
 				 *         this.arg2 = arg2;
 				 *     }
 				 * }
+				 *
+				 * 3、通过实现beanFactory后置处理器，获取相关的BeanDefinition，然后通过调用BeanDefinition的
+				 * getConstructorArgumentValues方法拿到constructorArgumentValues属性，再通过该属性的addXXX
+				 * 相关的方法进行构造方法参数添加。
 				 */
 				ConstructorArgumentValues cargs = mbd.getConstructorArgumentValues();
 				resolvedValues = new ConstructorArgumentValues();

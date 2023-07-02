@@ -1224,7 +1224,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		 * 寻找逻辑：
 		 * 1、如果beanClass存在一个被 @Autowired 注解修饰的构造方法，则返回该构造方法；
 		 * 2、如果beanClass存在多个个被 @Autowired(required=false) 注解修饰的构造方法，则返回所有这些被修饰的构造方法以及无参构造方法；
-		 * 3、如果beanClass只有一个有参构造方法，则仅仅返回这个无参构造方法；
+		 * 3、如果beanClass只有一个有参构造方法，则仅仅返回这个有参构造方法；
 		 * 4、如果beanClass只有一个无参构造方法，则返回null；
 		 * 5、如果beanClass既有无参构造方法又有有参构造方法，则返回null；
 		 */
