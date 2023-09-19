@@ -18,8 +18,8 @@ public class ImportBeanDefinitionImpl implements ImportBeanDefinitionRegistrar {
 		// 可以利用 registry 向容器注册 BeanDefinition
 
 		// 构建 BeanDefinition 实例
-		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(MyFactoryBean.class);
-		BeanDefinition beanDefinition = builder.getBeanDefinition();
+//		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(MyFactoryBean.class);
+//		BeanDefinition beanDefinition = builder.getBeanDefinition();
 
 		/**
 		 * 类的全限定名如何获取?
@@ -28,7 +28,7 @@ public class ImportBeanDefinitionImpl implements ImportBeanDefinitionRegistrar {
 		 * beanName 如何获取？
 		 * 扫描指定包下的接口或类，通过截取全限定名获取。
 		 */
-		beanDefinition.getConstructorArgumentValues().addGenericArgumentValue("类的全限定名");
-		registry.registerBeanDefinition("beanName", beanDefinition);
+//		beanDefinition.getConstructorArgumentValues().addGenericArgumentValue("类的全限定名");
+//		registry.registerBeanDefinition("beanName", beanDefinition);
 	}
 }
