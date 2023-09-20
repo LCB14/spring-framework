@@ -349,6 +349,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				if (mbd.isSingleton()) {
 					sharedInstance = getSingleton(beanName, () -> {
 						try {
+							/**
+							 * @see AbstractAutowireCapableBeanFactory#createBean(String, RootBeanDefinition, Object[])
+							 */
 							return createBean(beanName, mbd, args);
 						} catch (BeansException ex) {
 							// Explicitly remove instance from singleton cache: It might have been put there

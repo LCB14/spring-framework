@@ -446,6 +446,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		Object result = existingBean;
 		for (BeanPostProcessor processor : getBeanPostProcessors()) {
+			/**
+			 * AOP 实现逻辑参见：
+			 * @see org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator#postProcessAfterInitialization(Object, String)
+			 */
 			Object current = processor.postProcessAfterInitialization(result, beanName);
 			if (current == null) {
 				return result;
@@ -614,7 +618,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			// Spring 在此处完成属性填充（自动注入）
 			populateBean(beanName, mbd, instanceWrapper);
 
-			// 主要执行各种生命周期回调方法以及AOP
+			// 主要执行各种生命周期回调方法以及AOP(留意此处)
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		} catch (Throwable ex) {
 			if (ex instanceof BeanCreationException && beanName.equals(((BeanCreationException) ex).getBeanName())) {
@@ -1216,8 +1220,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		// Candidate constructors for autowiring?
-		// Spring 第二次调用bean的后置处理器（推断构造方法） -- second
 		/**
+		 * Spring 第二次调用bean的后置处理器（推断构造方法） -- second
+		 *
 		 * 寻找候选构造方法（拓展点之一，自己可以实现寻找构造方法策略）
 		 * @see AutowiredAnnotationBeanPostProcessor#determineCandidateConstructors(Class, String)
 		 *
