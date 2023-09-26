@@ -516,6 +516,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// Prepare method overrides.
 		try {
+			// 准备方法覆写，它来自于 bean 定义中的 <lookup-method /> 和 <replaced-method />
 			mbdToUse.prepareMethodOverrides();
 		} catch (BeanDefinitionValidationException ex) {
 			throw new BeanDefinitionStoreException(mbdToUse.getResourceDescription(),
@@ -535,6 +536,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		try {
+			// 真正实例化 Bean 操作 -- 重点
 			Object beanInstance = doCreateBean(beanName, mbdToUse, args);
 			if (logger.isTraceEnabled()) {
 				logger.trace("Finished creating instance of bean '" + beanName + "'");
@@ -574,7 +576,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
 		}
 		if (instanceWrapper == null) {
-			// Spring 利用BeanDefinition实例化bean
+			// Spring 利用BeanDefinition实例化bean  -- 重点
 			instanceWrapper = createBeanInstance(beanName, mbd, args);
 		}
 
@@ -615,10 +617,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Initialize the bean instance.
 		Object exposedObject = bean;
 		try {
-			// Spring 在此处完成属性填充（自动注入）
+			// Spring 在此处完成属性填充（自动注入） -- 重点
 			populateBean(beanName, mbd, instanceWrapper);
 
-			// 主要执行各种生命周期回调方法以及AOP(留意此处)
+			// 主要执行各种生命周期回调方法以及AOP -- 重点
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		} catch (Throwable ex) {
 			if (ex instanceof BeanCreationException && beanName.equals(((BeanCreationException) ex).getBeanName())) {
