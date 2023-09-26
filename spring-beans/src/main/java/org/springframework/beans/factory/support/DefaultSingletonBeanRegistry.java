@@ -72,16 +72,19 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 
 	/**
 	 * Cache of singleton objects: bean name to bean instance.
+	 * 一级缓存 -- 缓存完成初始化的 Bean 实例
 	 */
 	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
 	/**
 	 * Cache of singleton factories: bean name to ObjectFactory.
+	 * 三级缓存 -- 缓存创建目标Bean对应的lambda表达式
 	 */
 	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
 	/**
 	 * Cache of early singleton objects: bean name to bean instance.
+	 * 二级缓存 -- 缓存完成实例化但尚未完成初始化 Bean 的实例
 	 */
 	private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
 
@@ -201,20 +204,22 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	@Nullable
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+		// 查询一级缓存，获取目标 beanName 对应的 Bean 实例。
 		Object singletonObject = this.singletonObjects.get(beanName);
-
-		// isSingletonCurrentlyInCreationa方法判断未能从单例池中获取对应的bean的beanName当前是否处于创建中
+		// isSingletonCurrentlyInCreation 方法判断未能从单例池中获取对应的bean的beanName当前是否处于创建中。
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			synchronized (this.singletonObjects) {
+				// 查询二级缓存，获取创建目标 beanName 对应的已完成实例化但尚未完成初始化的 Bean 实例。
 				singletonObject = this.earlySingletonObjects.get(beanName);
 				if (singletonObject == null && allowEarlyReference) {
+					// 查询三级缓存，获取创建目标 beanName 对应 Bean 实例的 lambda 表达式
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 					if (singletonFactory != null) {
-						/**
-						 * @see AbstractAutowireCapableBeanFactory#getEarlyBeanReference(String, RootBeanDefinition, Object)
-						 */
+						// 利用三级缓存中缓存的 lambda 表达式获取目标 Bean 对应的"半成品"实例（已实例化但尚未初始化）。
 						singletonObject = singletonFactory.getObject();
+						// 将利用三级缓存中缓存的 lambda 表达式获取的目标 Bean 对应的"半成品"实例缓存到二级缓存中。
 						this.earlySingletonObjects.put(beanName, singletonObject);
+						// 从三级缓存中移除已完成实例化（尚未初始化）的beanName对应的值。
 						this.singletonFactories.remove(beanName);
 					}
 				}
