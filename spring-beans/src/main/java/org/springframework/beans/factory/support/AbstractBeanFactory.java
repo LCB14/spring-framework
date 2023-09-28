@@ -240,6 +240,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		Object bean;
 
 		// Eagerly check singleton cache for manually registered singletons.
+		/**
+		 * @see DefaultSingletonBeanRegistry#getSingleton(String, boolean)
+		 */
 		Object sharedInstance = getSingleton(beanName);
 		if (sharedInstance != null && args == null) {
 			if (logger.isTraceEnabled()) {
@@ -251,7 +254,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				}
 			}
 
-			// 如果是普通 Bean 的话，直接返回 sharedInstance，如果是 FactoryBean 的话，根据name来确定是否调用getObject方法返回它创建的那个实例对象
+			// 如果是普通 Bean 的话直接返回 sharedInstance，如果是 FactoryBean 的话根据 name 来确定是否调用 getObject 方法返回它创建的那个实例对象。
 			bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
 		} else {
 			// Fail if we're already creating this bean instance:
