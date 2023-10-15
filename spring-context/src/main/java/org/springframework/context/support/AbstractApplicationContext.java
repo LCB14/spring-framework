@@ -536,15 +536,21 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		// 防止业务系统在多个位置调用refresh()方法刷新容器，引发并发问题。
 		synchronized (this.startupShutdownMonitor) {
 			// Prepare this context for refreshing.
-			// 刷新容器前的准备工作，记录下容器的启动时间、标记容器为“已启动”状态、处理配置文件中的占位符
+			/**
+			 * 完成容器刷新前的准备工作
+			 * 1、设置容器的启动时间；
+			 * 2、设置容器的活跃状态为true，关闭状态为false；
+			 * 3、获取Environment对象，并加载当前系统的属性值到Environment对象中；
+			 * 4、准备监听器和事件的集合对象，默认为空的集合；
+			 */
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
-			// 根据配置文件，解析BeanDefinition并向容器中注册
+			// 创建beanFactory对象，根据配置文件，解析BeanDefinition并向容器中注册
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
-			// 设置 BeanFactory 的类加载器，添加几个 BeanPostProcessor，"手动"注册几个特殊的 bean
+			// 初始化beanFactory，并添加相关的 BeanPostProcessor，"手动"注册几个特殊的 bean
 			prepareBeanFactory(beanFactory);
 
 			try {
@@ -692,7 +698,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		 */
 		beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
 
-		// 如果某个 bean 依赖于以下几个接口的实现类，在自动装配的时候忽略它们，Spring 会通过其他方式来处理这些依赖。
+		// 如果某个 bean 依赖于以下几个接口的实现类，在自动装配的时候忽略它们，Spring 会通过其它方式来处理这些依赖。
 		beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
 		beanFactory.ignoreDependencyInterface(EmbeddedValueResolverAware.class);
 		beanFactory.ignoreDependencyInterface(ResourceLoaderAware.class);
@@ -702,7 +708,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// BeanFactory interface not registered as resolvable type in a plain factory.
 		// MessageSource registered (and found for autowiring) as a bean.
-		// 下面几行为Spring中特殊的几个类型，如果有 bean 依赖了以下几个类型实例，会注入下边提前注册的值。
+		// 下面几行为Spring中特殊的几个类型，如果有 bean 依赖了以下几个类型实例，会提前注入下边设定的值。
 		beanFactory.registerResolvableDependency(BeanFactory.class, beanFactory);
 		beanFactory.registerResolvableDependency(ResourceLoader.class, this);
 		beanFactory.registerResolvableDependency(ApplicationEventPublisher.class, this);
