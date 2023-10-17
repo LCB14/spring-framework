@@ -616,7 +616,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Initialize the bean instance.
 		Object exposedObject = bean;
 		try {
-			// Spring 在此处完成属性填充（自动注入） -- 重点
+			/**
+			 * Spring 在此处完成属性填充（自动注入） -- 重点
+			 *
+			 * Spring 是如何保证当发生循环依赖时这里将要被填充属性的对象和预先因为循环依赖提前注入到其它对象中的'半成品'是同一个对象引用呢？
+			 *
+			 */
 			populateBean(beanName, mbd, instanceWrapper);
 
 			// 主要执行各种生命周期回调方法以及AOP -- 重点
@@ -1429,6 +1434,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Give any InstantiationAwareBeanPostProcessors the opportunity to modify the
 		// state of the bean before properties are set. This can be used, for example,
 		// to support styles of field injection.
+		// Spring 提供bean对象属性填充之前想要对实例化的对象进行操作的拓展点。
 		if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof InstantiationAwareBeanPostProcessor) {

@@ -2,6 +2,8 @@ package com.lcb.spring.test;
 
 import com.lcb.spring.appconfig.AppConfig;
 import com.lcb.spring.aspect.Inject;
+import com.lcb.spring.bean.School;
+import com.lcb.spring.bean.Student;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
@@ -16,11 +18,11 @@ public class Test {
 				new AnnotationConfigApplicationContext(AppConfig.class);
 
 
-//		Student student = annotationConfigApplicationContext.getBean(Student.class);
-//		System.out.println(student);
-//
-//		School school = (School) annotationConfigApplicationContext.getBean("school");
-//		System.out.println(school);
+		Student student = annotationConfigApplicationContext.getBean(Student.class);
+		System.out.println(student);
+
+		School school = (School) annotationConfigApplicationContext.getBean("school");
+		System.out.println(school);
 
 //		TestInject bean = annotationConfigApplicationContext.getBean(TestInject.class);
 //		bean.test();

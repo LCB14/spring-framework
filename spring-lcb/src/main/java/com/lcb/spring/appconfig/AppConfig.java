@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @Date 2019-06-22 16:01
  */
 @Configuration
-@ComponentScan("com.lcb.spring")
+@ComponentScan("com.lcb")
 //@EnableAspectJAutoProxy
 public class AppConfig {
 
