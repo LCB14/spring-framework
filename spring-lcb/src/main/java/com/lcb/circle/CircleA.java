@@ -12,11 +12,4 @@ import javax.annotation.Resource;
 public class CircleA {
 	@Resource
 	private CircleB circleB;
-
-	@Override
-	public String toString() {
-		return "CircleA{" +
-				"circleB=" + circleB +
-				'}';
-	}
 }
