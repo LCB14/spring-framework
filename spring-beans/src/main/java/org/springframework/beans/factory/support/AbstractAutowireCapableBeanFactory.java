@@ -620,7 +620,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			 * Spring 在此处完成属性填充（自动注入） -- 重点
 			 *
 			 * Spring 是如何保证当发生循环依赖时这里将要被填充属性的对象和预先因为循环依赖提前注入到其它对象中的'半成品'是同一个对象引用呢？
-			 *
+			 * 因为 Spring 是不关心生成的代理对象属性是否有初始化，代理时传入的半成品对象才是代理对象真正干活的，只要后面半成品对象完成属性初始化
+			 * 就不会影响代理对象正常工作。
 			 */
 			populateBean(beanName, mbd, instanceWrapper);
 
@@ -635,9 +636,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		if (earlySingletonExposure) {
+			// 如果beanName对应的bean存在循环依赖，则此处取出来的beanName实例一般都是从二级缓存中获取的。（如果beanName还存在AOP操作，这里返回的就是代理对象。）
 			Object earlySingletonReference = getSingleton(beanName, false);
 			if (earlySingletonReference != null) {
-				// 如果条件成立则说明目标 bean 实例并未被动态代理。
+				/**
+				 * exposedObject 是经过了 AbstractAutoProxyCreator 的 postProcessAfterInitialization处理过后的bean，
+				 * 但是在处理过程中发现当前beanName对应的bean已经被earlyProxyReferences缓存，所以并没有进行AOP处理，而是直接跳过。
+				 */
 				if (exposedObject == bean) {
 					exposedObject = earlySingletonReference;
 				} else if (!this.allowRawInjectionDespiteWrapping && hasDependentBean(beanName)) {
