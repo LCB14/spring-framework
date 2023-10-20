@@ -624,7 +624,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			 */
 			populateBean(beanName, mbd, instanceWrapper);
 
-			// 主要执行各种生命周期回调方法以及AOP -- 重点
+			// 主要执行各种生命周期回调方法以及AOP -- 重点（代理对象是在该方法调用后产生的即属性填充完成后，Spring才会根据条件来决定是否产生代理对象。）
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		} catch (Throwable ex) {
 			if (ex instanceof BeanCreationException && beanName.equals(((BeanCreationException) ex).getBeanName())) {
@@ -663,6 +663,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// Register bean as disposable.
 		try {
+			// 如果实现了 DisposableBean 接口，这里会进行注册，最后在销毁的时候调用相应的 destory 方法。
 			registerDisposableBeanIfNecessary(beanName, bean, mbd);
 		} catch (BeanDefinitionValidationException ex) {
 			throw new BeanCreationException(
@@ -974,6 +975,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof SmartInstantiationAwareBeanPostProcessor) {
 					SmartInstantiationAwareBeanPostProcessor ibp = (SmartInstantiationAwareBeanPostProcessor) bp;
+					/**
+					 * @see org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator#getEarlyBeanReference(Object, String)
+					 */
 					exposedObject = ibp.getEarlyBeanReference(exposedObject, beanName);
 				}
 			}
