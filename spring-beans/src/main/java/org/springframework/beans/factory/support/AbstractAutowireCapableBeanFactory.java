@@ -609,7 +609,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				logger.trace("Eagerly caching bean '" + beanName +
 						"' to allow for resolving potential circular references");
 			}
-			// Spring 在getEarlyBeanReference方法中，第四次调用bean的后置处理器，判断是否需要AOP  -- four
+			/**
+			 * Spring 在getEarlyBeanReference方法中，第四次调用bean的后置处理器，判断是否需要AOP  -- four
+			 *
+			 * Spring 为什么要使用三级缓存来实现二级缓存就能解决的循环依赖问题？
+			 * Spring 需要三级缓存的目的是为了在没有循环依赖的情况下，延迟代理对象的创建，使 Bean 的创建符合 Spring 的设计原则。
+			 * 所以Spring在实例化bean后但尚未初始化之前往三级缓存中添加的是一个对bean实例包装的对象ObjectFactory，而不是bean代理对象。
+			 */
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
 
