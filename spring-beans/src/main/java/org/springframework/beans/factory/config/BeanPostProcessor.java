@@ -49,6 +49,10 @@ public interface BeanPostProcessor {
 	 * The returned bean instance may be a wrapper around the original.
 	 * <p>The default implementation returns the given {@code bean} as-is.
 	 *
+	 * 该方法是在初始化 Bean 之前调用的，这里的初始化并不是指实例化，而是指这个 Bean 中定义的初始化回调方法，
+	 * 比如：InitializingBean 接口中的 afterPropertiesSet() 方法、@PostConstruct 修饰的方法。
+	 * postProcessBeforeInitialization() 方法是在这些初始化回调方法执行之前执行。
+	 *
 	 * @param bean     the new bean instance
 	 * @param beanName the name of the bean
 	 * @return the bean instance to use, either the original or a wrapped one;
