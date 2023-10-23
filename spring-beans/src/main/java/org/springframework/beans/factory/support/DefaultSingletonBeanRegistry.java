@@ -211,13 +211,14 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * <p>Checks already instantiated singletons and also allows for an early
 	 * reference to a currently created singleton (resolving a circular reference).
 	 * <p>
-	 * Spring 解决循环依赖的问题采用了三级缓存策略，为何二级缓存就能解决却不使用呢？
+	 * Spring 解决循环依赖的问题采用了三级缓存策略而非二级缓存但明明二级缓存就能解决为何不使用呢？
 	 * 说法1：延迟动态代理逻辑的执行；
-	 * 如果一个bean真的需要被代理，初始化之前被代理和初始化之后被代理差别不是很大吧，况且存在循环依赖时代理还不是在bean实例化完成之前被代理了。
+	 * 如果一个bean真的需要被代理，初始化之前被代理和初始化之后被代理差别不是很大吧，况且存在循环依赖时，
+	 * 代理还不是在bean实例化完成之前被代理了和传统的流程即实例化之后代理相违背了。
 	 * <p>
 	 * 说法2：二级缓存只能解决代理对象之间不存在动态代理的情况；
 	 * 这个说法完全是错误的，如果想要二级缓存也能实现，就是在实例化bean之后往三级缓存添加ObjectFactory对象的位置，直接往二级缓存中添加刚完成
-	 * 实例化尚未完成初始化对象的动态代理对象（如果存在动态代理）。
+	 * 实例化尚未完成初始化对象的动态代理对象。
 	 * <p>
 	 * 说法3：Spring 这样设计的目的是为了解耦Bean的实例化过程和AOP过程，AOP只是Spring的一个拓展点实现；
 	 * （实例化的bean需要被代理的场景有：AOP、事务（@Transactional）、异步线程池（@Async）等）
