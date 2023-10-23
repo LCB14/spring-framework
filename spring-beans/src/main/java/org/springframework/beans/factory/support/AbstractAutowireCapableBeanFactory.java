@@ -525,7 +525,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		try {
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
-			// Spring 首次调用bean的后置处理器 -- first
+			/**
+			 * Spring 首次调用bean的后置处理器 -- first
+			 * 解析将要实例化的Bean是否存在相匹配的切面信息
+			 */
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 			if (bean != null) {
 				return bean;
