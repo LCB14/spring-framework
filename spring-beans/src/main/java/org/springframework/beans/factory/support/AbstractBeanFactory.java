@@ -130,6 +130,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 	/**
 	 * Indicates whether any InstantiationAwareBeanPostProcessors have been registered.
+	 * 初始化时机参考：
+	 * @see AbstractBeanFactory#addBeanPostProcessor(BeanPostProcessor)
 	 */
 	private volatile boolean hasInstantiationAwareBeanPostProcessors;
 

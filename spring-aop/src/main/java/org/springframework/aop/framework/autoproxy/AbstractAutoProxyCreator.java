@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.Advisor;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.TargetSource;
+import org.springframework.aop.aspectj.autoproxy.AspectJAwareAdvisorAutoProxyCreator;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.framework.ProxyProcessorSupport;
@@ -266,7 +267,11 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 			}
 
 			/**
-			 * 判断 beanClass 是否能够被代理。
+			 * 判断 beanClass 是否能够被代理，不应该代理的类分为两种情况:
+			 * 1、用于实现AOP的Spring基础类，此种情况在isInfrastructureClass方法中完成检测。
+			 * 2、子类定义的应该跳过的类，默认AbstractAutoProxyCreator的实现直接返回false，即都不应该跳过。
+			 *
+			 * @see AspectJAwareAdvisorAutoProxyCreator#shouldSkip(Class, String)
 			 */
 			if (isInfrastructureClass(beanClass) || shouldSkip(beanClass, beanName)) {
 				this.advisedBeans.put(cacheKey, Boolean.FALSE);
