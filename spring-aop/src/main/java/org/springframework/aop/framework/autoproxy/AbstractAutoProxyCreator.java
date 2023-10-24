@@ -282,6 +282,9 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 			if (StringUtils.hasLength(beanName)) {
 				this.targetSourcedBeans.add(beanName);
 			}
+			/**
+			 * @see org.springframework.aop.framework.autoproxy.AbstractAdvisorAutoProxyCreator#getAdvicesAndAdvisorsForBean(java.lang.Class, java.lang.String, org.springframework.aop.TargetSource)
+			 */
 			Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(beanClass, beanName, targetSource);
 			Object proxy = createProxy(beanClass, beanName, specificInterceptors, targetSource);
 			this.proxyTypes.put(cacheKey, proxy.getClass());
@@ -443,8 +446,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 				if (ts != null) {
 					// Found a matching TargetSource.
 					if (logger.isTraceEnabled()) {
-						logger.trace("TargetSourceCreator [" + tsc +
-								"] found custom TargetSource for bean with name '" + beanName + "'");
+						logger.trace("TargetSourceCreator [" + tsc + "] found custom TargetSource for bean with name '" + beanName + "'");
 					}
 					return ts;
 				}
