@@ -98,20 +98,31 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 						if (!isEligibleBean(beanName)) {
 							continue;
 						}
+
 						// We must be careful not to instantiate beans eagerly as in this case they
 						// would be cached by the Spring container but would not have been weaved.
 						Class<?> beanType = this.beanFactory.getType(beanName);
 						if (beanType == null) {
 							continue;
 						}
+
+						/**
+						 * 1、判断是否是切面（标准之一：是否被@Aspect注解修饰）
+						 * @see AbstractAspectJAdvisorFactory#isAspect(Class)
+						 */
 						if (this.advisorFactory.isAspect(beanType)) {
 							aspectNames.add(beanName);
 							AspectMetadata amd = new AspectMetadata(beanType, beanName);
 							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 								MetadataAwareAspectInstanceFactory factory =
 										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
+								/**
+								 * 2、获取所有切面列表
+								 * @see ReflectiveAspectJAdvisorFactory#getAdvisors(MetadataAwareAspectInstanceFactory)
+								 */
 								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
 								if (this.beanFactory.isSingleton(beanName)) {
+									// 3、缓存切面列表
 									this.advisorsCache.put(beanName, classAdvisors);
 								} else {
 									this.aspectFactoryCache.put(beanName, factory);

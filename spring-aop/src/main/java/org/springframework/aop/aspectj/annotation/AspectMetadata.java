@@ -92,6 +92,7 @@ public class AspectMetadata implements Serializable {
 			}
 			currClass = currClass.getSuperclass();
 		}
+
 		if (ajType == null) {
 			throw new IllegalArgumentException("Class '" + aspectClass.getName() + "' is not an @AspectJ aspect");
 		}
