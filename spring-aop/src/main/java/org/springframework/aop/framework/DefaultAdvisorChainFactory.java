@@ -31,6 +31,7 @@ import org.springframework.aop.IntroductionAwareMethodMatcher;
 import org.springframework.aop.MethodMatcher;
 import org.springframework.aop.PointcutAdvisor;
 import org.springframework.aop.framework.adapter.AdvisorAdapterRegistry;
+import org.springframework.aop.framework.adapter.DefaultAdvisorAdapterRegistry;
 import org.springframework.aop.framework.adapter.GlobalAdvisorAdapterRegistry;
 import org.springframework.lang.Nullable;
 
@@ -75,6 +76,10 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 						match = mm.matches(method, actualClass);
 					}
 					if (match) {
+						/**
+						 * advice -> advisor -> MethodInterceptor
+						 * @see DefaultAdvisorAdapterRegistry#getInterceptors(Advisor)
+						 */
 						MethodInterceptor[] interceptors = registry.getInterceptors(advisor);
 						if (mm.isRuntime()) {
 							// Creating a new object instance in the getInterceptors() method

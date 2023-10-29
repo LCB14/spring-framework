@@ -165,6 +165,11 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 		Object oldProxy = null;
 		boolean setProxyContext = false;
 
+		/**
+		 * this.advised 表示的是 ProxyFactory 对象
+		 * @see org.springframework.aop.framework.ProxyFactory#getProxy()
+		 * @see ProxyCreatorSupport#createAopProxy()
+		 */
 		TargetSource targetSource = this.advised.targetSource;
 		Object target = null;
 
@@ -186,6 +191,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 
 			Object retVal;
 
+			// exposeProxy 属性如果设置为true等于把代理对象暴露到ThreadLocal中，后续可以在被代理对象中通过AopContext.currentProxy()方法拿到代理对象。
 			if (this.advised.exposeProxy) {
 				// Make invocation available if necessary.
 				oldProxy = AopContext.setCurrentProxy(proxy);
@@ -213,6 +219,9 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 				MethodInvocation invocation =
 						new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);
 				// Proceed to the joinpoint through the interceptor chain.
+				/**
+				 * @see ReflectiveMethodInvocation#proceed()
+				 */
 				retVal = invocation.proceed();
 			}
 
