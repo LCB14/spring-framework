@@ -110,6 +110,10 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 	 */
 	protected List<Advisor> findCandidateAdvisors() {
 		Assert.state(this.advisorRetrievalHelper != null, "No BeanFactoryAdvisorRetrievalHelper available");
+		/**
+		 * @see BeanFactoryAdvisorRetrievalHelperAdapter  -- 子类
+		 * @see BeanFactoryAdvisorRetrievalHelper#findAdvisorBeans()  -- 父类
+		 */
 		return this.advisorRetrievalHelper.findAdvisorBeans();
 	}
 

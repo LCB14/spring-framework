@@ -371,6 +371,9 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		 * 1、构建AOP功能的组件Bean是不参与代理处理逻辑的；
 		 * 2、跳过被@Aspect注解修饰的AOP 配置信息的 Bean；
 		 * @see AspectJAwareAdvisorAutoProxyCreator#shouldSkip(Class, String)
+		 *
+		 * 注意：Spring 的事务底层也是通过特定的 Advisor 实现的，因此AOP和事务都有自己对应
+		 * 的AutoProxyCreator(本质就是一个后置处理器)，来识别与自己功能相关的 Advisor 实现。
 		 */
 		if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
 			this.advisedBeans.put(cacheKey, Boolean.FALSE);
