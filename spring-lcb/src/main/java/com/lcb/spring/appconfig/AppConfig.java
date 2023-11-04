@@ -8,6 +8,8 @@ import com.lcb.spring.aspect.InterfaceBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * @author changbao.li
@@ -16,7 +18,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ComponentScan("com.lcb")
-//@EnableAspectJAutoProxy
+@EnableAspectJAutoProxy
+@EnableTransactionManagement
 public class AppConfig {
 
 	@Bean
@@ -41,7 +44,7 @@ public class AppConfig {
 	}
 
 	@Bean
-	public InterfaceBean interfaceBean(){
+	public InterfaceBean interfaceBean() {
 		return new InterfaceBean();
 	}
 }

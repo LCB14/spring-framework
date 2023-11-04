@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class LouzaiAspect {
-    @Pointcut("execution(* com.java.Louzai.everyDay())")
+    @Pointcut("execution(* com.lcb.aop.example.Louzai.everyDay())")
     private void myPointCut() {
     }
 
