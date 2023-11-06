@@ -602,6 +602,10 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	 * @see #setContextConfigLocation
 	 */
 	protected WebApplicationContext initWebApplicationContext() {
+		/**
+		 * rootContext 值的初始化位置
+		 * @see org.springframework.web.context.ContextLoaderListener#contextInitialized(javax.servlet.ServletContextEvent)
+		 */
 		WebApplicationContext rootContext =
 				WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 		WebApplicationContext wac = null;
@@ -702,6 +706,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 							"': custom WebApplicationContext class [" + contextClass.getName() +
 							"] is not of type ConfigurableWebApplicationContext");
 		}
+
 		ConfigurableWebApplicationContext wac =
 				(ConfigurableWebApplicationContext) BeanUtils.instantiateClass(contextClass);
 
@@ -711,6 +716,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		if (configLocation != null) {
 			wac.setConfigLocation(configLocation);
 		}
+
 		configureAndRefreshWebApplicationContext(wac);
 
 		return wac;
