@@ -559,13 +559,22 @@ public class DispatcherServlet extends FrameworkServlet {
 	 */
 	protected void initStrategies(ApplicationContext context) {
 		initMultipartResolver(context);
+
 		initLocaleResolver(context);
+
 		initThemeResolver(context);
+
 		initHandlerMappings(context);
+
 		initHandlerAdapters(context);
+
 		initHandlerExceptionResolvers(context);
+
 		initRequestToViewNameTranslator(context);
+
+		// 初始化视图解析器
 		initViewResolvers(context);
+
 		initFlashMapManager(context);
 	}
 
@@ -780,6 +789,26 @@ public class DispatcherServlet extends FrameworkServlet {
 	private void initViewResolvers(ApplicationContext context) {
 		this.viewResolvers = null;
 
+		/**
+		 * this.detectAllViewResolvers 属性修改可以通过 web.xml 配置。
+		 * <servlet>
+		 *     <servlet-name>springmvc</servlet-name>
+		 *     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		 *     <init-param>
+		 *         <param-name>contextConfigLocation</param-name>
+		 *         <param-value>classpath:spring-servlet.xml</param-value>
+		 *     </init-param>
+		 *     <init-param>
+		 *         <param-name>detectAllViewResolvers</param-name>
+		 *         <param-value>false</param-value>
+		 *     </init-param>
+		 *     <load-on-startup>1</load-on-startup>
+		 * </servlet>
+		 * <servlet-mapping>
+		 *     <servlet-name>springmvc</servlet-name>
+		 *     <url-pattern>/</url-pattern>
+		 * </servlet-mapping>
+		 */
 		if (this.detectAllViewResolvers) {
 			// Find all ViewResolvers in the ApplicationContext, including ancestor contexts.
 			Map<String, ViewResolver> matchingBeans =
@@ -791,6 +820,13 @@ public class DispatcherServlet extends FrameworkServlet {
 			}
 		} else {
 			try {
+				/**
+				 * 自己指定视图解析器参考：
+				 * <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" id="viewResolver">
+				 *     <property name="prefix" value="/WEB-INF/jsp/"/>
+				 *     <property name="suffix" value=".jsp"/>
+				 * </bean>
+				 */
 				ViewResolver vr = context.getBean(VIEW_RESOLVER_BEAN_NAME, ViewResolver.class);
 				this.viewResolvers = Collections.singletonList(vr);
 			} catch (NoSuchBeanDefinitionException ex) {
