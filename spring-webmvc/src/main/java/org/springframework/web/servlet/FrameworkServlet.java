@@ -1058,6 +1058,9 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	 * Process this request, publishing an event regardless of the outcome.
 	 * <p>The actual event handling is performed by the abstract
 	 * {@link #doService} template method.
+	 *
+	 * 方法调用位置参考：
+	 * @see FrameworkServlet#service(HttpServletRequest, HttpServletResponse)
 	 */
 	protected final void processRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -1077,6 +1080,9 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		initContextHolders(request, localeContext, requestAttributes);
 
 		try {
+			/**
+			 * @see DispatcherServlet#doService(HttpServletRequest, HttpServletResponse)
+			 */
 			doService(request, response);
 		} catch (ServletException | IOException ex) {
 			failureCause = ex;
