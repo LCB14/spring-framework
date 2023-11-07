@@ -143,6 +143,10 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
 	public void onStartup(@Nullable Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)
 			throws ServletException {
 
+		/**
+		 * 该种方式启动Spring容器的具体应用参考：
+		 * @see org.springframework.boot.web.servlet.support.SpringBootServletInitializer
+		 */
 		List<WebApplicationInitializer> initializers = new LinkedList<>();
 
 		if (webAppInitializerClasses != null) {
