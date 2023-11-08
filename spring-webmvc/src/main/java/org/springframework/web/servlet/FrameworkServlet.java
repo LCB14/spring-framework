@@ -1105,6 +1105,18 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 				requestAttributes.requestCompleted();
 			}
 			logResult(request, response, failureCause, asyncManager);
+			/**
+			 * 发布 ServletRequestHandledEvent 事件；
+			 * 触发场景：当一个请求执行完毕时，该事件就会被触发。
+			 *
+			 * @Component
+			 * public class ServletRequestHandleListener implements ApplicationListener<ServletRequestHandledEvent> {
+			 *     @Override
+			 *     public void onApplicationEvent(ServletRequestHandledEvent servletRequestHandledEvent) {
+			 *         System.out.println("请求执行完毕-"+servletRequestHandledEvent.getRequestUrl());
+			 *     }
+			 * }
+			 */
 			publishRequestHandledEvent(request, response, startTime, failureCause);
 		}
 	}
