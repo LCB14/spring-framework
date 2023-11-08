@@ -1009,6 +1009,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		request.setAttribute(THEME_RESOLVER_ATTRIBUTE, this.themeResolver);
 		request.setAttribute(THEME_SOURCE_ATTRIBUTE, getThemeSource());
 
+		// FlashMap 在请求重定向传参场景有重要应用，核心原理利用session（会话）
 		if (this.flashMapManager != null) {
 			FlashMap inputFlashMap = this.flashMapManager.retrieveAndUpdate(request, response);
 			if (inputFlashMap != null) {
@@ -1079,27 +1080,41 @@ public class DispatcherServlet extends FrameworkServlet {
 		HandlerExecutionChain mappedHandler = null;
 		boolean multipartRequestParsed = false;
 
+		// 异步请求管理器
 		WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
 
 		try {
+			// ModelAndView 最终渲染返回的对象类型
 			ModelAndView mv = null;
+			// 表示请求处理过程中所抛出的异常，这个异常不包括渲染过程抛出的异常。
 			Exception dispatchException = null;
 
 			try {
+				// 检查是否是文件上传请求，如果是文件上传请求，则会对请求重新进行封装，如果不是文件上传请求，则继续使用原来的请求。
 				processedRequest = checkMultipart(request);
+				// 标记当前请求是否是文件上传请求
 				multipartRequestParsed = (processedRequest != request);
 
 				// Determine handler for the current request.
+				// 请求处理器链包含请求处理器和对应的Interceptor（拦截器）。
 				mappedHandler = getHandler(processedRequest);
+				// 如果没找到对应的请求处理器，则调用 noHandlerFound 方法抛出异常或者给出 404。
 				if (mappedHandler == null) {
 					noHandlerFound(processedRequest, response);
 					return;
 				}
 
 				// Determine handler adapter for the current request.
+				// 根据当前的处理器找到处理器适配器
 				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
 				// Process last-modified header, if supported by the handler.
+				/**
+				 * 处理 GET 和 HEAD 请求头的 Last_Modified 字段.
+				 * 当浏览器第一次发起 GET 或者 HEAD 请求时，请求的响应头中包含一个 Last-Modified 字段，这个字段表示该资源最后一次修改时间，
+				 * 以后浏览器再次发送 GET、HEAD 请求时，都会携带上该字段，服务端收到该字段之后，和资源的最后一次修改时间进行对比，如果资源还没有过期，
+				 * 则直接返回 304 告诉浏览器之前的资源还是可以继续用的，如果资源已经过期，则服务端会返回新的资源以及新的 Last-Modified。
+				 */
 				String method = request.getMethod();
 				boolean isGet = "GET".equals(method);
 				if (isGet || "HEAD".equals(method)) {
@@ -1109,21 +1124,24 @@ public class DispatcherServlet extends FrameworkServlet {
 					}
 				}
 
-				// 调用拦截器的前置处理方法
+				// 调用拦截器的前置处理方法 -- preHandle
 				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
 					return;
 				}
 
 				// Actually invoke the handler.
+				// 真正的调用请求处理方法
 				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
+				// 判断当前请求是否需要异步处理，如果需要，则直接 return 掉
 				if (asyncManager.isConcurrentHandlingStarted()) {
 					return;
 				}
 
+				// 检查当前 mv 是否没有视图，如果没有则给一个默认的视图名。
 				applyDefaultViewName(processedRequest, mv);
 
-				// 调用拦截器的后置处理方法
+				// 调用拦截器的后置处理方法 -- postHandle
 				mappedHandler.applyPostHandle(processedRequest, response, mv);
 			} catch (Exception ex) {
 				dispatchException = ex;
@@ -1133,6 +1151,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				dispatchException = new NestedServletException("Handler dispatch failed", err);
 			}
 
+			// 对执行结果进行处理，包括异常处理、渲染页面以及执行拦截器的 afterCompletion 方法都在这里完成。
 			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
 		} catch (Exception ex) {
 			triggerAfterCompletion(processedRequest, response, mappedHandler, ex);
@@ -1189,6 +1208,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		// Did the handler return a view to render?
 		if (mv != null && !mv.wasCleared()) {
+			// 渲染页面
 			render(mv, request, response);
 			if (errorView) {
 				WebUtils.clearErrorRequestAttributes(request);
