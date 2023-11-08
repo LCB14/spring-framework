@@ -1068,6 +1068,15 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		long startTime = System.currentTimeMillis();
 		Throwable failureCause = null;
 
+		/**
+		 * 在 Spring 中，如果我们需要在 Controller 之外的其他地方使用 request、response 以及 session，
+		 * 其实不用每次都从 Controller 中传递 request、response 以及 session 等对象，我们完全可以直接通过 RequestContextHolder 来获取，
+		 * 像下面这样：
+		 *
+		 * ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+		 * HttpServletRequest request = servletRequestAttributes.getRequest();
+		 * HttpServletResponse response = servletRequestAttributes.getResponse();
+		 */
 		LocaleContext previousLocaleContext = LocaleContextHolder.getLocaleContext();
 		LocaleContext localeContext = buildLocaleContext(request);
 
