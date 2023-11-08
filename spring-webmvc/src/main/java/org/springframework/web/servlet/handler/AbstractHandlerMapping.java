@@ -437,6 +437,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 			logger.debug("Mapped to " + executionChain.getHandler());
 		}
 
+		// 处理跨域请求
 		if (CorsUtils.isCorsRequest(request)) {
 			CorsConfiguration globalConfig = this.corsConfigurationSource.getCorsConfiguration(request);
 			CorsConfiguration handlerConfig = getCorsConfiguration(handler, request);

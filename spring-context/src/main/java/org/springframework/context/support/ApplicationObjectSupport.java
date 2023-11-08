@@ -126,9 +126,16 @@ public abstract class ApplicationObjectSupport implements ApplicationContextAwar
 	 * @throws ApplicationContextException in case of initialization errors
 	 * @throws BeansException              if thrown by ApplicationContext methods
 	 * @see #setApplicationContext
+	 *
+	 * 该方法调用位置参考：
+	 * @see ApplicationObjectSupport#setApplicationContext(ApplicationContext)
 	 */
 	protected void initApplicationContext(ApplicationContext context) throws BeansException {
 		/**
+		 * 实现参考1：
+		 * @see org.springframework.web.servlet.handler.AbstractHandlerMapping#initApplicationContext()
+		 *
+		 * 实现参考2：
 		 * @see org.springframework.web.servlet.handler.AbstractDetectingUrlHandlerMapping#initApplicationContext()
 		 */
 		initApplicationContext();

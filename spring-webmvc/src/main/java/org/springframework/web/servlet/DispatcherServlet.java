@@ -1105,7 +1105,12 @@ public class DispatcherServlet extends FrameworkServlet {
 				}
 
 				// Determine handler adapter for the current request.
-				// 根据当前的处理器找到处理器适配器
+				/**
+				 * 根据当前的处理器找到处理器适配器(注：之所以有处理器适配器是因为Spring mvc支持多种定义Controller的方式，每种定义背后都对应一种处理器)
+				 * 1、通过@Controller注解来定义Controller；
+				 * 2、实现 Controller 接口，重写接口的 handleRequest 方法；
+				 * 3、实现 HttpRequestHandler 接口，重写接口的  handleRequest 方法；
+				 */
 				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
 				// Process last-modified header, if supported by the handler.
