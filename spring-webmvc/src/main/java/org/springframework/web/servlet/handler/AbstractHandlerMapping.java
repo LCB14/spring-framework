@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.core.Ordered;
 import org.springframework.lang.Nullable;
 import org.springframework.util.AntPathMatcher;
@@ -299,11 +301,19 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	 *
 	 * @see #extendInterceptors(java.util.List)
 	 * @see #initInterceptors()
+	 *
+	 * 该方法调用位置参考：
+	 * @see ApplicationObjectSupport#initApplicationContext(ApplicationContext)
 	 */
 	@Override
 	protected void initApplicationContext() throws BeansException {
+		// extendInterceptors 是一个模版方法，可以在子类中实现，子类实现了该方法之后，可以对拦截器进行添加、删除或者修改
 		extendInterceptors(this.interceptors);
+
+		// 从 SpringMVC 容器以及 Spring 容器中查找所有 MappedInterceptor 类型的 Bean，查找到之后添加到 mappedInterceptors 属性中
 		detectMappedInterceptors(this.adaptedInterceptors);
+
+		// 进行拦截器的初始化操作即将Object类型的拦截器适配成原类型
 		initInterceptors();
 	}
 
