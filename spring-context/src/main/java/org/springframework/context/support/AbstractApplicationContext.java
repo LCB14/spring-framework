@@ -427,6 +427,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			if (this.parent instanceof AbstractApplicationContext) {
 				((AbstractApplicationContext) this.parent).publishEvent(event, eventType);
 			} else {
+				/**
+				 * @see AbstractApplicationContext#publishEvent(Object)
+				 */
 				this.parent.publishEvent(event);
 			}
 		}
@@ -952,6 +955,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		getLifecycleProcessor().onRefresh();
 
 		// Publish the final event.
+		/**
+		 * 发布 ContextRefreshedEvent 事件，通知子容器刷新
+		 * @see org.springframework.web.servlet.FrameworkServlet.ContextRefreshListener
+		 */
 		publishEvent(new ContextRefreshedEvent(this));
 
 		// Participate in LiveBeansView MBean, if active.

@@ -575,6 +575,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		long startTime = System.currentTimeMillis();
 
 		try {
+			// 启动 Spring mvc 容器
 			this.webApplicationContext = initWebApplicationContext();
 			initFrameworkServlet();
 		} catch (ServletException | RuntimeException ex) {
@@ -613,8 +614,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		 * rootContext 值的初始化位置
 		 * @see org.springframework.web.context.ContextLoaderListener#contextInitialized(javax.servlet.ServletContextEvent)
 		 */
-		WebApplicationContext rootContext =
-				WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+		WebApplicationContext rootContext = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 		WebApplicationContext wac = null;
 
 		if (this.webApplicationContext != null) {
@@ -651,6 +651,9 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 			// support or the context injected at construction time had already been
 			// refreshed -> trigger initial onRefresh manually here.
 			synchronized (this.onRefreshMonitor) {
+				/**
+				 * @see DispatcherServlet#onRefresh(ApplicationContext)
+				 */
 				onRefresh(wac);
 			}
 		}
@@ -716,8 +719,8 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 
 		ConfigurableWebApplicationContext wac =
 				(ConfigurableWebApplicationContext) BeanUtils.instantiateClass(contextClass);
-
 		wac.setEnvironment(getEnvironment());
+		// 指定父容器
 		wac.setParent(parent);
 		String configLocation = getContextConfigLocation();
 		if (configLocation != null) {
@@ -906,6 +909,9 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		this.refreshEventReceived = true;
 		synchronized (this.onRefreshMonitor) {
+			/**
+			 * @see DispatcherServlet#onRefresh(ApplicationContext)
+			 */
 			onRefresh(event.getApplicationContext());
 		}
 	}
