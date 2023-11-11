@@ -284,6 +284,7 @@ public class ContextLoader {
 		try {
 			// Store context in local instance variable, to guarantee that
 			// it is available on ServletContext shutdown.
+			// 只有通过SPI方式注册监听器和 DispatchServlet 时 this.context 才有值。
 			if (this.context == null) {
 				// 实例化IOC容器
 				this.context = createWebApplicationContext(servletContext);
@@ -303,6 +304,7 @@ public class ContextLoader {
 					configureAndRefreshWebApplicationContext(cwac, servletContext);
 				}
 			}
+			// 这里将根容器（父容器）保存到servletContext中，之后创建子容器时就直接可以取出对应的父容器了
 			servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this.context);
 
 			ClassLoader ccl = Thread.currentThread().getContextClassLoader();
@@ -390,6 +392,7 @@ public class ContextLoader {
 			}
 		}
 
+		// 设置 ServletContext 到 Spring 容器中。
 		wac.setServletContext(sc);
 
 		/**
