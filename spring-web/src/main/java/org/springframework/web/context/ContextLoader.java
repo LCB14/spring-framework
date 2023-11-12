@@ -300,7 +300,7 @@ public class ContextLoader {
 						ApplicationContext parent = loadParentContext(servletContext);
 						cwac.setParent(parent);
 					}
-					// 初始化IOC容器
+					// 初始化Spring IOC容器（父容器）
 					configureAndRefreshWebApplicationContext(cwac, servletContext);
 				}
 			}
