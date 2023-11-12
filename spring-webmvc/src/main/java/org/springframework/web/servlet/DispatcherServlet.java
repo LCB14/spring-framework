@@ -547,7 +547,12 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * This implementation calls {@link #initStrategies}.
 	 *
 	 * 方法调用位置参考：
+	 * 1、Spring 容器启动后通过发布ContextRefreshedEvent事件触发刷新
 	 * @see FrameworkServlet#onApplicationEvent(ContextRefreshedEvent)
+	 * 2、Spring MVC单独作为一个框架时，当DispatchServlet被容器加载时触发刷新
+	 * @see HttpServletBean#init()
+	 * @see FrameworkServlet#initServletBean()
+	 * @see org.springframework.web.servlet.FrameworkServlet#initWebApplicationContext()
 	 */
 	@Override
 	protected void onRefresh(ApplicationContext context) {
