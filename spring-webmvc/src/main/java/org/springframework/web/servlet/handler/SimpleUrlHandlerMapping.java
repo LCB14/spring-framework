@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -56,6 +58,17 @@ import org.springframework.util.CollectionUtils;
  */
 public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 
+	/**
+	 * urlMap 变量属性值的来源
+	 *
+	 * <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+	 *     <property name="urlMap">
+	 *         <map>
+	 *             <entry key="/aaa" value-ref="/hello"/>
+	 *         </map>
+	 *     </property>
+	 * </bean>
+	 */
 	private final Map<String, Object> urlMap = new LinkedHashMap<>();
 
 
@@ -100,6 +113,9 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 	/**
 	 * Calls the {@link #registerHandlers} method in addition to the
 	 * superclass's initialization.
+	 *
+	 * 该方法调用位置参考：
+	 * @see ApplicationObjectSupport#setApplicationContext(ApplicationContext)
 	 */
 	@Override
 	public void initApplicationContext() throws BeansException {
@@ -118,6 +134,7 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 		if (urlMap.isEmpty()) {
 			logger.trace("No patterns in " + formatMappingName());
 		} else {
+			// 在注册之前做一些预处理，例如确保所有的 URL 都是以 / 开始。
 			urlMap.forEach((url, handler) -> {
 				// Prepend with slash if not already present.
 				if (!url.startsWith("/")) {

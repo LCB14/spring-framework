@@ -48,6 +48,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 /**
  * Abstract base class for {@link HandlerMapping} implementations that define
@@ -271,19 +272,24 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 				obtainApplicationContext().getType((String) handler) : handler.getClass());
 
 		if (handlerType != null) {
+			// 检查是否是 cglib 代理的子对象类型，如果是，则返回父类型，否则将参数直接返回。
 			Class<?> userType = ClassUtils.getUserClass(handlerType);
-			Map<Method, T> methods = MethodIntrospector.selectMethods(userType,
-					(MethodIntrospector.MetadataLookup<T>) method -> {
-						try {
-							return getMappingForMethod(method, userType);
-						} catch (Throwable ex) {
-							throw new IllegalStateException("Invalid mapping on handler class [" +
-									userType.getName() + "]: " + method, ex);
-						}
-					});
+			Map<Method, T> methods = MethodIntrospector.selectMethods(userType, (MethodIntrospector.MetadataLookup<T>) method -> {
+				try {
+					/**
+					 * @see RequestMappingHandlerMapping#getMappingForMethod(Method, Class)
+					 */
+					return getMappingForMethod(method, userType);
+				} catch (Throwable ex) {
+					throw new IllegalStateException("Invalid mapping on handler class [" +
+							userType.getName() + "]: " + method, ex);
+				}
+			});
+
 			if (logger.isTraceEnabled()) {
 				logger.trace(formatMappings(userType, methods));
 			}
+
 			methods.forEach((method, mapping) -> {
 				Method invocableMethod = AopUtils.selectInvocableMethod(method, userType);
 				registerHandlerMethod(handler, invocableMethod, mapping);
@@ -598,9 +604,11 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 			this.readWriteLock.writeLock().lock();
 			try {
 				HandlerMethod handlerMethod = createHandlerMethod(handler, method);
+				// 主要是验证 handlerMethod 是否已经存在。
 				assertUniqueMethodMapping(handlerMethod, mapping);
 				this.mappingLookup.put(mapping, handlerMethod);
 
+				// 从 mappings 中提取出 directPaths，就是不包含通配符的请求路径，然后将请求路径和 mapping 的映射关系保存到 urlLookup 中。
 				List<String> directUrls = getDirectUrls(mapping);
 				for (String url : directUrls) {
 					this.urlLookup.add(url, mapping);
@@ -608,6 +616,30 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 
 				String name = null;
 				if (getNamingStrategy() != null) {
+					/**
+					 * 找到所有 handler 的简称，调用 addMappingName 方法添加到 nameLookup 中。
+					 * 例如我们在 HelloController 中定义了一个名为 hello 的请求接口，那么这里拿到的就是 HC#hello，HC 是 HelloController 中的大写字母。
+					 * 作用：当你请求该接口的时候，不想通过路径，想直接通过方法名
+					 * @RestController
+					 * @RequestMapping("/javaboy")
+					 * public class HelloController {
+					 *     @GetMapping("/aaa")
+					 *     public String hello99() {
+					 *         return "aaa";
+					 *     }
+					 * }
+					 *
+					 * <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
+					 * <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+					 * <html>
+					 * <head>
+					 *     <title>Title</title>
+					 * </head>
+					 * <body>
+					 * <a href="${s:mvcUrl('HC#hello99').build()}">Go!</a>
+					 * </body>
+					 * </html>
+					 */
 					name = getNamingStrategy().getName(handlerMethod, mapping);
 					addMappingName(name, handlerMethod);
 				}

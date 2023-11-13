@@ -173,7 +173,11 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 				String handlerName = (String) handler;
 				handler = obtainApplicationContext().getBean(handlerName);
 			}
+
+			// 空实现（模版方法，目的是交给子类实现）
 			validateHandler(handler, request);
+
+			// 添加拦截器
 			return buildPathExposingHandler(handler, urlPath, urlPath, null);
 		}
 
@@ -183,6 +187,11 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 			if (getPathMatcher().match(registeredPattern, urlPath)) {
 				matchingPatterns.add(registeredPattern);
 			} else if (useTrailingSlashMatch()) {
+				/**
+				 * 如果你定义的接口是 /user，那么请求路径可以是 /user 也可以 /user/，这两种默认都是支持的，
+				 * 所以这里的 useTrailingSlashMatch 分支主要是处理后面这种情况，处理方式很简单，
+				 * 就在 registeredPattern 后面加上 / 然后继续和请求路径进行匹配。
+				 */
 				if (!registeredPattern.endsWith("/") && getPathMatcher().match(registeredPattern + "/", urlPath)) {
 					matchingPatterns.add(registeredPattern + "/");
 				}
@@ -230,6 +239,8 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 			if (logger.isTraceEnabled() && uriTemplateVariables.size() > 0) {
 				logger.trace("URI variables " + uriTemplateVariables);
 			}
+
+			// 添加两个内部拦截器
 			return buildPathExposingHandler(handler, bestMatch, pathWithinMapping, uriTemplateVariables);
 		}
 
@@ -318,6 +329,8 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 	 * @param beanName the name of the handler bean
 	 * @throws BeansException        if the handler couldn't be registered
 	 * @throws IllegalStateException if there is a conflicting handler registered
+	 *
+	 * 第一个参数是一个数组，那是因为同一个处理器可以对应多个不同的请求路径。
 	 */
 	protected void registerHandler(String[] urlPaths, String beanName) throws BeansException, IllegalStateException {
 		Assert.notNull(urlPaths, "URL path array must not be null");
@@ -351,6 +364,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 
 		Object mappedHandler = this.handlerMap.get(urlPath);
 		if (mappedHandler != null) {
+			// 一个 URL 地址只能对应一个处理器
 			if (mappedHandler != resolvedHandler) {
 				throw new IllegalStateException(
 						"Cannot map " + getHandlerDescription(handler) + " to URL path [" + urlPath +

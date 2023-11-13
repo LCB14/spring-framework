@@ -78,7 +78,14 @@ public abstract class AbstractDetectingUrlHandlerMapping extends AbstractUrlHand
 
 		// Take any bean name that we can determine URLs for.
 		for (String beanName : beanNames) {
-			// 获取controller中所有方法的url(Controller类上的url + Controller类中方法上的url)，由子类实现，典型的模板模式
+			/**
+			 * 获取controller中所有方法的url(Controller类上的url + Controller类中方法上的url)，由子类实现，典型的模板模式
+			 * @see BeanNameUrlHandlerMapping#determineUrlsForHandler(String)
+			 * 如果我们想要在项目中使用 BeanNameUrlHandlerMapping，配置方式如下：
+			 * <bean class="org.javaboy.init.HelloController" name="/hello"/>
+			 * <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" id="handlerMapping"/>
+			 * 注意，Controller 的 name 必须是以 / 开始，否则该 bean 不会被自动作为处理器。
+			 */
 			String[] urls = determineUrlsForHandler(beanName);
 			if (!ObjectUtils.isEmpty(urls)) {
 				// URL paths found: Let's consider it a handler.

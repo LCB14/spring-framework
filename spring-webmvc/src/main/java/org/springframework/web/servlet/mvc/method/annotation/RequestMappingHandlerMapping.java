@@ -227,6 +227,22 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 			if (typeInfo != null) {
 				info = typeInfo.combine(info);
 			}
+			/**
+			 * 查看 handlerType 上有没有 URL 前缀
+			 * 我们可以在 Controller 上使用 @RequestMapping 注解，配置一个路径前缀，
+			 * 这样 Controller 中的所有方法都加上了该路径前缀，但是这种方式需要一个一个的配置，
+			 * 如果想一次性配置所有的 Controller 呢？我们可以使用 Spring5.1 中新引入的方法 addPathPrefix 来配置，如下：
+			 *
+			 * @Configuration
+			 * public class WebConfig implements WebMvcConfigurer {
+			 *     @Override
+			 *     public void configurePathMatch(PathMatchConfigurer configurer) {
+			 *         configurer.setPatternParser(new PathPatternParser()).addPathPrefix("/itboyhub", HandlerTypePredicate.forAnnotation(RestController.class));
+			 *     }
+			 * }
+			 *
+			 * 上面这个配置表示，所有的 @RestController 标记的类都自动加上 itboyhub 前缀。有了这个配置之后，上面的 getPathPrefix 方法获取到的就是 /itboyhub 了。
+			 */
 			String prefix = getPathPrefix(handlerType);
 			if (prefix != null) {
 				info = RequestMappingInfo.paths(prefix).options(this.config).build().combine(info);
