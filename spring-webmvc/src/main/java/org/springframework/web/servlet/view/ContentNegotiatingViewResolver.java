@@ -224,6 +224,7 @@ public class ContentNegotiatingViewResolver extends WebApplicationObjectSupport
 	public View resolveViewName(String viewName, Locale locale) throws Exception {
 		RequestAttributes attrs = RequestContextHolder.getRequestAttributes();
 		Assert.state(attrs instanceof ServletRequestAttributes, "No current ServletRequestAttributes");
+
 		List<MediaType> requestedMediaTypes = getMediaTypes(((ServletRequestAttributes) attrs).getRequest());
 		if (requestedMediaTypes != null) {
 			List<View> candidateViews = getCandidateViews(viewName, locale, requestedMediaTypes);
@@ -236,6 +237,10 @@ public class ContentNegotiatingViewResolver extends WebApplicationObjectSupport
 		String mediaTypeInfo = logger.isDebugEnabled() && requestedMediaTypes != null ?
 				" given " + requestedMediaTypes.toString() : "";
 
+		/**
+		 * 如果 useNotAcceptableStatusCode 为 true，则返回 NOT_ACCEPTABLE_VIEW 视图，这个视图其实是一个 406 响应，
+		 * 表示客户端错误，服务器端无法提供与 Accept-Charset 以及 Accept-Language 消息头指定的值相匹配的响应。
+		 */
 		if (this.useNotAcceptableStatusCode) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Using 406 NOT_ACCEPTABLE" + mediaTypeInfo);
@@ -305,11 +310,13 @@ public class ContentNegotiatingViewResolver extends WebApplicationObjectSupport
 		List<View> candidateViews = new ArrayList<>();
 		if (this.viewResolvers != null) {
 			Assert.state(this.contentNegotiationManager != null, "No ContentNegotiationManager set");
+			// 调用各个 ViewResolver 中的 resolveViewName 方法去加载出对应的 View 对象。
 			for (ViewResolver viewResolver : this.viewResolvers) {
 				View view = viewResolver.resolveViewName(viewName, locale);
 				if (view != null) {
 					candidateViews.add(view);
 				}
+				// 根据 MediaType 提取出扩展名，再根据扩展名去加载 View 对象，在实际应用中，这一步我们都很少去配置，所以一步基本上是加载不出来 View 对象的，主要靠第一步。
 				for (MediaType requestedMediaType : requestedMediaTypes) {
 					List<String> extensions = this.contentNegotiationManager.resolveFileExtensions(requestedMediaType);
 					for (String extension : extensions) {

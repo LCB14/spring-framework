@@ -69,6 +69,9 @@ import org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.view.AbstractView;
+import org.springframework.web.servlet.view.BeanNameViewResolver;
+import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
+import org.springframework.web.servlet.view.ViewResolverComposite;
 import org.springframework.web.util.NestedServletException;
 import org.springframework.web.util.WebUtils;
 
@@ -593,7 +596,12 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		initRequestToViewNameTranslator(context);
 
-		// 初始化视图解析器
+		/**
+		 * 初始化视图解析器
+		 * @see BeanNameViewResolver
+		 * @see ContentNegotiatingViewResolver
+		 * @see ViewResolverComposite
+		 */
 		initViewResolvers(context);
 
 		initFlashMapManager(context);
