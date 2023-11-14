@@ -585,7 +585,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		 * @see HttpRequestHandlerAdapter -- 处理实现了 HttpRequestHandler 接口的 handler
 		 * @see SimpleControllerHandlerAdapter -- 处理实现了 Controller 接口的 handler
 		 * @see SimpleServletHandlerAdapter -- 处理实现了 javax.servlet.Servlet 接口的 handler
-		 * @see RequestMappingHandlerAdapter --
+		 * @see RequestMappingHandlerAdapter -- 处理加了 @Controller 注解的 handler
 		 */
 		initHandlerAdapters(context);
 

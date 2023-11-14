@@ -799,6 +799,11 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 										  HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
 
 		ModelAndView mav;
+
+		/**
+		 * 1、检查当前请求方法是否支持；
+		 * 2、检查是否需要 session；
+		 */
 		checkRequest(request);
 
 		// Execute invokeHandlerMethod in synchronized block if required.
@@ -818,6 +823,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			mav = invokeHandlerMethod(request, response, handlerMethod);
 		}
 
+		// 缓存处理主要是针对响应头的 Cache-Control 字段
 		if (!response.containsHeader(HEADER_CACHE_CONTROL)) {
 			if (getSessionAttributesHandler(handlerMethod).hasSessionAttributes()) {
 				applyCacheSeconds(response, this.cacheSecondsForSessionAttributeHandlers);
