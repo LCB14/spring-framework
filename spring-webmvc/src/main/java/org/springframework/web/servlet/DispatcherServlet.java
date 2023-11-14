@@ -576,7 +576,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		/**
 		 * 初始化处理器映射器
-		 * (处理器映射器的作用：因为Spring mvc 支持多种定义controller的方式，所以需要不同的处理器映射器来映射请求url和处理器的关系)
+		 * (处理器映射器的作用：因为Spring mvc 支持多种定义controller的方式，所以需要不同的处理器映射器来解析用户定义的各式处理器然后映射请求url和处理器的关系)
 		 */
 		initHandlerMappings(context);
 
