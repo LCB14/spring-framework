@@ -64,6 +64,10 @@ import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
+import org.springframework.web.servlet.handler.SimpleServletHandlerAdapter;
+import org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter;
+import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.view.AbstractView;
 import org.springframework.web.util.NestedServletException;
 import org.springframework.web.util.WebUtils;
@@ -570,8 +574,19 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		initThemeResolver(context);
 
+		/**
+		 * 初始化处理器映射器
+		 * (处理器映射器的作用：因为Spring mvc 支持多种定义controller的方式，所以需要不同的处理器映射器来映射请求url和处理器的关系)
+		 */
 		initHandlerMappings(context);
 
+		/**
+		 * 初始化处理器适配器
+		 * @see HttpRequestHandlerAdapter -- 处理实现了 HttpRequestHandler 接口的 handler
+		 * @see SimpleControllerHandlerAdapter -- 处理实现了 Controller 接口的 handler
+		 * @see SimpleServletHandlerAdapter -- 处理实现了 javax.servlet.Servlet 接口的 handler
+		 * @see RequestMappingHandlerAdapter --
+		 */
 		initHandlerAdapters(context);
 
 		initHandlerExceptionResolvers(context);
