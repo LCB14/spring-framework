@@ -94,6 +94,7 @@ public class StandardMultipartHttpServletRequest extends AbstractMultipartHttpSe
 
 	private void parseRequest(HttpServletRequest request) {
 		try {
+			// 当用户在表单中选择多个文件进行同时上传时，每个选中的文件都会被封装成一个独立的 Part 对象，并作为请求参数传递给服务器。这样就能够实现一次性提交多个附件。
 			Collection<Part> parts = request.getParts();
 			this.multipartParameterNames = new LinkedHashSet<>(parts.size());
 			MultiValueMap<String, MultipartFile> files = new LinkedMultiValueMap<>(parts.size());
