@@ -140,6 +140,7 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 			HttpServletRequest request, HttpServletResponse response, @Nullable Object handler, Exception ex) {
 
 		if (shouldApplyTo(request, handler)) {
+			// 主要是处理一下响应头的缓存字段。
 			prepareResponse(ex, response);
 			ModelAndView result = doResolveException(request, response, handler, ex);
 			if (result != null) {
@@ -147,6 +148,7 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 				if (logger.isDebugEnabled() && (this.warnLogger == null || !this.warnLogger.isWarnEnabled())) {
 					logger.debug("Resolved [" + ex + "]" + (result.isEmpty() ? "" : " to " + result));
 				}
+
 				// Explicitly configured warn logger in logException method.
 				logException(ex, request);
 			}
@@ -172,6 +174,7 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 	 */
 	protected boolean shouldApplyTo(HttpServletRequest request, @Nullable Object handler) {
 		if (handler != null) {
+			// 一般不会特殊指定this.mappedHandlers和this.mappedHandlerClasses，指定了就变成了该异常处理器只为某一个处理器服务，但是一般来说没这种需求
 			if (this.mappedHandlers != null && this.mappedHandlers.contains(handler)) {
 				return true;
 			}

@@ -63,11 +63,17 @@ import org.springframework.web.context.request.async.WebAsyncUtils;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
+import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 import org.springframework.web.servlet.handler.SimpleServletHandlerAdapter;
 import org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
+import org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver;
+import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
+import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 import org.springframework.web.servlet.view.AbstractView;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
@@ -571,10 +577,18 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * <p>May be overridden in subclasses in order to initialize further strategy objects.
 	 */
 	protected void initStrategies(ApplicationContext context) {
+		/**
+		 * 处理Content-Type = multipart/* 的请求的解析器，主要解析文件上传的请求。
+		 * @see StandardServletMultipartResolver
+		 * @see CommonsMultipartResolver  -- 仅处理 post 方法请求
+		 */
 		initMultipartResolver(context);
 
 		initLocaleResolver(context);
 
+		/**
+		 * 初始化主题解析器
+		 */
 		initThemeResolver(context);
 
 		/**
@@ -592,6 +606,14 @@ public class DispatcherServlet extends FrameworkServlet {
 		 */
 		initHandlerAdapters(context);
 
+		/**
+		 * 初始化异常处理解析器
+		 * @see ResponseStatusExceptionResolver -- 处理含有 @ResponseStatus 注解的异常。
+		 * @see ExceptionHandlerExceptionResolver -- 处理使用 @ExceptionHandler 注解自定义的异常类型。
+		 * @see DefaultHandlerExceptionResolver --
+		 * @see SimpleMappingExceptionResolver --
+		 * @see DefaultHandlerExceptionResolver --
+		 */
 		initHandlerExceptionResolvers(context);
 
 		initRequestToViewNameTranslator(context);
