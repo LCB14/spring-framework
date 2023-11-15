@@ -1501,6 +1501,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				response.setStatus(mv.getStatus().value());
 			}
 			/**
+			 * 渲染相应视图界面
 			 * @see AbstractView#render(Map, HttpServletRequest, HttpServletResponse)
 			 */
 			view.render(mv.getModelInternal(), request, response);
