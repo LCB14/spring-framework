@@ -1322,6 +1322,7 @@ public class DispatcherServlet extends FrameworkServlet {
 						"skipping re-resolution for undisturbed error rendering");
 			} else {
 				try {
+					// 将 HttpServletRequest 请求封装成 MultipartHttpServletRequest 对象，解析请求里面的参数以及文件
 					return this.multipartResolver.resolveMultipart(request);
 				} catch (MultipartException ex) {
 					if (request.getAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE) != null) {

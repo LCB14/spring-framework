@@ -102,6 +102,7 @@ public class StandardMultipartHttpServletRequest extends AbstractMultipartHttpSe
 				String headerValue = part.getHeader(HttpHeaders.CONTENT_DISPOSITION);
 				ContentDisposition disposition = ContentDisposition.parse(headerValue);
 				String filename = disposition.getFilename();
+				// 文件名非空，说明是文件参数，则封装成 StandardMultipartFile 对象，否则就是普通参数
 				if (filename != null) {
 					if (filename.startsWith("=?") && filename.endsWith("?=")) {
 						filename = MimeDelegate.decode(filename);
@@ -111,6 +112,7 @@ public class StandardMultipartHttpServletRequest extends AbstractMultipartHttpSe
 					this.multipartParameterNames.add(part.getName());
 				}
 			}
+			// 将上面生成的 StandardMultipartFile 文件对象们，设置到父类的 multipartFiles 属性中
 			setMultipartFiles(files);
 		} catch (Throwable ex) {
 			handleParseFailure(ex);
