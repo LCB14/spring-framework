@@ -561,8 +561,11 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * This implementation calls {@link #initStrategies}.
 	 *
 	 * 方法调用位置参考：
-	 * 1、Spring 容器启动后通过发布ContextRefreshedEvent事件触发刷新
+	 * 1、Spring mvc 容器启动后通过发布ContextRefreshedEvent事件触发刷新(Spring 容器启动后发布的该事件对Spring MVC 来说是没用的
+	 * 因为此时Spring MVC 容器尚未完成ContextRefreshListener监听器的注册)
+	 * @see ContextRefreshListener#onApplicationEvent(ContextRefreshedEvent)
 	 * @see FrameworkServlet#onApplicationEvent(ContextRefreshedEvent)
+	 *
 	 * 2、Spring MVC单独作为一个框架时，当DispatchServlet被容器加载时触发刷新
 	 * @see HttpServletBean#init()
 	 * @see FrameworkServlet#initServletBean()
@@ -579,12 +582,17 @@ public class DispatcherServlet extends FrameworkServlet {
 	 */
 	protected void initStrategies(ApplicationContext context) {
 		/**
+		 * 初始化文件上传解析器
+		 *
 		 * 处理Content-Type = multipart/* 的请求的解析器，主要解析文件上传的请求。
 		 * @see StandardServletMultipartResolver
 		 * @see CommonsMultipartResolver  -- 仅处理 post 方法请求
 		 */
 		initMultipartResolver(context);
 
+		/**
+		 * 初始化国际化解析器 -- 实现翻译语言切换功能
+		 */
 		initLocaleResolver(context);
 
 		/**
@@ -593,7 +601,8 @@ public class DispatcherServlet extends FrameworkServlet {
 		initThemeResolver(context);
 
 		/**
-		 * 初始化处理器映射器
+		 * 初始化处理器映射器 -- 维护请求url与handler关系
+		 *
 		 * (处理器映射器的作用：因为Spring mvc 支持多种定义controller的方式，所以需要不同的处理器映射器来解析用户定义的各式处理器然后映射请求url和处理器的关系)
 		 * @see RequestMappingHandlerAdapter -- 解析加了 @RequestMapping 注解的 Controller，Controller 中的每一个方法都会被解析成一个handler
 		 * @see BeanNameUrlHandlerMapping -- 解析 beanName 以"/"开头的 bean，例如@Component("/test")
@@ -601,7 +610,8 @@ public class DispatcherServlet extends FrameworkServlet {
 		initHandlerMappings(context);
 
 		/**
-		 * 初始化处理器适配器
+		 * 初始化处理器适配器 -- 反射执行对应类型的handler
+		 *
 		 * @see HttpRequestHandlerAdapter -- 处理实现了 HttpRequestHandler 接口的 handler
 		 * @see SimpleControllerHandlerAdapter -- 处理实现了 Controller 接口的 handler
 		 * @see SimpleServletHandlerAdapter -- 处理实现了 javax.servlet.Servlet 接口的 handler
@@ -610,7 +620,8 @@ public class DispatcherServlet extends FrameworkServlet {
 		initHandlerAdapters(context);
 
 		/**
-		 * 初始化异常处理解析器
+		 * 初始化异常处理解析器 -- handler异常优雅捕获处理
+		 *
 		 * @see ResponseStatusExceptionResolver -- 处理含有 @ResponseStatus 注解的异常。
 		 * @see ExceptionHandlerExceptionResolver -- 处理使用 @ExceptionHandler 注解自定义的异常类型。
 		 * @see DefaultHandlerExceptionResolver --
@@ -619,16 +630,23 @@ public class DispatcherServlet extends FrameworkServlet {
 		 */
 		initHandlerExceptionResolvers(context);
 
+		/**
+		 * 初始化默认视图名称转换器 -- 当为指定逻辑视图名称时，根据url获取默认逻辑视图名称
+		 */
 		initRequestToViewNameTranslator(context);
 
 		/**
-		 * 初始化视图解析器
+		 * 初始化视图解析器 -- 根据逻辑视图名解析创建真实视图
+		 *
 		 * @see BeanNameViewResolver
 		 * @see ContentNegotiatingViewResolver
 		 * @see ViewResolverComposite
 		 */
 		initViewResolvers(context);
 
+		/**
+		 * 初始化FlashMap管理器 -- 负责spring mvc重定时参数的传递处理
+		 */
 		initFlashMapManager(context);
 	}
 

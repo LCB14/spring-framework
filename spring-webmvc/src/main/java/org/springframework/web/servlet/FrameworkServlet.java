@@ -733,6 +733,19 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		return wac;
 	}
 
+	/**
+	 * 方法调用位置参考1：
+	 *
+	 * @see FrameworkServlet#createWebApplicationContext(ApplicationContext)
+	 * @see FrameworkServlet#createWebApplicationContext(WebApplicationContext)
+	 * @see FrameworkServlet#initWebApplicationContext()
+	 * <p>
+	 * 方法调用位置参考2：
+	 * @see FrameworkServlet#initWebApplicationContext()
+	 * <p>
+	 * 综合分析该方法的调用位置:
+	 * @see FrameworkServlet#initWebApplicationContext()
+	 */
 	protected void configureAndRefreshWebApplicationContext(ConfigurableWebApplicationContext wac) {
 		if (ObjectUtils.identityToString(wac).equals(wac.getId())) {
 			// The application context id is still set to its original default value
@@ -905,6 +918,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	 *
 	 * @param event the incoming ApplicationContext event
 	 *
+	 * 方法调用位置参考：
 	 * @see ContextRefreshListener#onApplicationEvent(ContextRefreshedEvent)
 	 */
 	public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -1289,6 +1303,9 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	 * ContextRefreshedEvent事件的产生时机以及onApplicationEvent方法的调用位置
 	 * @see AbstractApplicationContext#refresh()
 	 * @see AbstractApplicationContext#finishRefresh()
+	 *
+	 * ContextRefreshListener 监听器注册时机 -- DispatchServlet 在 Tomcat 启动时被加载初始化时完成注册
+	 * @see FrameworkServlet#configureAndRefreshWebApplicationContext(ConfigurableWebApplicationContext)
 	 */
 	private class ContextRefreshListener implements ApplicationListener<ContextRefreshedEvent> {
 
