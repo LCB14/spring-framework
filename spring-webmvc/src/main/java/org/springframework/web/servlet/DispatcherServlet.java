@@ -66,6 +66,7 @@ import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.handler.AbstractHandlerMapping;
+import org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 import org.springframework.web.servlet.handler.SimpleServletHandlerAdapter;
 import org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter;
@@ -594,6 +595,8 @@ public class DispatcherServlet extends FrameworkServlet {
 		/**
 		 * 初始化处理器映射器
 		 * (处理器映射器的作用：因为Spring mvc 支持多种定义controller的方式，所以需要不同的处理器映射器来解析用户定义的各式处理器然后映射请求url和处理器的关系)
+		 * @see RequestMappingHandlerAdapter -- 解析加了 @RequestMapping 注解的 Controller，Controller 中的每一个方法都会被解析成一个handler
+		 * @see BeanNameUrlHandlerMapping -- 解析 beanName 以"/"开头的 bean，例如@Component("/test")
 		 */
 		initHandlerMappings(context);
 

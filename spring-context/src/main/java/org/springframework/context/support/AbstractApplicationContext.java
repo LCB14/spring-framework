@@ -958,6 +958,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		/**
 		 * 发布 ContextRefreshedEvent 事件，通知子容器刷新
 		 * @see org.springframework.web.servlet.FrameworkServlet.ContextRefreshListener
+		 *
+		 * 子容器（Spring mvc）注册该事件监听的位置
+		 * @see org.springframework.web.servlet.FrameworkServlet#configureAndRefreshWebApplicationContext(org.springframework.web.context.ConfigurableWebApplicationContext)
 		 */
 		publishEvent(new ContextRefreshedEvent(this));
 
