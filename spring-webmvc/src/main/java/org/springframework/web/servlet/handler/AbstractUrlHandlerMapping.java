@@ -166,6 +166,10 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 	@Nullable
 	protected Object lookupHandler(String urlPath, HttpServletRequest request) throws Exception {
 		// Direct match?
+		/**
+		 * this.handlerMap 属性的初始化位置
+		 * @see AbstractDetectingUrlHandlerMapping#initApplicationContext()
+		 */
 		Object handler = this.handlerMap.get(urlPath);
 		if (handler != null) {
 			// Bean name or resolved handler?

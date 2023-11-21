@@ -55,8 +55,9 @@ public abstract class AbstractDetectingUrlHandlerMapping extends AbstractUrlHand
 	 */
 	@Override
 	public void initApplicationContext() throws ApplicationContextException {
+		// 初始化拦截器
 		super.initApplicationContext();
-		// 建立当前ApplicationContext中的所有controller和url的对应关系
+		// 建立当前ApplicationContext中的所有Handler和url的对应关系
 		detectHandlers();
 	}
 
@@ -71,7 +72,10 @@ public abstract class AbstractDetectingUrlHandlerMapping extends AbstractUrlHand
 	 */
 	protected void detectHandlers() throws BeansException {
 		ApplicationContext applicationContext = obtainApplicationContext();
-		// 获取ApplicationContext容器中所有bean的Name
+		/**
+		 * 获取ApplicationContext容器中所有bean的Name
+		 * this.detectHandlersInAncestorContexts 属性表示获取handler的时候是否从当前容器的父容器寻找，默认是false
+		 */
 		String[] beanNames = (this.detectHandlersInAncestorContexts ?
 				BeanFactoryUtils.beanNamesForTypeIncludingAncestors(applicationContext, Object.class) :
 				applicationContext.getBeanNamesForType(Object.class));
