@@ -99,9 +99,13 @@ public class StandardMultipartHttpServletRequest extends AbstractMultipartHttpSe
 			this.multipartParameterNames = new LinkedHashSet<>(parts.size());
 			MultiValueMap<String, MultipartFile> files = new LinkedMultiValueMap<>(parts.size());
 			for (Part part : parts) {
+				// 获得请求头中的 Content-Disposition 信息，MIME 协议的扩展
 				String headerValue = part.getHeader(HttpHeaders.CONTENT_DISPOSITION);
+				// 对 Content-Disposition 信息进行解析，生成 ContentDisposition 对象，包含请求参数信息，以面向“对象”的形式进行访问
 				ContentDisposition disposition = ContentDisposition.parse(headerValue);
+				// 获得文件名
 				String filename = disposition.getFilename();
+
 				// 文件名非空，说明是文件参数，则封装成 StandardMultipartFile 对象，否则就是普通参数
 				if (filename != null) {
 					if (filename.startsWith("=?") && filename.endsWith("?=")) {
@@ -109,6 +113,7 @@ public class StandardMultipartHttpServletRequest extends AbstractMultipartHttpSe
 					}
 					files.add(part.getName(), new StandardMultipartFile(part, filename));
 				} else {
+					// 普通参数名的集合，非上传文件的参数名
 					this.multipartParameterNames.add(part.getName());
 				}
 			}

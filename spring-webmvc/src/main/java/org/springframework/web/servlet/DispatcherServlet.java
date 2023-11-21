@@ -580,11 +580,11 @@ public class DispatcherServlet extends FrameworkServlet {
 	 */
 	protected void initStrategies(ApplicationContext context) {
 		/**
-		 * 初始化文件上传解析器
+		 * 初始化文件上传解析器(注：Spring MVC 环境该解析器需要自己配置，不配默认为null)
 		 *
 		 * 处理Content-Type = multipart/* 的请求的解析器，主要解析文件上传的请求。
-		 * @see StandardServletMultipartResolver
-		 * @see CommonsMultipartResolver  -- 仅处理 post 方法请求
+		 * @see StandardServletMultipartResolver -- 基于 Servlet 3.0 标准的上传文件 API 的 MultipartResolver 实现类
+		 * @see CommonsMultipartResolver  -- 仅处理 post 方法请求，基于 Apache Commons FileUpload 的 MultipartResolver 实现类
 		 */
 		initMultipartResolver(context);
 
@@ -1161,7 +1161,7 @@ public class DispatcherServlet extends FrameworkServlet {
 			Exception dispatchException = null;
 
 			try {
-				// 检查是否是文件上传请求，如果是文件上传请求，则会对请求重新进行封装，如果不是文件上传请求，则继续使用原来的请求。
+				// 检查是否是文件上传请求，如果是文件上传请求，则会对请求重新进行封装（便于获取参数信息以及上传的文件），如果不是文件上传请求，则继续使用原来的请求。
 				processedRequest = checkMultipart(request);
 				// 标记当前请求是否是文件上传请求
 				multipartRequestParsed = (processedRequest != request);

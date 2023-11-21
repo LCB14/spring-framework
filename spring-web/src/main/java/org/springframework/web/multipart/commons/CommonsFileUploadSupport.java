@@ -268,6 +268,7 @@ public abstract class CommonsFileUploadSupport {
 
 		// Extract multipart files and multipart parameters.
 		for (FileItem fileItem : fileItems) {
+			// 如果是一个简单的表单字段，那么就是一个普通的参数，将参数名和值保存起来
 			if (fileItem.isFormField()) {
 				String value;
 				String partEncoding = determineEncoding(fileItem.getContentType(), encoding);
