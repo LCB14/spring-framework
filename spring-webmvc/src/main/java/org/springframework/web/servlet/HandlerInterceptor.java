@@ -76,6 +76,7 @@ import org.springframework.web.method.HandlerMethod;
 public interface HandlerInterceptor {
 
 	/**
+	 * 注：handler 方法被调用前执行
 	 * Intercept the execution of a handler. Called after HandlerMapping determined
 	 * an appropriate handler object, but before HandlerAdapter invokes the handler.
 	 * <p>DispatcherServlet processes a handler in an execution chain, consisting
@@ -102,6 +103,7 @@ public interface HandlerInterceptor {
 	}
 
 	/**
+	 * 注：handler 方法被调用后执行
 	 * Intercept the execution of a handler. Called after HandlerAdapter actually
 	 * invoked the handler, but before the DispatcherServlet renders the view.
 	 * Can expose additional model objects to the view via the given ModelAndView.
@@ -127,6 +129,7 @@ public interface HandlerInterceptor {
 	}
 
 	/**
+	 * 注：完成视图渲染后调用
 	 * Callback after completion of request processing, that is, after rendering
 	 * the view. Will be called on any outcome of handler execution, thus allows
 	 * for proper resource cleanup.

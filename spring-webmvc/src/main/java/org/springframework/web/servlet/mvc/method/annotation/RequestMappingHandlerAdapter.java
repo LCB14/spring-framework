@@ -580,6 +580,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		 */
 		initControllerAdviceCache();
 
+		// 初始化参数解析器
 		if (this.argumentResolvers == null) {
 			List<HandlerMethodArgumentResolver> resolvers = getDefaultArgumentResolvers();
 			this.argumentResolvers = new HandlerMethodArgumentResolverComposite().addResolvers(resolvers);
@@ -590,6 +591,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			this.initBinderArgumentResolvers = new HandlerMethodArgumentResolverComposite().addResolvers(resolvers);
 		}
 
+		// 初始化返回值解析器
 		if (this.returnValueHandlers == null) {
 			List<HandlerMethodReturnValueHandler> handlers = getDefaultReturnValueHandlers();
 			this.returnValueHandlers = new HandlerMethodReturnValueHandlerComposite().addHandlers(handlers);
@@ -817,6 +819,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		checkRequest(request);
 
 		// Execute invokeHandlerMethod in synchronized block if required.
+		// 针对同一个session请求进行同步操作，默认为false。
 		if (this.synchronizeOnSession) {
 			HttpSession session = request.getSession(false);
 			if (session != null) {
@@ -888,22 +891,67 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
 		ServletWebRequest webRequest = new ServletWebRequest(request, response);
 		try {
+			/**
+			 * 找出@InitBinder注解修饰的方法
+			 *
+			 * 注册将字符串转换为Date的属性编辑器，该编辑器仅仅对声明当前方法的Controller有效
+			 * @InitBinder
+			 * public void initBinderXXX(WebDataBinder binder) {
+			 * 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			 * 		CustomDateEditor dateEditor = new CustomDateEditor(df, true);
+			 * 		binder.registerCustomEditor(Date.class, dateEditor);
+			 * }
+			 *
+			 * 如果想要全局生效可以进行如下声明
+			 * @ControllerAdvice
+			 * public class GlobalControllerAdvice {
+			 *    @InitBinder
+			 *    public void initBinderXXX(WebDataBinder binder) {
+			 * 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			 * 		CustomDateEditor dateEditor = new CustomDateEditor(df, true);
+			 * 		binder.registerCustomEditor(Date.class, dateEditor);
+			 *    }
+			 * }
+			 */
 			WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);
+
+			/**
+			 * ModelFactory 用来创建 Model 对象的，比如 Model 中有哪些属性，都是由 ModelFactory 来设置的。
+			 *
+			 * getModelFactory方法主要干了两件事
+			 * 1、把加了@ModelAttribute("key")注解的方法的返回值和该注解中指定的key，以key:value的形式存到 Model 对象中。（类似 @InitBinder 支持部分和全局生效模式）
+			 * 2、把@SessionAttribute("key")注解中指定 key 在 session 中的信息以 key:value 的形式存到 Model 对象中。
+			 */
 			ModelFactory modelFactory = getModelFactory(handlerMethod, binderFactory);
 
 			ServletInvocableHandlerMethod invocableMethod = createInvocableHandlerMethod(handlerMethod);
+			// 设置方法的参数解析器
 			if (this.argumentResolvers != null) {
 				invocableMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);
 			}
+			// 设置方法的返回值解析器
 			if (this.returnValueHandlers != null) {
 				invocableMethod.setHandlerMethodReturnValueHandlers(this.returnValueHandlers);
 			}
+			// 执行方法时，需要利用WebDataBinderFactory来进行参数类型的转换
 			invocableMethod.setDataBinderFactory(binderFactory);
+			// Spring 中用来解析方法参数的名字（利用ASM技术），Java8 开始就可以直接获取了
 			invocableMethod.setParameterNameDiscoverer(this.parameterNameDiscoverer);
 
+			// 没执行一次handlerMethod时，都会生成一个mavContainer，每个mavContainer都会对应一个ModelMap
 			ModelAndViewContainer mavContainer = new ModelAndViewContainer();
+
+			// 把 inputFlashMap 中的 attribute 添加到Model中
 			mavContainer.addAllAttributes(RequestContextUtils.getInputFlashMap(request));
+
+			/**
+			 * 注意执行到此处，mavContainer 中已经有Model对象了，现在进行初始化
+			 * 比如执行添加了@ModelAttribute 注解的方法，把attribute添加到Model中
+			 * 比如解析@SessionAttribute注解从session中获取attribute添加到Model中
+			 * 但是并没有把Request parameter、Request attitude添加到Model中
+			 */
 			modelFactory.initModel(webRequest, mavContainer, invocableMethod);
+
 			mavContainer.setIgnoreDefaultModelOnRedirect(this.ignoreDefaultModelOnRedirect);
 
 			AsyncWebRequest asyncWebRequest = WebAsyncUtils.createAsyncWebRequest(request, response);
@@ -926,11 +974,16 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 				invocableMethod = invocableMethod.wrapConcurrentResult(result);
 			}
 
+			// 这里才是真正执行handlerMethod方法
 			invocableMethod.invokeAndHandle(webRequest, mavContainer);
 			if (asyncManager.isConcurrentHandlingStarted()) {
 				return null;
 			}
 
+			/**
+			 * 封装ModelAndView，主要是判断当前请求是否进行了重定向，如果进行了重定向则会继续判断
+			 * 是否需要将FlashAttributes封装到新的请求中。
+			 */
 			return getModelAndView(mavContainer, modelFactory, webRequest);
 		} finally {
 			webRequest.requestCompleted();
@@ -950,13 +1003,16 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
 	private ModelFactory getModelFactory(HandlerMethod handlerMethod, WebDataBinderFactory binderFactory) {
 		SessionAttributesHandler sessionAttrHandler = getSessionAttributesHandler(handlerMethod);
+
 		Class<?> handlerType = handlerMethod.getBeanType();
 		Set<Method> methods = this.modelAttributeCache.get(handlerType);
 		if (methods == null) {
 			methods = MethodIntrospector.selectMethods(handlerType, MODEL_ATTRIBUTE_METHODS);
 			this.modelAttributeCache.put(handlerType, methods);
 		}
+
 		List<InvocableHandlerMethod> attrMethods = new ArrayList<>();
+
 		// Global methods first
 		this.modelAttributeAdviceCache.forEach((clazz, methodSet) -> {
 			if (clazz.isApplicableToBeanType(handlerType)) {
@@ -966,10 +1022,12 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 				}
 			}
 		});
+
 		for (Method method : methods) {
 			Object bean = handlerMethod.getBean();
 			attrMethods.add(createModelAttributeMethod(binderFactory, bean, method));
 		}
+
 		return new ModelFactory(attrMethods, binderFactory, sessionAttrHandler);
 	}
 
@@ -990,7 +1048,9 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			methods = MethodIntrospector.selectMethods(handlerType, INIT_BINDER_METHODS);
 			this.initBinderCache.put(handlerType, methods);
 		}
+
 		List<InvocableHandlerMethod> initBinderMethods = new ArrayList<>();
+
 		// Global methods first
 		this.initBinderAdviceCache.forEach((clazz, methodSet) -> {
 			if (clazz.isApplicableToBeanType(handlerType)) {
@@ -1000,10 +1060,12 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 				}
 			}
 		});
+
 		for (Method method : methods) {
 			Object bean = handlerMethod.getBean();
 			initBinderMethods.add(createInitBinderMethod(bean, method));
 		}
+
 		return createDataBinderFactory(initBinderMethods);
 	}
 

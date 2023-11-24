@@ -49,7 +49,6 @@ public abstract class TypeConverterSupport extends PropertyEditorRegistrySupport
 	@Nullable
 	public <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType,
 									@Nullable MethodParameter methodParam) throws TypeMismatchException {
-
 		return convertIfNecessary(value, requiredType,
 				(methodParam != null ? new TypeDescriptor(methodParam) : TypeDescriptor.valueOf(requiredType)));
 	}

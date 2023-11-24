@@ -133,11 +133,12 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	@Nullable
 	public Object invokeForRequest(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
 								   Object... providedArgs) throws Exception {
-
+		// 解析handlerMethod的请求方法参数
 		Object[] args = getMethodArgumentValues(request, mavContainer, providedArgs);
 		if (logger.isTraceEnabled()) {
 			logger.trace("Arguments: " + Arrays.toString(args));
 		}
+		// 通过反射调用真正的目标方法
 		return doInvoke(args);
 	}
 
@@ -164,10 +165,19 @@ public class InvocableHandlerMethod extends HandlerMethod {
 			if (args[i] != null) {
 				continue;
 			}
+
+			// 寻找可以解析当前参数的参数解析器
 			if (!this.resolvers.supportsParameter(parameter)) {
 				throw new IllegalStateException(formatArgumentError(parameter, "No suitable resolver"));
 			}
+
 			try {
+				/**
+				 * 解析参数，获取请求中要传给参数的值
+				 *
+				 * this.dataBinderFactory 属性的初始化位置
+				 * @see org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#invokeHandlerMethod(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.springframework.web.method.HandlerMethod)
+				 */
 				args[i] = this.resolvers.resolveArgument(parameter, mavContainer, request, this.dataBinderFactory);
 			} catch (Exception ex) {
 				// Leave stack trace for later, exception may actually be resolved and handled...

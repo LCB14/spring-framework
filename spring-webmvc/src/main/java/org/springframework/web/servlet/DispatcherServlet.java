@@ -609,7 +609,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		initHandlerMappings(context);
 
 		/**
-		 * 初始化处理器适配器 -- 反射执行对应类型的handler
+		 * 初始化处理器适配器 -- 反射执行对应类型的handler （注：适配器会包含相应的初始化参数解析器和返回值解析器）
 		 *
 		 * @see HttpRequestHandlerAdapter -- 处理实现了 HttpRequestHandler 接口的 handler
 		 * @see SimpleControllerHandlerAdapter -- 处理实现了 Controller 接口的 handler
@@ -1227,7 +1227,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				dispatchException = new NestedServletException("Handler dispatch failed", err);
 			}
 
-			// 对执行结果进行处理，包括异常处理、渲染页面以及执行拦截器的 afterCompletion 方法都在这里完成。
+			// 渲染视图，对执行结果进行处理，包括异常处理、渲染页面以及执行拦截器的 afterCompletion 方法都在这里完成。
 			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
 		} catch (Exception ex) {
 			triggerAfterCompletion(processedRequest, response, mappedHandler, ex);
