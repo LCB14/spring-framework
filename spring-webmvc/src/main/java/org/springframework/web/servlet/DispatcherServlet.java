@@ -609,7 +609,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		initHandlerMappings(context);
 
 		/**
-		 * 初始化处理器适配器 -- 反射执行对应类型的handler （注：适配器会包含相应的初始化参数解析器和返回值解析器）
+		 * 初始化处理器适配器 -- 反射执行对应类型的handler （注：适配器会包含相应的初始化参数解析器和返回值处理器）
 		 *
 		 * @see HttpRequestHandlerAdapter -- 处理实现了 HttpRequestHandler 接口的 handler
 		 * @see SimpleControllerHandlerAdapter -- 处理实现了 Controller 接口的 handler

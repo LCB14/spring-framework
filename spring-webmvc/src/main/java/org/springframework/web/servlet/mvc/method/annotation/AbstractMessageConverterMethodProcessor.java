@@ -200,6 +200,7 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 			targetType = GenericTypeResolver.resolveType(getGenericType(returnType), returnType.getContainingClass());
 		}
 
+		// 处理返回值类型为 Resource 的情况
 		if (isResourceType(value, returnType)) {
 			outputMessage.getHeaders().set(HttpHeaders.ACCEPT_RANGES, "bytes");
 			if (value != null && inputMessage.getHeaders().getFirst(HttpHeaders.RANGE) != null &&
@@ -227,15 +228,20 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 			selectedMediaType = contentType;
 		} else {
 			HttpServletRequest request = inputMessage.getServletRequest();
+			// 通过请求获取浏览器支持的文本显示类型，例如 Accept:text/html等
 			List<MediaType> acceptableTypes = getAcceptableMediaTypes(request);
+			// 返回服务端目前支持的 MediaType
 			List<MediaType> producibleTypes = getProducibleMediaTypes(request, valueType, targetType);
 
 			if (body != null && producibleTypes.isEmpty()) {
 				throw new HttpMessageNotWritableException(
 						"No converter found for return value of type: " + valueType);
 			}
+
 			List<MediaType> mediaTypesToUse = new ArrayList<>();
+			// acceptableTypes 存储的是当前请求浏览器支持的mediaType
 			for (MediaType requestedType : acceptableTypes) {
+				// producibleTypes 存储的是当前返回值处理器支持的mediaType
 				for (MediaType producibleType : producibleTypes) {
 					if (requestedType.isCompatibleWith(producibleType)) {
 						mediaTypesToUse.add(getMostSpecificMediaType(requestedType, producibleType));
@@ -275,9 +281,8 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 			for (HttpMessageConverter<?> converter : this.messageConverters) {
 				GenericHttpMessageConverter genericConverter = (converter instanceof GenericHttpMessageConverter ?
 						(GenericHttpMessageConverter<?>) converter : null);
-				if (genericConverter != null ?
-						((GenericHttpMessageConverter) converter).canWrite(targetType, valueType, selectedMediaType) :
-						converter.canWrite(valueType, selectedMediaType)) {
+				if (genericConverter != null ? ((GenericHttpMessageConverter) converter).canWrite(targetType, valueType, selectedMediaType)
+						: converter.canWrite(valueType, selectedMediaType)) {
 					body = getAdvice().beforeBodyWrite(body, returnType, selectedMediaType,
 							(Class<? extends HttpMessageConverter<?>>) converter.getClass(),
 							inputMessage, outputMessage);
@@ -287,6 +292,9 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 								"Writing [" + LogFormatUtils.formatValue(theBody, !traceOn) + "]");
 						addContentDispositionHeader(inputMessage, outputMessage);
 						if (genericConverter != null) {
+							/**
+							 * @see org.springframework.http.converter.AbstractGenericHttpMessageConverter#write(java.lang.Object, java.lang.reflect.Type, org.springframework.http.MediaType, org.springframework.http.HttpOutputMessage)
+							 */
 							genericConverter.write(body, targetType, selectedMediaType, outputMessage);
 						} else {
 							((HttpMessageConverter) converter).write(body, selectedMediaType, outputMessage);
