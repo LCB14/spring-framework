@@ -92,7 +92,7 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 	 * @see #extendAdvisors
 	 */
 	protected List<Advisor> findEligibleAdvisors(Class<?> beanClass, String beanName) {
-		// 获取所有切面信息
+		// 获取所有候选切面信息
 		List<Advisor> candidateAdvisors = findCandidateAdvisors();
 		// 过滤和指定beanName匹配的切面信息
 		List<Advisor> eligibleAdvisors = findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName);

@@ -92,6 +92,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 				if (aspectNames == null) {
 					List<Advisor> advisors = new ArrayList<>();
 					aspectNames = new ArrayList<>();
+					// 1、获取 IOC 容器中所有的 beanName
 					String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
 							this.beanFactory, Object.class, true, false);
 					for (String beanName : beanNames) {
@@ -107,24 +108,30 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 						}
 
 						/**
-						 * 1、判断是否是切面（标准之一：是否被@Aspect注解修饰）
+						 * 2、判断是否是切面（标准之一：是否被@Aspect注解修饰）
 						 * @see AbstractAspectJAdvisorFactory#isAspect(Class)
 						 */
 						if (this.advisorFactory.isAspect(beanType)) {
 							aspectNames.add(beanName);
 							AspectMetadata amd = new AspectMetadata(beanType, beanName);
+							/**
+							 * `amd` 是一个 AspectMetadata 对象，表示一个AspectJ类型的元数据信息。
+							 * `getAjType()` 方法返回该AspectJ类型对应的Java类对象。
+							 * `getPerClause()` 方法返回该Java类对象上定义的@Aspect注解中指定的per-clause（即声明了切面作用域）。
+							 * `getKind()` 方法返回per-clause所属的种类，可能有多种种类可选。在这里使用`PerClauseKind.SINGLETON`来比较，表示要判断是否为单例模式。
+							 */
 							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
-								MetadataAwareAspectInstanceFactory factory =
-										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
+								MetadataAwareAspectInstanceFactory factory = new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
 								/**
-								 * 2、获取所有切面列表
+								 * 3、获取所有切面列表（把切面类中的增强方法封装为 Advisor）
 								 * @see ReflectiveAspectJAdvisorFactory#getAdvisors(MetadataAwareAspectInstanceFactory)
 								 */
 								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
+								// 如果是单例，就将构建好的增强 -- classAdvisors 放入到缓存中，以便下一次直接从缓存获取
 								if (this.beanFactory.isSingleton(beanName)) {
-									// 3、缓存切面列表
 									this.advisorsCache.put(beanName, classAdvisors);
 								} else {
+									// 如果不是单例，那么就缓存 factory，以便下次快速创建 Advisor
 									this.aspectFactoryCache.put(beanName, factory);
 								}
 								advisors.addAll(classAdvisors);
@@ -141,6 +148,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 							}
 						}
 					}
+					// 缓存切面类的beanName,下次直接从缓存中取
 					this.aspectBeanNames = aspectNames;
 					return advisors;
 				}
@@ -150,6 +158,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 		if (aspectNames.isEmpty()) {
 			return Collections.emptyList();
 		}
+
 		List<Advisor> advisors = new ArrayList<>();
 		for (String aspectName : aspectNames) {
 			List<Advisor> cachedAdvisors = this.advisorsCache.get(aspectName);
