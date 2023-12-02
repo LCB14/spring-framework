@@ -123,7 +123,8 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 								MetadataAwareAspectInstanceFactory factory = new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
 								/**
-								 * 3、获取所有切面列表（把切面类中的增强方法封装为 Advisor）
+								 * 3、获取所有切面列表（把切面类中的通知方法封装为 Advisor）  -- 重点
+								 * Advisor = Advice + PointCut
 								 * @see ReflectiveAspectJAdvisorFactory#getAdvisors(MetadataAwareAspectInstanceFactory)
 								 */
 								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);

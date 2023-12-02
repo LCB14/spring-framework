@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.aspectj.weaver.internal.tools.PointcutExpressionImpl;
 import org.aspectj.weaver.patterns.NamePattern;
 import org.aspectj.weaver.reflect.ReflectionWorld.ReflectionWorldException;
 import org.aspectj.weaver.reflect.ShadowMatchImpl;
@@ -196,6 +197,7 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 		}
 		if (this.pointcutExpression == null) {
 			this.pointcutClassLoader = determinePointcutClassLoader();
+			// 解析Aspect切点表达式，并把切点表达式封装为 PointCutExpressionImpl 类的实例
 			this.pointcutExpression = buildPointcutExpression(this.pointcutClassLoader);
 		}
 		return this.pointcutExpression;
@@ -291,6 +293,8 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 	@Override
 	public boolean matches(Method method, Class<?> targetClass, boolean hasIntroductions) {
 		obtainPointcutExpression();
+
+		// 匹配核心方法
 		ShadowMatch shadowMatch = getTargetShadowMatch(method, targetClass);
 
 		// Special handling for this, target, @this, @target, @annotation
@@ -452,6 +456,10 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 					Method methodToMatch = targetMethod;
 					try {
 						try {
+							/**
+							 * 切点表达式与方法进行匹配
+							 * @see PointcutExpressionImpl#matchesMethodExecution(Method)
+							 */
 							shadowMatch = obtainPointcutExpression().matchesMethodExecution(methodToMatch);
 						} catch (ReflectionWorldException ex) {
 							// Failed to introspect target method, probably because it has been loaded
