@@ -22,11 +22,13 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.Advisor;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.TargetSource;
+import org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator;
 import org.springframework.aop.aspectj.autoproxy.AspectJAwareAdvisorAutoProxyCreator;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.framework.ProxyProcessorSupport;
 import org.springframework.aop.framework.adapter.AdvisorAdapterRegistry;
+import org.springframework.aop.framework.adapter.DefaultAdvisorAdapterRegistry;
 import org.springframework.aop.framework.adapter.GlobalAdvisorAdapterRegistry;
 import org.springframework.aop.framework.autoproxy.target.AbstractBeanFactoryBasedTargetSourceCreator;
 import org.springframework.aop.target.SingletonTargetSource;
@@ -495,12 +497,25 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		}
 
 		ProxyFactory proxyFactory = new ProxyFactory();
+		/**
+		 * this 实例
+		 * @see AnnotationAwareAspectJAutoProxyCreator
+		 */
 		proxyFactory.copyFrom(this);
 
+		// 判断是基于类的代理还是接口的代理
 		if (!proxyFactory.isProxyTargetClass()) {
+			/**
+			 * 再次确认被代理的bean有没有配置 org.springframework.aop.framework.autoproxy.AutoProxyUtils.preserveTargetClass 属性
+			 * 如果被代理bean对应的BeanDefinition中定义上面属性且值设为true，那么说明针对该bean的代理是基于类的。
+			 */
 			if (shouldProxyTargetClass(beanClass, beanName)) {
 				proxyFactory.setProxyTargetClass(true);
 			} else {
+				/**
+				 * 即使上面两个校验用户都没特别指定值，这里也会检查目标类是否是否有符合要求的接口，有才基于接口代理
+				 * 否则只能基于类代理。
+				 */
 				evaluateProxyInterfaces(beanClass, proxyFactory);
 			}
 		}
@@ -508,6 +523,8 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
 		proxyFactory.addAdvisors(advisors);
 		proxyFactory.setTargetSource(targetSource);
+
+		// 可以通过实现该方法自定义 ProxyFactory 的行为（默认空实现）
 		customizeProxyFactory(proxyFactory);
 
 		proxyFactory.setFrozen(this.freezeProxy);
@@ -572,6 +589,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 				}
 			}
 		}
+
 		if (logger.isTraceEnabled()) {
 			int nrOfCommonInterceptors = commonInterceptors.length;
 			int nrOfSpecificInterceptors = (specificInterceptors != null ? specificInterceptors.length : 0);
@@ -581,6 +599,9 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 
 		Advisor[] advisors = new Advisor[allInterceptors.size()];
 		for (int i = 0; i < allInterceptors.size(); i++) {
+			/**
+			 * @see DefaultAdvisorAdapterRegistry#wrap(Object)
+			 */
 			advisors[i] = this.advisorAdapterRegistry.wrap(allInterceptors.get(i));
 		}
 		return advisors;
