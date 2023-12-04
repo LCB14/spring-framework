@@ -85,6 +85,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 
 	/**
 	 * Config used to configure this proxy.
+	 * 存放代理会使用到的配置，一般为 ProxyFactory 对象。
 	 */
 	private final AdvisedSupport advised;
 
@@ -217,6 +218,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 				retVal = AopUtils.invokeJoinpointUsingReflection(target, method, argsToUse);
 			} else {
 				// We need to create a method invocation...
+				// 如果增强方法链不为空，则将 Advisor 统一封装成 MethodInvocation
 				MethodInvocation invocation =
 						new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);
 				// Proceed to the joinpoint through the interceptor chain.

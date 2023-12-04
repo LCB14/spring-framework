@@ -61,12 +61,15 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 		Boolean hasIntroductions = null;
 
 		for (Advisor advisor : advisors) {
+			// 处理普通增强
 			if (advisor instanceof PointcutAdvisor) {
 				// Add it conditionally.
 				PointcutAdvisor pointcutAdvisor = (PointcutAdvisor) advisor;
+				// 首先判断类级别是否和切点表达式匹配
 				if (config.isPreFiltered() || pointcutAdvisor.getPointcut().getClassFilter().matches(actualClass)) {
 					MethodMatcher mm = pointcutAdvisor.getPointcut().getMethodMatcher();
 					boolean match;
+					// 然后判断方法级别是否和切点表达式匹配
 					if (mm instanceof IntroductionAwareMethodMatcher) {
 						if (hasIntroductions == null) {
 							hasIntroductions = hasMatchingIntroductions(advisors, actualClass);
@@ -75,6 +78,7 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 					} else {
 						match = mm.matches(method, actualClass);
 					}
+
 					if (match) {
 						/**
 						 * advice -> advisor -> MethodInterceptor
@@ -92,13 +96,17 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 						}
 					}
 				}
-			} else if (advisor instanceof IntroductionAdvisor) {
+			}
+			// 处理引介增强（控制粒度 -- 类级别）
+			else if (advisor instanceof IntroductionAdvisor) {
 				IntroductionAdvisor ia = (IntroductionAdvisor) advisor;
 				if (config.isPreFiltered() || ia.getClassFilter().matches(actualClass)) {
 					Interceptor[] interceptors = registry.getInterceptors(advisor);
 					interceptorList.addAll(Arrays.asList(interceptors));
 				}
-			} else {
+			}
+			// 其它增强类型
+			else {
 				Interceptor[] interceptors = registry.getInterceptors(advisor);
 				interceptorList.addAll(Arrays.asList(interceptors));
 			}
