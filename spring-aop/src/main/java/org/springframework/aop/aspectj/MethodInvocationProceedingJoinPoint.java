@@ -27,6 +27,7 @@ import org.aspectj.lang.reflect.SourceLocation;
 import org.aspectj.runtime.internal.AroundClosure;
 
 import org.springframework.aop.ProxyMethodInvocation;
+import org.springframework.aop.framework.ReflectiveMethodInvocation;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.lang.Nullable;
@@ -90,6 +91,9 @@ public class MethodInvocationProceedingJoinPoint implements ProceedingJoinPoint,
 
 	@Override
 	public Object proceed() throws Throwable {
+		/**
+		 * @see ReflectiveMethodInvocation#invocableClone()
+		 */
 		return this.methodInvocation.invocableClone().proceed();
 	}
 

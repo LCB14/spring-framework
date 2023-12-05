@@ -92,6 +92,7 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 
 		for (AdvisorAdapter adapter : this.adapters) {
 			if (adapter.supportsAdvice(advice)) {
+				// 将切面增强方法统一封装为MethodInterceptor
 				interceptors.add(adapter.getInterceptor(advisor));
 			}
 		}

@@ -26,6 +26,7 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
 import org.springframework.aop.ProxyMethodInvocation;
+import org.springframework.aop.aspectj.autoproxy.AspectJAwareAdvisorAutoProxyCreator;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.lang.Nullable;
@@ -160,10 +161,17 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 	@Nullable
 	public Object proceed() throws Throwable {
 		// We start with an index of -1 and increment early.
+		// this.interceptorsAndDynamicMethodMatchers.size() 表示拦截器链中最后一个拦截器的下标，此条件如果满足表示当前将要执行拦截器链中的最后一个拦截器。
 		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
+			// 执行目标方法
 			return invokeJoinpoint();
 		}
 
+		/**
+		 * 第一个拦截器 ExposeInvocationInterceptor 添加时机参考：
+		 * @see org.springframework.aop.framework.autoproxy.AbstractAdvisorAutoProxyCreator#findEligibleAdvisors(java.lang.Class, java.lang.String)
+		 * @see AspectJAwareAdvisorAutoProxyCreator#extendAdvisors(List)
+		 */
 		Object interceptorOrInterceptionAdvice =
 				this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);
 		if (interceptorOrInterceptionAdvice instanceof InterceptorAndDynamicMethodMatcher) {

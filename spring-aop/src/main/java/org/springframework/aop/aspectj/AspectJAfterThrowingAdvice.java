@@ -61,7 +61,9 @@ public class AspectJAfterThrowingAdvice extends AbstractAspectJAdvice
 		try {
 			return mi.proceed();
 		} catch (Throwable ex) {
+			// 抛出的异常必须是给定抛出异常类型的子类型时，才会执行AfterThrowing增强方法。
 			if (shouldInvokeOnThrowing(ex)) {
+				// 调用增强方法
 				invokeAdviceMethod(getJoinPointMatch(), null, ex);
 			}
 			throw ex;

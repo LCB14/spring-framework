@@ -46,6 +46,7 @@ public class AspectJAfterAdvice extends AbstractAspectJAdvice
 		try {
 			return mi.proceed();
 		} finally {
+			// 不管是否报错，都一定会执行After增强方法
 			invokeAdviceMethod(getJoinPointMatch(), null, null);
 		}
 	}
