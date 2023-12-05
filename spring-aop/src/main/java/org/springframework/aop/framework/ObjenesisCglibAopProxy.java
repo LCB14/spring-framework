@@ -55,11 +55,13 @@ class ObjenesisCglibAopProxy extends CglibAopProxy {
 
 	@Override
 	protected Object createProxyClassAndInstance(Enhancer enhancer, Callback[] callbacks) {
+		// 1、创建代理类
 		Class<?> proxyClass = enhancer.createClass();
 		Object proxyInstance = null;
 
 		if (objenesis.isWorthTrying()) {
 			try {
+				// 2、创建代理类实例
 				proxyInstance = objenesis.newInstance(proxyClass, enhancer.getUseCache());
 			} catch (Throwable ex) {
 				logger.debug("Unable to instantiate proxy using Objenesis, " +
@@ -82,6 +84,10 @@ class ObjenesisCglibAopProxy extends CglibAopProxy {
 			}
 		}
 
+		/**
+		 * 3、设置回调
+		 * @see org.springframework.aop.framework.CglibAopProxy#getCallbacks(java.lang.Class)
+		 */
 		((Factory) proxyInstance).setCallbacks(callbacks);
 		return proxyInstance;
 	}
