@@ -20,6 +20,8 @@ import org.springframework.aop.ClassFilter;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractBeanFactoryPointcutAdvisor;
 import org.springframework.lang.Nullable;
+import org.springframework.transaction.annotation.AnnotationTransactionAttributeSource;
+import org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration;
 
 /**
  * Advisor driven by a {@link TransactionAttributeSource}, used to include
@@ -54,6 +56,11 @@ public class BeanFactoryTransactionAttributeSourceAdvisor extends AbstractBeanFa
 	 * @see TransactionInterceptor#setTransactionAttributeSource
 	 */
 	public void setTransactionAttributeSource(TransactionAttributeSource transactionAttributeSource) {
+		/**
+		 * @see org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration#transactionAdvisor()
+		 * @see ProxyTransactionManagementConfiguration#transactionAttributeSource()
+		 * @see AnnotationTransactionAttributeSource
+		 */
 		this.transactionAttributeSource = transactionAttributeSource;
 	}
 

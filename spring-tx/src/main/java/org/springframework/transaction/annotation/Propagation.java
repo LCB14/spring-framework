@@ -33,6 +33,8 @@ public enum Propagation {
 	 * Support a current transaction, create a new one if none exists.
 	 * Analogous to EJB transaction attribute of the same name.
 	 * <p>This is the default setting of a transaction annotation.
+	 *
+	 * 表示如果当前线程持有控制事务的数据库连接就直接复用该线程所持有的连接没有则创建一个数据库连接。
 	 */
 	REQUIRED(TransactionDefinition.PROPAGATION_REQUIRED),
 
@@ -47,12 +49,16 @@ public enum Propagation {
 	 * the actual synchronization configuration of the transaction manager.
 	 *
 	 * @see org.springframework.transaction.support.AbstractPlatformTransactionManager#setTransactionSynchronization
+	 *
+	 * 表示当前执行线程如果存在事务则支持该事务，如果没有事务则以非事务的方式执行。
 	 */
 	SUPPORTS(TransactionDefinition.PROPAGATION_SUPPORTS),
 
 	/**
 	 * Support a current transaction, throw an exception if none exists.
 	 * Analogous to EJB transaction attribute of the same name.
+	 *
+	 * 表示当前执行线程必须存在事务（持有数据库连接 -- 从ThreadLocal里查询），没有则抛出异常和NEVER相反。
 	 */
 	MANDATORY(TransactionDefinition.PROPAGATION_MANDATORY),
 
@@ -66,6 +72,11 @@ public enum Propagation {
 	 * made available to it (which is server-specific in standard Java EE).
 	 *
 	 * @see org.springframework.transaction.jta.JtaTransactionManager#setTransactionManager
+	 *
+	 * 表示不管当前线程是否持有控制事务的数据库连接都会创建一个新的数据库连接用于控制事务，
+	 * 如果线程之前持有数据库连接就会将线程之前持有的数据库连接给挂起（所谓的挂起就是把线
+	 * 程初始持有的数据库连接从ThreadLocal里拿出来暂存到其它变量等待新创建的数据
+	 * 库连接事务执行完毕后恢复使用，而本次新创建数据库连接则给塞到ThreadLocal里面去）。
 	 */
 	REQUIRES_NEW(TransactionDefinition.PROPAGATION_REQUIRES_NEW),
 
@@ -79,12 +90,16 @@ public enum Propagation {
 	 * made available to it (which is server-specific in standard Java EE).
 	 *
 	 * @see org.springframework.transaction.jta.JtaTransactionManager#setTransactionManager
+	 *
+	 * 表示如果当前执行线程存在事务则将事务挂起，然后以非事务方式执行。
 	 */
 	NOT_SUPPORTED(TransactionDefinition.PROPAGATION_NOT_SUPPORTED),
 
 	/**
 	 * Execute non-transactionally, throw an exception if a transaction exists.
 	 * Analogous to EJB transaction attribute of the same name.
+	 *
+	 * 表示当前执行线程不能存在事务（持有数据库连接 -- 从ThreadLocal里查询），有则抛出异常。
 	 */
 	NEVER(TransactionDefinition.PROPAGATION_NEVER),
 
@@ -97,6 +112,9 @@ public enum Propagation {
 	 * transactions as well.
 	 *
 	 * @see org.springframework.jdbc.datasource.DataSourceTransactionManager
+	 *
+	 * 表示为当前线程所持有的数据库连接创建savapoint，回滚时可以只回滚到savepoint不用回滚
+	 * 整个事务，如果当前线程未持有数据库连接则新创建一个数据库连接。
 	 */
 	NESTED(TransactionDefinition.PROPAGATION_NESTED);
 

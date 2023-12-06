@@ -353,6 +353,9 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	 */
 	@Override
 	public final TransactionStatus getTransaction(@Nullable TransactionDefinition definition) throws TransactionException {
+		/**
+		 * @see org.springframework.jdbc.datasource.DataSourceTransactionManager#doGetTransaction()
+		 */
 		Object transaction = doGetTransaction();
 
 		// Cache debug flag to avoid repeated checks.
@@ -386,9 +389,17 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			}
 			try {
 				boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
+
+				// 创建事务状态对象（@Transaction 注解信息、事务数据源信息、是否是新开启的事务）
 				DefaultTransactionStatus status = newTransactionStatus(
 						definition, transaction, true, newSynchronization, debugEnabled, suspendedResources);
+				/**
+				 * 开启事务，创建连接（如果有则不创建）
+				 * @see org.springframework.jdbc.datasource.DataSourceTransactionManager#doBegin(java.lang.Object, org.springframework.transaction.TransactionDefinition)
+				 */
 				doBegin(transaction, definition);
+
+				// 初始化 TransactionSynchronizationManager 中的属性
 				prepareSynchronization(status, definition);
 				return status;
 			} catch (RuntimeException | Error ex) {

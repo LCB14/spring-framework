@@ -29,10 +29,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.BeanFactoryAnnotationUtils;
 import org.springframework.core.NamedThreadLocal;
 import org.springframework.lang.Nullable;
-import org.springframework.transaction.NoTransactionException;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.*;
+import org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration;
+import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 import org.springframework.transaction.support.CallbackPreferringPlatformTransactionManager;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -286,11 +285,19 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 											 final InvocationCallback invocation) throws Throwable {
 
 		// If the transaction attribute is null, the method is non-transactional.
+		/**
+		 * TransactionAttributeSource 值设置位置参考：
+		 * @see ProxyTransactionManagementConfiguration#transactionInterceptor()
+		 * TransactionAspectSupport 为 TransactionInterceptor 的父类
+		 */
 		TransactionAttributeSource tas = getTransactionAttributeSource();
+		// 获取指定方法上的 @Transaction 注解信息
 		final TransactionAttribute txAttr = (tas != null ? tas.getTransactionAttribute(method, targetClass) : null);
+		// 利用 @Transaction 注解信息创建事务管理器（负责事务的创建、提交、回滚等相关事务操作）
 		final PlatformTransactionManager tm = determineTransactionManager(txAttr);
+		// 生成事务名称
 		final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);
-
+		// CallbackPreferringPlatformTransactionManager 继承了 PlatformTransactionManager
 		if (txAttr == null || !(tm instanceof CallbackPreferringPlatformTransactionManager)) {
 			// Standard transaction demarcation with getTransaction and commit/rollback calls.
 			// 开启事务
@@ -304,10 +311,14 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 				retVal = invocation.proceedWithInvocation();
 			} catch (Throwable ex) {
 				// target invocation exception
-				// 发生异常进行事务回滚
+				/**
+				 * 发生异常进行事务回滚,默认情况下只有 RuntimeException 异常或 Error 才会回滚
+				 * @see org.springframework.transaction.interceptor.DefaultTransactionAttribute#rollbackOn(java.lang.Throwable)
+				 */
 				completeTransactionAfterThrowing(txInfo, ex);
 				throw ex;
 			} finally {
+				// 清除ThreadLocal中的事务信息
 				cleanupTransactionInfo(txInfo);
 			}
 			// 提交事务
@@ -472,6 +483,9 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		TransactionStatus status = null;
 		if (txAttr != null) {
 			if (tm != null) {
+				/**
+				 * @see AbstractPlatformTransactionManager#getTransaction(TransactionDefinition)
+				 */
 				status = tm.getTransaction(txAttr);
 			} else {
 				if (logger.isDebugEnabled()) {
