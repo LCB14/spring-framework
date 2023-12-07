@@ -82,7 +82,7 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 	public MethodInterceptor[] getInterceptors(Advisor advisor) throws UnknownAdviceTypeException {
 		List<MethodInterceptor> interceptors = new ArrayList<>(3);
 		/**
-		 * 将切面中的增强方法，切点信息都封装到 Advice 实例里面
+		 * 将切面中的增强方法，切点表达式都封装到 Advice 实例里面
 		 * @see InstantiationModelAwarePointcutAdvisorImpl#getAdvice()
 		 */
 		Advice advice = advisor.getAdvice();
