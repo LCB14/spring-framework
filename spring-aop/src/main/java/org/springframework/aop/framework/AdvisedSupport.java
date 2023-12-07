@@ -498,6 +498,8 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 		if (cached == null) {
 			/**
 			 * @see DefaultAdvisorChainFactory#getInterceptorsAndDynamicInterceptionAdvice(Advised, Method, Class)
+			 *
+			 * 这里的this对象本质就是ProxyFactory
 			 */
 			cached = this.advisorChainFactory.getInterceptorsAndDynamicInterceptionAdvice(this, method, targetClass);
 			this.methodCache.put(cacheKey, cached);
