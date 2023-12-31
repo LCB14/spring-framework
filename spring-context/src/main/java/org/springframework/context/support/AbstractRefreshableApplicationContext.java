@@ -133,6 +133,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 			destroyBeans();
 			closeBeanFactory();
 		}
+
 		try {
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			beanFactory.setSerializationId(getId());
