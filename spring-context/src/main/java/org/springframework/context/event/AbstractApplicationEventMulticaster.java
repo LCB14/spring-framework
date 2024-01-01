@@ -220,6 +220,10 @@ public abstract class AbstractApplicationEventMulticaster
 		Set<ApplicationListener<?>> listeners;
 		Set<String> listenerBeans;
 		synchronized (this.retrievalMutex) {
+			/**
+			 * this.defaultRetriever.applicationListeners 属性的初始化位置参考
+			 * @see org.springframework.context.support.ApplicationListenerDetector#postProcessAfterInitialization
+			 */
 			listeners = new LinkedHashSet<>(this.defaultRetriever.applicationListeners);
 			listenerBeans = new LinkedHashSet<>(this.defaultRetriever.applicationListenerBeans);
 		}
