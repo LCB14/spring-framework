@@ -256,6 +256,8 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * 说法3：Spring 这样设计的目的是为了解耦Bean的实例化过程和AOP过程，AOP只是Spring的一个拓展点实现；
 	 * （实例化的bean需要被代理的场景有：AOP、事务（@Transactional）、异步线程池（@Async）等）
 	 *
+	 * Spring 解决各种场景循环依赖方案参考：
+	 * <link>https://www.zhihu.com/question/619438897/answer/3249199287</link>
 	 * @param beanName            the name of the bean to look for
 	 * @param allowEarlyReference whether early references should be created or not
 	 * @return the registered singleton object, or {@code null} if none found
