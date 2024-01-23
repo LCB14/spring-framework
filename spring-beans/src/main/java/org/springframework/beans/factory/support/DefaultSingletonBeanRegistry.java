@@ -212,6 +212,39 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * reference to a currently created singleton (resolving a circular reference).
 	 * <p>
 	 * Spring 解决循环依赖的问题采用了三级缓存策略而非二级缓存但明明二级缓存就能解决为何不使用呢？
+	 * 说法0：保持 bean 的引用对象是单例的。
+	 * @Service
+	 * public class TestService1 {
+	 *
+	 *     @Autowired
+	 *     private TestService2 testService2;
+	 *     @Autowired
+	 *     private TestService3 testService3;
+	 *
+	 *     public void test1() {
+	 *     }
+	 * }
+	 *
+	 * @Service
+	 * public class TestService2 {
+	 *
+	 *     @Autowired
+	 *     private TestService1 testService1;
+	 *
+	 *     public void test2() {
+	 *     }
+	 * }
+	 *
+	 * @Service
+	 * public class TestService3 {
+	 *
+	 *     @Autowired
+	 *     private TestService1 testService1;
+	 *
+	 *     public void test3() {
+	 *     }
+	 * }
+	 *
 	 * 说法1：延迟动态代理逻辑的执行；
 	 * 如果一个bean真的需要被代理，初始化之前被代理和初始化之后被代理差别不是很大吧，况且存在循环依赖时，
 	 * 代理还不是在bean实例化完成之前被代理了和传统的流程即实例化之后代理相违背了。
