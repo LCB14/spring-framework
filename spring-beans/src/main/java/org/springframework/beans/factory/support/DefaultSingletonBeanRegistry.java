@@ -192,7 +192,10 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				// 向三级缓存中添加beanName对应的lambda表达式
 				this.singletonFactories.put(beanName, singletonFactory);
 
-				// 移除二级缓存beanName对应的元素
+				/**
+				 * 这里为啥要操作二级缓存beanName对应的元素，什么场景下会导致一个bean在添加到三级缓存之前二级缓存就已经有值了？
+				 *
+				 */
 				this.earlySingletonObjects.remove(beanName);
 
 				this.registeredSingletons.add(beanName);
