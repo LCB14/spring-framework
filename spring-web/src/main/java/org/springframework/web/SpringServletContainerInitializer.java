@@ -150,6 +150,7 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
 		List<WebApplicationInitializer> initializers = new LinkedList<>();
 
 		if (webAppInitializerClasses != null) {
+			// webAppInitializerClasses 值来源于 Servlet 容器通过扫描 @HandlesTypes 注解中指定的接口实现所得。
 			for (Class<?> waiClass : webAppInitializerClasses) {
 				// Be defensive: Some servlet containers provide us with invalid classes,
 				// no matter what @HandlesTypes says...
