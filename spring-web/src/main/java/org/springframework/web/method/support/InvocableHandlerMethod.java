@@ -138,6 +138,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 		if (logger.isTraceEnabled()) {
 			logger.trace("Arguments: " + Arrays.toString(args));
 		}
+
 		// 得到参数后，反射执行HandlerMethod
 		return doInvoke(args);
 	}
@@ -159,6 +160,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 
 		// args就是装我们所有的参数，这里先声明出来
 		Object[] args = new Object[parameters.length];
+
 		for (int i = 0; i < parameters.length; i++) {
 			MethodParameter parameter = parameters[i];
 			parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);

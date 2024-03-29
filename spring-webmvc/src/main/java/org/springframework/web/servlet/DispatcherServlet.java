@@ -1250,7 +1250,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				}
 
 				// Actually invoke the handler.
-				// 真正的调用请求处理方法（包含参数解析）
+				// 真正的调用请求处理方法（包含参数解析、执行方法并处理执行返回）
 				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
 				// 判断当前请求是否需要异步处理，如果需要，则直接 return 掉
@@ -1271,7 +1271,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				dispatchException = new NestedServletException("Handler dispatch failed", err);
 			}
 
-			// 渲染视图，对执行结果进行处理，包括异常处理、渲染页面以及执行拦截器的 afterCompletion 方法都在这里完成。
+			// 视图解析，对执行结果进行处理，包括异常处理、渲染页面以及执行拦截器的 afterCompletion 方法都在这里完成。
 			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
 		} catch (Exception ex) {
 			triggerAfterCompletion(processedRequest, response, mappedHandler, ex);
@@ -1328,7 +1328,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		// Did the handler return a view to render?
 		if (mv != null && !mv.wasCleared()) {
-			// 渲染页面
+			// 解析视图
 			render(mv, request, response);
 			if (errorView) {
 				WebUtils.clearErrorRequestAttributes(request);
@@ -1572,14 +1572,14 @@ public class DispatcherServlet extends FrameworkServlet {
 	 */
 	protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// Determine locale for request and apply it to the response.
-		Locale locale =
-				(this.localeResolver != null ? this.localeResolver.resolveLocale(request) : request.getLocale());
+		Locale locale = (this.localeResolver != null ? this.localeResolver.resolveLocale(request) : request.getLocale());
 		response.setLocale(locale);
 
 		View view;
 		String viewName = mv.getViewName();
 		if (viewName != null) {
 			// We need to resolve the view name.
+			// 通过视图名得到View对象
 			view = resolveViewName(viewName, mv.getModelInternal(), locale, request);
 			if (view == null) {
 				throw new ServletException("Could not resolve view with name '" + mv.getViewName() +

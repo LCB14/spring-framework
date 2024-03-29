@@ -126,8 +126,7 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
 			/**
 			 * 通过返回值处理器处理handlerMethod方法的返回值结果
 			 */
-			this.returnValueHandlers.handleReturnValue(
-					returnValue, getReturnValueType(returnValue), mavContainer, webRequest);
+			this.returnValueHandlers.handleReturnValue(returnValue, getReturnValueType(returnValue), mavContainer, webRequest);
 		} catch (Exception ex) {
 			if (logger.isTraceEnabled()) {
 				logger.trace(formatErrorForReturnValue(returnValue), ex);

@@ -913,7 +913,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			 *    }
 			 * }
 			 *
-			 * web 数据绑定工厂
+			 * SpringMVC将form表单提交的每一个参数信息绑定到了我们的User对象上，而这个绑定操作就是WebDataBinderFactory干的工作。
 			 */
 			WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);
 
@@ -979,6 +979,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
 			// 包装之后的核心执行，包含参数解析，处理器执行和返回结果的处理
 			invocableMethod.invokeAndHandle(webRequest, mavContainer);
+
 			if (asyncManager.isConcurrentHandlingStarted()) {
 				return null;
 			}
@@ -1105,11 +1106,14 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		if (mavContainer.isRequestHandled()) {
 			return null;
 		}
+
 		ModelMap model = mavContainer.getModel();
 		ModelAndView mav = new ModelAndView(mavContainer.getViewName(), model, mavContainer.getStatus());
+		// 设置View，针对返回不是视图名的情况
 		if (!mavContainer.isViewReference()) {
 			mav.setView((View) mavContainer.getView());
 		}
+
 		if (model instanceof RedirectAttributes) {
 			Map<String, ?> flashAttributes = ((RedirectAttributes) model).getFlashAttributes();
 			HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
