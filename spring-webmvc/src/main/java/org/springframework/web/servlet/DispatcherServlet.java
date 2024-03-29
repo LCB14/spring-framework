@@ -581,6 +581,8 @@ public class DispatcherServlet extends FrameworkServlet {
 	protected void initStrategies(ApplicationContext context) {
 		/**
 		 * 初始化文件上传解析器(注：Spring MVC 环境该解析器需要自己配置，不配默认为null)
+		 * 用于处理上传请求，通过将普通的 Request 包装成 MultipartHttpServletRequest 来实现。MultipartHttpServletRequest 可以通过 getFile() 直接获得文件，
+		 * 如果是多个文件上传，还可以通过调用getFileMap 得到 Map<FileName, File> 这样的结构。MultipartResolver 的作用就是用来封装普通 的 request，使其拥有处理文件上传的功能。
 		 *
 		 * 处理Content-Type = multipart/* 的请求的解析器，主要解析文件上传的请求。
 		 * @see StandardServletMultipartResolver -- 基于 Servlet 3.0 标准的上传文件 API 的 MultipartResolver 实现类
@@ -590,18 +592,29 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		/**
 		 * 初始化国际化解析器 -- 实现翻译语言切换功能
+		 *
+		 * 我们有看到 ViewResolver 的 resolveViewName()方法，需要两个参数。那么第 二个参数 Locale 是从哪来的呢，这就是 LocaleResolver 要做的事了。
+		 * LocaleResolver 用于从 request 中解析出 Locale, 在中国大陆地区，Locale 当然就会是 zh-CN 之类， 用来表示一个区域。这个类也是 i18n 的基础。
 		 */
 		initLocaleResolver(context);
 
 		/**
 		 * 初始化主题解析器
+		 *
+		 * 从名字便可看出，这个类是用来解析主题的。主题，就是样式，图片以及它们所形成的 显示效果的集合。Spring MVC 中一套主题对应一个 properties 文件，
+		 * 里面存放着跟当 前主题相关的所有资源，如图片，css 样式等。创建主题非常简单，只需准备好资源，然后新建一个 "主题名.properties" 并将资源设置进去，
+		 * 放在classpath下，便可以在页面中使用了。 Spring MVC 中跟主题有关的类有 ThemeResolver,
+		 * ThemeSource 和 Theme。 ThemeResolver 负责从 request 中解析出主题名， ThemeSource 则根据主 题名找到具体的主题，
+		 * 其抽象也就是 Theme, 通过 Theme 来获取主题和具体的资源。
 		 */
 		initThemeResolver(context);
 
 		/**
 		 * 初始化处理器映射器 -- 维护请求url与handler关系
 		 *
-		 * (处理器映射器的作用：因为Spring mvc 支持多种定义controller的方式，所以需要不同的处理器映射器来解析用户定义的各式处理器然后映射请求url和处理器的关系)
+		 * HandlerMapping是用来查找Handler的，也就是处理器，具体的表现形式可以是类也可以是方法。比如，标注了@RequestMapping的每个Method都可以看成是一个Handler，
+		 * 由Handler来负责实际的请求处理。HandlerMapping在请求到达后，它的作用便是找到请求响应的处理器Handler和Interceptors。
+		 *
 		 * @see RequestMappingHandlerMapping -- 解析加了 @RequestMapping 注解的 Controller，Controller 中的每一个方法都会被解析成一个handler
 		 * @see BeanNameUrlHandlerMapping -- 解析 beanName 以"/"开头的 bean，例如@Component("/test")
 		 * @see SimpleUrlHandlerMapping
@@ -610,6 +623,10 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		/**
 		 * 初始化处理器适配器 -- 反射执行对应类型的handler （注：适配器会包含相应的初始化参数解析器和返回值处理器）
+		 *
+		 * 因为Spring MVC中Handler可以是任意形式的，只要能够处理请求便行，但是把请求交给Servlet的时候，
+		 * 由于Servlet的方法结构都是如doService(HttpServletRequest req, HttpServletResponse resp)这样的形式，
+		 * 让固定的Servlet处理方法调用Handler来进行处理，这一部工作便是HandlerAdapter要做的事。
 		 *
 		 * @see HttpRequestHandlerAdapter -- 处理实现了 HttpRequestHandler 接口的 handler
 		 * @see SimpleControllerHandlerAdapter -- 处理实现了 Controller 接口的 handler
@@ -621,6 +638,9 @@ public class DispatcherServlet extends FrameworkServlet {
 		/**
 		 * 初始化异常处理解析器 -- handler异常优雅捕获处理
 		 *
+		 * 此组件的作用是根据异常设置ModelAndView，之后再交给render()方法进行渲染，而render()便将ModelAndView渲染成页面。
+		 * 不过有一点HandlerExceptionResolver只是用于解析对请求做处理阶段产生的异常，而渲染阶段的异常不归它管了，这也是Spring MVC组件设计的一大原则分工明确互不干涉。
+		 *
 		 * @see ResponseStatusExceptionResolver -- 处理含有 @ResponseStatus 注解的异常。
 		 * @see ExceptionHandlerExceptionResolver -- 处理使用 @ExceptionHandler 注解自定义的异常类型。
 		 * @see DefaultHandlerExceptionResolver --
@@ -631,11 +651,20 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		/**
 		 * 初始化默认视图名称转换器 -- 当为指定逻辑视图名称时，根据url获取默认逻辑视图名称
+		 *
+		 * 这个组件的作用，在于从 Request 中获取 viewName. 因为 ViewResolver 是根据 ViewName 查找 View,
+		 * 但有的 Handler 处理完成之后，没有设置 View 也没有设置 ViewName， 便要通过这个组件来从 Request 中查找 viewName。
 		 */
 		initRequestToViewNameTranslator(context);
 
 		/**
 		 * 初始化视图解析器 -- 根据逻辑视图名解析创建真实视图
+		 *
+		 * 通常在Spring MVC的配置文件中都会配上一个该接口的实现类来进行视图解析。这个组件的主要作用，便是将Spring类型的视图名和Locale解析为View类型的视图。
+		 * 这个接口只有一个resolveViewName()方法。从方法的定义就可以看出，Controller层返回的String类型的视图名viewName，最终会在这里被解析成为View。
+		 * View是用来渲染页面的，也就是说，它会将程序返回的参数和数据填入模板中，最终生成小HTML文件。ViewResolver在这个过程中，主要做两件大事，
+		 * 即ViewResolver会找到渲染所用的模板（使用什么模板来渲染？）和所用的技术（其实也就是视图的类型，如JSP 等）填入参数。默认情况下，
+		 * Spring MVC会为我们自动配置一个InternalResourceViewResolver，这个是针对JSP类型视图的。
 		 *
 		 * @see BeanNameViewResolver
 		 * @see ContentNegotiatingViewResolver
@@ -645,6 +674,15 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		/**
 		 * 初始化FlashMap管理器 -- 负责spring mvc重定时参数的传递处理
+		 *
+		 * 说到 FlashMapManager，就得先提一下 FlashMap。FlashMap 用于重定向 Redirect 时的参数数据传递，比如，在处理用户订单提交时，
+		 * 为 了避免重复提交，可以处理完 post 请求后 redirect 到一个 get 请求，这个 get 请求可以 用来显示订单详情之类的信息。
+		 * 这样做虽然可以规避用户刷新重新提交表单的问题，但 是在这个页面上要显示订单的信息，那这些数据从哪里去获取呢，
+		 * 因为 redirect 重定向 是没有传递参数这一功能的，如果不想把参数写进 url(其实也不推荐这么做，url 有长度 限制不说，
+		 * 把参数都直接暴露，感觉也不安全)， 那么就可以通过 flashMap 来传递。只 需要在 redirect 之前，
+		 * 将要传递的数据写入 request(可以通过 ServletRequestAttributes.getRequest() 获 得 ) 的 属 性 OUTPUT_FLASH_MAP_ATTRIBUTE 中，
+		 * 这样在 redirect 之后的 handler 中 Spring 就 会自动将其设置到 Model 中，
+		 * 在显示订单信息的页面上，就可以直接从 Model 中取得 数据了。而 FlashMapManager 就是用来管理 FlashMap 的。
 		 */
 		initFlashMapManager(context);
 	}
@@ -1018,6 +1056,11 @@ public class DispatcherServlet extends FrameworkServlet {
 			for (String className : classNames) {
 				try {
 					Class<?> clazz = ClassUtils.forName(className, DispatcherServlet.class.getClassLoader());
+					/**
+					 * 将 DispatcherServlet.properties 文件中加载的
+					 * org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping 等类信息放入 Spring mvc容器，
+					 * 从而导致RequestMappingHandlerMapping#afterPropertiesSet()方法被回调，完成url和controller 的映射。
+					 */
 					Object strategy = createDefaultStrategy(context, clazz);
 					strategies.add((T) strategy);
 				} catch (ClassNotFoundException ex) {
@@ -1169,6 +1212,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				// Determine handler for the current request.
 				// 请求处理器链包含请求处理器和对应的Interceptor（拦截器）。
 				mappedHandler = getHandler(processedRequest);
+
 				// 如果没找到对应的请求处理器，则调用 noHandlerFound 方法抛出异常或者给出 404。
 				if (mappedHandler == null) {
 					noHandlerFound(processedRequest, response);
@@ -1206,7 +1250,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				}
 
 				// Actually invoke the handler.
-				// 真正的调用请求处理方法
+				// 真正的调用请求处理方法（包含参数解析）
 				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
 				// 判断当前请求是否需要异步处理，如果需要，则直接 return 掉
@@ -1397,6 +1441,15 @@ public class DispatcherServlet extends FrameworkServlet {
 	 */
 	@Nullable
 	protected HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
+		/**
+		 * handlerMappings 属性初始化位置
+		 * @see DispatcherServlet#initHandlerMappings(ApplicationContext)
+		 * @see DispatcherServlet#getDefaultStrategies(ApplicationContext, Class)
+		 *
+		 * handlerMappings 集合内容参考：
+		 * org.springframework.web.servlet.HandlerMapping=org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping,\
+		 * 	org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
+		 */
 		if (this.handlerMappings != null) {
 			for (HandlerMapping mapping : this.handlerMappings) {
 				/**
@@ -1437,6 +1490,12 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * @throws ServletException if no HandlerAdapter can be found for the handler. This is a fatal error.
 	 */
 	protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
+		/**
+		 * handlerAdapters 集合内容参考：
+		 * org.springframework.web.servlet.HandlerAdapter=org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter,\
+		 * 	org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter,\
+		 * 	org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter
+		 */
 		if (this.handlerAdapters != null) {
 			for (HandlerAdapter adapter : this.handlerAdapters) {
 				if (adapter.supports(handler)) {

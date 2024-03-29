@@ -133,12 +133,12 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	@Nullable
 	public Object invokeForRequest(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
 								   Object... providedArgs) throws Exception {
-		// 解析handlerMethod的请求方法参数
+		// 根据HTTP请求解析参数
 		Object[] args = getMethodArgumentValues(request, mavContainer, providedArgs);
 		if (logger.isTraceEnabled()) {
 			logger.trace("Arguments: " + Arrays.toString(args));
 		}
-		// 通过反射调用真正的目标方法
+		// 得到参数后，反射执行HandlerMethod
 		return doInvoke(args);
 	}
 
@@ -151,12 +151,13 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	 */
 	protected Object[] getMethodArgumentValues(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
 											   Object... providedArgs) throws Exception {
-
+		// 拿到所有的参数信息
 		MethodParameter[] parameters = getMethodParameters();
 		if (ObjectUtils.isEmpty(parameters)) {
 			return EMPTY_ARGS;
 		}
 
+		// args就是装我们所有的参数，这里先声明出来
 		Object[] args = new Object[parameters.length];
 		for (int i = 0; i < parameters.length; i++) {
 			MethodParameter parameter = parameters[i];

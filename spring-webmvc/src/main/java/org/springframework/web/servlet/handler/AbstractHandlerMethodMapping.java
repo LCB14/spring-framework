@@ -274,9 +274,12 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 		if (handlerType != null) {
 			// 检查是否是 cglib 代理的子对象类型，如果是，则返回父类型，否则将参数直接返回。
 			Class<?> userType = ClassUtils.getUserClass(handlerType);
+
+			// T 代表的是RequestMappingInfo
 			Map<Method, T> methods = MethodIntrospector.selectMethods(userType, (MethodIntrospector.MetadataLookup<T>) method -> {
 				try {
 					/**
+					 * 通过匿名内部类的方式来进行method的过滤，没有通过@RequestMapping修饰的方法会返回null
 					 * @see RequestMappingHandlerMapping#getMappingForMethod(Method, Class)
 					 */
 					return getMappingForMethod(method, userType);
@@ -372,6 +375,16 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 
 	/**
 	 * Look up a handler method for the given request.
+	 *
+	 * 针对通过下面这种方式定义controller
+	 * @Controller
+	 * public class AnnotationController {
+	 *    @RequestMapping("/test2")
+	 *    public Object test(){
+	 * 		System.out.println("test");
+	 * 		return null;
+	 *    }
+	 * }
 	 */
 	@Override
 	protected HandlerMethod getHandlerInternal(HttpServletRequest request) throws Exception {

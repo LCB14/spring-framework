@@ -51,11 +51,20 @@ public class ModelAndViewContainer {
 
 	private boolean ignoreDefaultModelOnRedirect = false;
 
+	/**
+	 * 视图信息，可以是一个View，也可能只是一个视图名String
+	 */
 	@Nullable
 	private Object view;
 
+	/**
+	 * 数据，本质是个Map，我们在Controller内的函数上写的Map或Model其实都是它
+	 */
 	private final ModelMap defaultModel = new BindingAwareModelMap();
 
+	/**
+	 * 重定向的数据，也是个Map
+	 */
 	@Nullable
 	private ModelMap redirectModel;
 

@@ -120,11 +120,23 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 	 *
 	 * 该方法调用位置参考：
 	 * @see org.springframework.web.servlet.handler.AbstractHandlerMapping#getHandler(javax.servlet.http.HttpServletRequest)
+	 *
+	 * 针对下面这种方式定义controller
+	 * @Component("/test")
+	 * public class TesrController implements org.springframework.web.servlet.mvc.Controller{
+	 *    @Override
+	 *    public ModelAndView handleRequest(HttpServletRequest request,
+	 * 	HttpServletResponse	response) throws Exception {
+	 * 		System.out.println("1");
+	 * 		return null;
+	 *    }
+	 * }
 	 */
 	@Override
 	@Nullable
 	protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
 		String lookupPath = getUrlPathHelper().getLookupPathForRequest(request);
+		// 找到对应的handler（重点）
 		Object handler = lookupHandler(lookupPath, request);
 		if (handler == null) {
 			// We need to care for the default handler directly, since we need to

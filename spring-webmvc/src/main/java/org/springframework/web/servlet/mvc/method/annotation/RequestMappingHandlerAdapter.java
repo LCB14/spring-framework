@@ -888,7 +888,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 	@Nullable
 	protected ModelAndView invokeHandlerMethod(HttpServletRequest request,
 											   HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
-
+		// webRequest是HttpServletRequest和HttpServletResponse的包装类
 		ServletWebRequest webRequest = new ServletWebRequest(request, response);
 		try {
 			/**
@@ -912,6 +912,8 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			 * 		binder.registerCustomEditor(Date.class, dateEditor);
 			 *    }
 			 * }
+			 *
+			 * web 数据绑定工厂
 			 */
 			WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);
 
@@ -924,6 +926,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			 */
 			ModelFactory modelFactory = getModelFactory(handlerMethod, binderFactory);
 
+			// ServletInvocableHandlerMethod是一个大的包装器，下面的一系列set操作都是对ServletInvocableHandlerMethod属性设置值
 			ServletInvocableHandlerMethod invocableMethod = createInvocableHandlerMethod(handlerMethod);
 			// 设置方法的参数解析器
 			if (this.argumentResolvers != null) {
@@ -938,7 +941,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			// Spring 中用来解析方法参数的名字（利用ASM技术），Java8 开始就可以直接获取了
 			invocableMethod.setParameterNameDiscoverer(this.parameterNameDiscoverer);
 
-			// 没执行一次handlerMethod时，都会生成一个mavContainer，每个mavContainer都会对应一个ModelMap
+			// 每执行一次handlerMethod时，都会生成一个mavContainer，每个mavContainer都会对应一个ModelMap
 			ModelAndViewContainer mavContainer = new ModelAndViewContainer();
 
 			// 把 inputFlashMap 中的 attribute 添加到Model中
@@ -974,7 +977,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 				invocableMethod = invocableMethod.wrapConcurrentResult(result);
 			}
 
-			// 这里才是真正执行handlerMethod方法
+			// 包装之后的核心执行，包含参数解析，处理器执行和返回结果的处理
 			invocableMethod.invokeAndHandle(webRequest, mavContainer);
 			if (asyncManager.isConcurrentHandlingStarted()) {
 				return null;
