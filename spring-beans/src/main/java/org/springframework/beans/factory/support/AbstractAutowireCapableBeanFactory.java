@@ -1500,6 +1500,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					/**
 					 * 针对 @Resource 注解注入属性的场景
 					 * @see org.springframework.context.annotation.CommonAnnotationBeanPostProcessor#postProcessProperties
+					 *
+					 * 针对 @Autowired 注解注入属性的场景
+					 * @see AutowiredAnnotationBeanPostProcessor#postProcessProperties(PropertyValues, Object, String)
 					 */
 					PropertyValues pvsToUse = ibp.postProcessProperties(pvs, bw.getWrappedInstance(), beanName);
 					if (pvsToUse == null) {
