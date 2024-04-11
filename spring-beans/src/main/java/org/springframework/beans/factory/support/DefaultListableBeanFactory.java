@@ -822,7 +822,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
 				// 处理 FactoryBean
 				if (isFactoryBean(beanName)) {
-					// FactoryBean 的话，实例化 Bean 时在 beanName 前面加上 ‘&’ 符号。
+					// FactoryBean 的话，实例化 Bean 时，在 beanName 前面加上 ‘&’ 符号。
 					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
 					if (bean instanceof FactoryBean) {
 						final FactoryBean<?> factory = (FactoryBean<?>) bean;
@@ -848,7 +848,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		}
 
 		// Trigger post-initialization callback for all applicable beans...
-		// 到这里说明所有的非懒加载的 singleton beans 已经完成了实例化并初始化完成，如果我们定义的 bean 实现了 SmartInitializingSingleton 接口的，那么在这里 afterSingletonsInstantiated 方法将得到回调。
+		// 到这里说明所有的非懒加载的 singleton beans 已经完成了实例化并初始化完成
+		// 如果我们定义的 bean 实现了 SmartInitializingSingleton 接口的，那么在这里 afterSingletonsInstantiated 方法将得到回调。
 		for (String beanName : beanNames) {
 			Object singletonInstance = getSingleton(beanName);
 			if (singletonInstance instanceof SmartInitializingSingleton) {

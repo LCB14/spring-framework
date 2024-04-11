@@ -552,25 +552,37 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
-			// 创建并初始化beanFactory对象，beanFactory对象的作用是根据配置文件，解析BeanDefinition并向容器中注册
+			/**
+			 * 这步完成后，配置文件就会被解析成一个个 Bean 定义，注册到 BeanFactory 中。
+			 */
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
-			// 初始化beanFactory，并添加相关的 BeanPostProcessor，"手动"注册几个特殊的 bean
+			/**
+			 * 初始化beanFactory，并添加相关的 BeanPostProcessor，spring自动注册几个特殊的 bean
+			 */
 			prepareBeanFactory(beanFactory);
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
+				/**
+				 * 这里是提供给子类的扩展点，到这里的时候，所有的 Bean 都加载、注册完成了，但是都还没有创建（实例化 + 初始化）
+				 */
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
-				// 调用 BeanFactoryPostProcessor 各个实现类的 postProcessBeanFactory(factory) 回调方法。（注意：BeanFactoryPostProcessor 处理的是 BeanDefinition ）
-				// 解析配置注册业务bean
+				/**
+				 * 调用 BeanFactoryPostProcessor 各个实现类的 postProcessBeanFactory(factory) 回调方法。
+				 * （注意：BeanFactoryPostProcessor 处理的是 BeanDefinition ）
+				 */
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
-				// 注册 BeanPostProcessor 的实现类，此接口有两个方法: postProcessBeforeInitialization 和 postProcessAfterInitialization
-				// 分别在 Bean 初始化之前和初始化之后得到执行。（注意：BeanPostProcessor 处理的是 Bean 实例）
+				/**
+				 * 注册 BeanPostProcessor 的实现类，此接口有两个方法: postProcessBeforeInitialization 和 postProcessAfterInitialization
+				 * 分别在 Bean 初始化之前和初始化之后得到执行。
+				 * （注意：BeanPostProcessor 处理的是 Bean 实例，注意区别 BeanFactoryPostProcessor）
+				 */
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
@@ -590,7 +602,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
-				// 创建（实例化）并初始化所有的 singleton beans（lazy-init 的除外）-- 重点
+				/**
+				 * 创建（实例化 + 初始化）所有的 singleton beans（lazy-init 的除外）-- 重点
+				 */
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
@@ -676,8 +690,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @see #getBeanFactory()
 	 */
 	protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
+		// 关闭旧的 BeanFactory (如果有)，创建新的 BeanFactory，加载 Bean 定义、注册 Bean 等等
 		refreshBeanFactory();
 
+		// 返回刚刚创建的 BeanFactory
 		return getBeanFactory();
 	}
 

@@ -138,8 +138,10 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			beanFactory.setSerializationId(getId());
 
+			// 设置 BeanFactory 的两个配置属性：是否允许 Bean 覆盖、是否允许循环引用
 			customizeBeanFactory(beanFactory);
 
+			// 加载 Bean 到 BeanFactory 中
 			loadBeanDefinitions(beanFactory);
 
 			synchronized (this.beanFactoryMonitor) {
@@ -234,9 +236,12 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * @see DefaultListableBeanFactory#setAllowEagerClassLoading
 	 */
 	protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
+		// 是否允许 bean 定义覆盖（如果在同一配置文件中重复了，会抛错，但是如果不是同一配置文件中，会发生覆盖。）
 		if (this.allowBeanDefinitionOverriding != null) {
 			beanFactory.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
 		}
+
+		// 表示是否允许循环依赖
 		if (this.allowCircularReferences != null) {
 			beanFactory.setAllowCircularReferences(this.allowCircularReferences);
 		}
