@@ -96,9 +96,11 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 				interceptors.add(adapter.getInterceptor(advisor));
 			}
 		}
+
 		if (interceptors.isEmpty()) {
 			throw new UnknownAdviceTypeException(advisor.getAdvice());
 		}
+
 		return interceptors.toArray(new MethodInterceptor[0]);
 	}
 

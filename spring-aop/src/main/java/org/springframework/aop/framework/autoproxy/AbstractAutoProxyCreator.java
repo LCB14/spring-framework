@@ -521,6 +521,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		// 注意：如果 specificInterceptors 中有 advice 和 interceptor，它们也会被包装成 advisor
 		Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
 		proxyFactory.addAdvisors(advisors);
+
 		proxyFactory.setTargetSource(targetSource);
 
 		// 可以通过实现该方法自定义 ProxyFactory 的行为（默认空实现）

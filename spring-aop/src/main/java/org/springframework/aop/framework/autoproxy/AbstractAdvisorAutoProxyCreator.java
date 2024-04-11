@@ -98,13 +98,17 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 		 * @see AnnotationAwareAspectJAutoProxyCreator#findCandidateAdvisors()
 		 */
 		List<Advisor> candidateAdvisors = findCandidateAdvisors();
+
 		// 过滤和指定beanName匹配的切面信息
 		List<Advisor> eligibleAdvisors = findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName);
+
 		extendAdvisors(eligibleAdvisors);
+
 		if (!eligibleAdvisors.isEmpty()) {
 			// 切面类可以通过实现Order接口为切面设置执行顺序
 			eligibleAdvisors = sortAdvisors(eligibleAdvisors);
 		}
+
 		return eligibleAdvisors;
 	}
 
