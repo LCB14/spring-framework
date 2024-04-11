@@ -123,7 +123,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 				new LazySingletonAspectInstanceFactoryDecorator(aspectInstanceFactory);
 
 		List<Advisor> advisors = new ArrayList<>();
-		// 获取切面类（被@Aspect注解修饰的类）中声明的方法
+		// 获取切面类（被@Aspect注解修饰的类）中声明的方法，getAdvisorMethods方法中已经过滤掉加了@PointCut注解的方法了
 		for (Method method : getAdvisorMethods(aspectClass)) {
 			/**
 			 * 为增强方法构建增强实例Advisor，这个Advisor其实就是一个 InstantiationModelAwarePointcutAdvisorImpl 类的实例

@@ -92,7 +92,9 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 				if (aspectNames == null) {
 					List<Advisor> advisors = new ArrayList<>();
 					aspectNames = new ArrayList<>();
-					// 1、获取 IOC 容器中所有的 beanName
+					/**
+					 * 1、获取 IOC 容器中所有的 beanName
+					 */
 					String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
 							this.beanFactory, Object.class, true, false);
 					for (String beanName : beanNames) {
@@ -128,7 +130,10 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 								 * @see ReflectiveAspectJAdvisorFactory#getAdvisors(MetadataAwareAspectInstanceFactory)
 								 */
 								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
-								// 如果是单例，就将构建好的增强 -- classAdvisors 放入到缓存中，以便下一次直接从缓存获取
+
+								/**
+								 * 4、如果是单例，就将构建好的增强 -- classAdvisors 放入到缓存中，以便下一次直接从缓存获取
+								 */
 								if (this.beanFactory.isSingleton(beanName)) {
 									this.advisorsCache.put(beanName, classAdvisors);
 								} else {
