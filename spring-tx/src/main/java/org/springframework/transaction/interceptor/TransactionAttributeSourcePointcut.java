@@ -23,6 +23,7 @@ import org.springframework.aop.support.StaticMethodMatcherPointcut;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.AnnotationTransactionAttributeSource;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -42,7 +43,12 @@ abstract class TransactionAttributeSourcePointcut extends StaticMethodMatcherPoi
 				PersistenceExceptionTranslator.class.isAssignableFrom(targetClass)) {
 			return false;
 		}
+		/**
+		 * tas 值参考：
+		 * @see AnnotationTransactionAttributeSource
+		 */
 		TransactionAttributeSource tas = getTransactionAttributeSource();
+
 		/**
 		 * @see AbstractFallbackTransactionAttributeSource#getTransactionAttribute(Method, Class)
 		 */

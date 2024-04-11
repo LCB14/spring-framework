@@ -49,7 +49,7 @@ public class TransactionManagementConfigurationSelector extends AdviceModeImport
 			case PROXY:
 				/**
 				 * AutoProxyRegistrar -- 向容器中注册 InfrastructureAdvisorAutoProxyCreator 后置处理器，专门用来处理事务
-				 * ProxyTransactionManagementConfiguration -- 构建事务对应的 Advisor（advice + pointcut）
+				 * ProxyTransactionManagementConfiguration -- 提供了一些加了@Bean的方法，构建事务对应的 Advisor（advice + pointcut）
 				 */
 				return new String[]{AutoProxyRegistrar.class.getName(),
 						ProxyTransactionManagementConfiguration.class.getName()};
