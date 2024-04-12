@@ -291,12 +291,16 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		 * TransactionAspectSupport 为 TransactionInterceptor 的父类
 		 */
 		TransactionAttributeSource tas = getTransactionAttributeSource();
+
 		// 获取指定方法上的 @Transaction 注解信息
 		final TransactionAttribute txAttr = (tas != null ? tas.getTransactionAttribute(method, targetClass) : null);
+
 		// 利用 @Transaction 注解信息创建事务管理器（负责事务的创建、提交、回滚等相关事务操作）
 		final PlatformTransactionManager tm = determineTransactionManager(txAttr);
+
 		// 生成事务名称
 		final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);
+
 		// CallbackPreferringPlatformTransactionManager 继承了 PlatformTransactionManager
 		if (txAttr == null || !(tm instanceof CallbackPreferringPlatformTransactionManager)) {
 			// Standard transaction demarcation with getTransaction and commit/rollback calls.
