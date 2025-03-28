@@ -1258,7 +1258,7 @@ public class DispatcherServlet extends FrameworkServlet {
 					return;
 				}
 
-				// 检查当前 mv 是否没有视图，如果没有则给一个默认的视图名。
+				// 检查当前 mv 是否有视图，如果没有则给一个默认的视图名。
 				applyDefaultViewName(processedRequest, mv);
 
 				// 调用拦截器的后置处理方法 -- postHandle
