@@ -410,18 +410,51 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	 */
 	@Nullable
 	protected HandlerMethod lookupHandlerMethod(String lookupPath, HttpServletRequest request) throws Exception {
+		// 用于保存 匹配条件 和 HandlerMethod，这个匹配条件在后面会从mappingRegistry中获取，
+		// mappingRegistry是AbstractHandlerMethodMapping的内部类MappingRegistry，它里面存储了很多url和处理器的映射关系
 		List<Match> matches = new ArrayList<>();
 
+		/**
+		 * 当前是以AbstractHandlerMethodMapping为例，所以这里提到的匹配条件就是指RequestMappingInfo
+		 * 我们只是用URL是不太够用的，因为请求还会有很多其他的信息，RequestMappingInfo里面会存储请求 URL、请求方法、URI 模板变量、请求参数、请求头等信息。
+		 * 所以我们就用这个对象来表示当前的请求
+		 *
+		 * 1. 根据lookupPath获取到匹配条件（RequestMappingInfo），有可能拿到很多匹配条件，所以这里创建的是一个匹配条件类型的集合
+		 * getMappingsByUrl()方法是MappingRegistry的方法，它是利用MappingRegistry的成员属性urlLookup（它是一个map，存储了url和匹配信息的映射关系），
+		 * 根据url来获取对应的匹配条件信息（RequestMappingInfo）
+		 * url和匹配条件之间的关系此时已经被缓存到了mappingRegistry中，可以通过url快速获取到对应的匹配条件
+		 * 以我们当前的例子，directPathMatches就是一个RequestMappingInfo集合
+		 */
 		List<T> directPathMatches = this.mappingRegistry.getMappingsByUrl(lookupPath);
 		if (directPathMatches != null) {
+			/**
+			 * Match类中有两个属性，一个是mapping，一个是handlerMethod。
+			 * 分别保存匹配条件（其实就是标识请求的信息，可以简单理解为url，当前的例子其实应该是RequestMappingInfo类型）和对应的处理器信息
+			 *
+			 * addMatchingMappings()方法就是遍历传入的directPathMatches（RequestMappingInfo集合）
+			 * 先将当前遍历到的RequestMappingInfo和请求的request封装成一个新的RequestMappingInfo对象（match），
+			 * 然后尝试利用mappingRegistry的mappingLookup，根据当前遍历到的RequestMappingInfo来获取对应的处理器（handlerMethod），
+			 * 其实就可以简单理解为通过url获取对应的handlerMethod
+			 * （mappingRegistry在初始化的时候已经建立好了所有url和handlerMethod的映射关系，这里我们就直接认为这些信息都已经有了）
+			 * 如果成功找到了当前请求对应的处理器handlerMethod，就将刚才封装的新的RequestMappingInfo对象和找到的对应的处理器handlerMethod封装成Match对象，添加到matches集合中
+			 *
+			 * 这样，addMatchingMappings()方法就将当前请求url和其对应的处理器都映射保存到了match中，我们也就找到了要处理当前请求的具体方法是什么了。
+			 *
+			 */
 			addMatchingMappings(directPathMatches, matches, request);
 		}
 
 		if (matches.isEmpty()) {
 			// No choice but to go through all mappings...
+			// 将mappingRegistry中的所有匹配条件都拿出来，然后添加到matches
+			// 这里的mappingRegistry.getMappings()返回的是一个mappingLookup，
+			// 这是一个Map，key是匹配条件（RequestMappingInfo），value是对应的处理器（HandlerMethod）
+			// 这里就将所有的匹配条件都拿出来，使用addMatchingMappings方法将其添加到matches
 			addMatchingMappings(this.mappingRegistry.getMappings().keySet(), matches, request);
 		}
 
+		// 至此，matches中已经保存了所有匹配条件和对应的处理器（也就是存储了请求路径url和对应的要处理该请求的处理器方法之间的映射关系），接下来就是从matches中找到最佳匹配的处理器了
+		// 对matches进行排序，并取第一个作为bestMatch（最佳匹配），如果前面两个排序相同则抛出异常
 		if (!matches.isEmpty()) {
 			Comparator<Match> comparator = new MatchComparator(getMappingComparator(request));
 			matches.sort(comparator);
@@ -443,6 +476,8 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 				}
 			}
 			request.setAttribute(BEST_MATCHING_HANDLER_ATTRIBUTE, bestMatch.handlerMethod);
+			// 在返回前做一些处理，默认实现是将lookupPath设置到request的属性，
+			// 子类RequestMappingInfoHandlerMapping进行了重写，将更多的参数设置到了request，主要是为了以后使用时方便
 			handleMatch(bestMatch.mapping, lookupPath, request);
 			return bestMatch.handlerMethod;
 		} else {
