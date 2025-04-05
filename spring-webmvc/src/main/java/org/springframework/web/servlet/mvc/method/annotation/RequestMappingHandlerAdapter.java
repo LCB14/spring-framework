@@ -928,14 +928,17 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
 			// ServletInvocableHandlerMethod是一个大的包装器，下面的一系列set操作都是对ServletInvocableHandlerMethod属性设置值
 			ServletInvocableHandlerMethod invocableMethod = createInvocableHandlerMethod(handlerMethod);
+
 			// 设置方法的参数解析器
 			if (this.argumentResolvers != null) {
 				invocableMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);
 			}
+
 			// 设置方法的返回值解析器
 			if (this.returnValueHandlers != null) {
 				invocableMethod.setHandlerMethodReturnValueHandlers(this.returnValueHandlers);
 			}
+
 			// 执行方法时，需要利用WebDataBinderFactory来进行参数类型的转换
 			invocableMethod.setDataBinderFactory(binderFactory);
 			// Spring 中用来解析方法参数的名字（利用ASM技术），Java8 开始就可以直接获取了

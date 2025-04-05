@@ -31,6 +31,7 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.method.annotation.RequestParamMethodArgumentResolver;
 
 /**
  * Extension of {@link HandlerMethod} that invokes the underlying method with
@@ -133,7 +134,10 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	@Nullable
 	public Object invokeForRequest(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
 								   Object... providedArgs) throws Exception {
-		// 根据HTTP请求解析参数
+		/**
+		 * 根据HTTP请求解析参数
+		 * @link https://blog.csdn.net/zknxx/article/details/78239951
+		 */
 		Object[] args = getMethodArgumentValues(request, mavContainer, providedArgs);
 		if (logger.isTraceEnabled()) {
 			logger.trace("Arguments: " + Arrays.toString(args));
@@ -152,7 +156,10 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	 */
 	protected Object[] getMethodArgumentValues(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
 											   Object... providedArgs) throws Exception {
-		// 拿到所有的参数信息
+		/**
+		 * 首先获取当前处理方法(handlerMethod 方法被包装联了一下)的所有参数信息
+		 * @see org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter#createInvocableHandlerMethod(HandlerMethod)
+		 */
 		MethodParameter[] parameters = getMethodParameters();
 		if (ObjectUtils.isEmpty(parameters)) {
 			return EMPTY_ARGS;
@@ -169,7 +176,10 @@ public class InvocableHandlerMethod extends HandlerMethod {
 				continue;
 			}
 
-			// 寻找可以解析当前参数的参数解析器
+			/**
+			 * 寻找可以解析当前参数的参数解析器
+			 * @see RequestParamMethodArgumentResolver#supportsParameter(MethodParameter)
+			 */
 			if (!this.resolvers.supportsParameter(parameter)) {
 				throw new IllegalStateException(formatArgumentError(parameter, "No suitable resolver"));
 			}

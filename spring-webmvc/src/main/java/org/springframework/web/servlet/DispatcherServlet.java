@@ -1188,6 +1188,8 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * @param request  current HTTP request
 	 * @param response current HTTP response
 	 * @throws Exception in case of any kind of processing failure
+	 *
+	 * 源码分析参考：@link https://blog.csdn.net/cy973071263/article/details/136088514
 	 */
 	protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		HttpServletRequest processedRequest = request;
