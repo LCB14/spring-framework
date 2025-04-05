@@ -391,6 +391,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 		String lookupPath = getUrlPathHelper().getLookupPathForRequest(request);
 		this.mappingRegistry.acquireReadLock();
 		try {
+			// 返回的 handlerMethod 中只有匹配条件，还没有handler处理器，这个方法就是要将处理器和匹配条件绑定在一起，创建HandlerMethod对象。
 			HandlerMethod handlerMethod = lookupHandlerMethod(lookupPath, request);
 			return (handlerMethod != null ? handlerMethod.createWithResolvedBean() : null);
 		} finally {

@@ -324,6 +324,42 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	protected RequestMappingInfo createRequestMappingInfo(
 			RequestMapping requestMapping, @Nullable RequestCondition<?> customCondition) {
 
+		/**
+		 * @RequestMapping(
+		 *     value = "/user/{id}",
+		 *     method = RequestMethod.PUT,
+		 *     consumes = "application/json",
+		 *     produces = "application/json",
+		 *     params = "action=update",
+		 *     headers = "X-API-Version=2"
+		 * )
+		 * public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+		 *     // 处理PUT请求，要求Content-Type为JSON，返回JSON，且参数action=update
+		 *     return ResponseEntity.ok(updatedUser);
+		 * }
+		 *
+		 * @RequestMapping(value = {"/user", "/profile"}) // 匹配多个路径
+		 * public String handleRequest() { ... }
+		 *
+		 * @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
+		 * public String handleMultiMethod() { ... }
+		 *
+		 * "param"：必须包含参数 param。
+		 * "!param"：必须不包含参数 param。
+		 * "param=value"：参数 param 必须等于 value。
+		 * "param!=value"：参数 param 必须不等于 value。
+		 * @RequestMapping(params = {"name", "age!=30"}) // 必须包含name，且age不等于30
+		 * public String handleWithParams() { ... }
+		 *
+		 * @RequestMapping(headers = {"Content-Type=text/plain", "X-API-Key"})
+		 * public String handleWithHeaders() { ... }
+		 *
+		 * @RequestMapping(consumes = "application/json") // 仅处理Content-Type为JSON的请求
+		 * public String handleJsonInput() { ... }
+		 *
+		 * @RequestMapping(produces = "application/xml") // 返回XML数据
+		 * public String handleXmlOutput() { ... }
+		 */
 		RequestMappingInfo.Builder builder = RequestMappingInfo
 				.paths(resolveEmbeddedValuesInPatterns(requestMapping.path()))
 				.methods(requestMapping.method())
