@@ -1328,7 +1328,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		// Did the handler return a view to render?
 		if (mv != null && !mv.wasCleared()) {
-			// 解析视图
+			// 解析并渲染视图
 			render(mv, request, response);
 			if (errorView) {
 				WebUtils.clearErrorRequestAttributes(request);
@@ -1576,10 +1576,12 @@ public class DispatcherServlet extends FrameworkServlet {
 		response.setLocale(locale);
 
 		View view;
+		// 获取视图名
 		String viewName = mv.getViewName();
 		if (viewName != null) {
 			// We need to resolve the view name.
-			// 通过视图名得到View对象
+			// 1、解析视图名，使用视图逻辑名解析出来View对象
+			// viewResolver的作用是根据视图逻辑名(Controller方法返回的String)得到view对象。ViewResolver是一个接口，里面只声明了一个resolveViewName方法 .
 			view = resolveViewName(viewName, mv.getModelInternal(), locale, request);
 			if (view == null) {
 				throw new ServletException("Could not resolve view with name '" + mv.getViewName() +
@@ -1587,6 +1589,7 @@ public class DispatcherServlet extends FrameworkServlet {
 			}
 		} else {
 			// No need to lookup: the ModelAndView object contains the actual View object.
+			// 再次判断当前ModelAndView对象中是否包含真正的View对象，因为接下来需要调用View对象的render方法
 			view = mv.getView();
 			if (view == null) {
 				throw new ServletException("ModelAndView [" + mv + "] neither contains a view name nor a " +
@@ -1603,7 +1606,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				response.setStatus(mv.getStatus().value());
 			}
 			/**
-			 * 渲染相应视图界面
+			 * 2、调用View对象的render方法完成视图渲染，实际调用的是AbstractView类的方法
 			 * @see AbstractView#render(Map, HttpServletRequest, HttpServletResponse)
 			 */
 			view.render(mv.getModelInternal(), request, response);
