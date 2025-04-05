@@ -1327,6 +1327,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 
 		// Did the handler return a view to render?
+		// 当前 controller 方法一般返回值都是对象且被 @ResponseBody 注解或 @RestController 注解修饰 mv 的值会被设置为 null，因此无需渲染
 		if (mv != null && !mv.wasCleared()) {
 			// 解析并渲染视图
 			render(mv, request, response);
