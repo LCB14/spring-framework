@@ -577,8 +577,12 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		long startTime = System.currentTimeMillis();
 
 		try {
-			// 创建 Spring mvc 容器
+			/**
+			 * 父子容器 -- 创建子容器
+			 * <@link https://blog.csdn.net/zzuhkp/article/details/121071737>
+			 */
 			this.webApplicationContext = initWebApplicationContext();
+
 			// 空实现
 			initFrameworkServlet();
 		} catch (ServletException | RuntimeException ex) {

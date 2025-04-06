@@ -168,7 +168,11 @@ import javax.servlet.ServletException;
  * successfully under GlassFish 3.1.<p>
  *
  * @author Chris Beams
+ *
+ *
  * @see SpringServletContainerInitializer
+ *
+ * 依赖关系
  * @see org.springframework.web.context.AbstractContextLoaderInitializer
  * @see org.springframework.web.servlet.support.AbstractDispatcherServletInitializer
  * @see org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer
