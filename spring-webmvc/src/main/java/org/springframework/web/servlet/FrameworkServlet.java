@@ -618,6 +618,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	 */
 	protected WebApplicationContext initWebApplicationContext() {
 		/**
+		 * 获取父容器
 		 * rootContext 值的初始化位置
 		 * @see org.springframework.web.context.ContextLoaderListener#contextInitialized(javax.servlet.ServletContextEvent)
 		 */
@@ -625,10 +626,12 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		WebApplicationContext wac = null;
 
 		/**
+		 *  this.webApplicationContext 表示子容器，初始化位置参考：
 		 * @see org.springframework.web.SpringServletContainerInitializer#onStartup(java.util.Set, javax.servlet.ServletContext)
 		 * 		@see WebApplicationInitializer#onStartup(ServletContext)
 		 * 			@see org.springframework.web.servlet.support.AbstractDispatcherServletInitializer#onStartup(javax.servlet.ServletContext)
 		 * 				@see AbstractDispatcherServletInitializer#registerDispatcherServlet(ServletContext)
+		 * 					@see AbstractDispatcherServletInitializer#createDispatcherServlet(WebApplicationContext)
 		 */
 		if (this.webApplicationContext != null) {
 			// A context instance was injected at construction time -> use it
