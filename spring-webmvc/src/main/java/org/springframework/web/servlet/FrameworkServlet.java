@@ -53,6 +53,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.ConfigurableWebEnvironment;
 import org.springframework.web.context.ContextLoader;
@@ -68,6 +69,7 @@ import org.springframework.web.context.support.ServletRequestHandledEvent;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.servlet.support.AbstractDispatcherServletInitializer;
 import org.springframework.web.util.NestedServletException;
 import org.springframework.web.util.WebUtils;
 
@@ -618,6 +620,12 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		WebApplicationContext rootContext = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
 		WebApplicationContext wac = null;
 
+		/**
+		 * @see org.springframework.web.SpringServletContainerInitializer#onStartup(java.util.Set, javax.servlet.ServletContext)
+		 * 		@see WebApplicationInitializer#onStartup(ServletContext)
+		 * 			@see org.springframework.web.servlet.support.AbstractDispatcherServletInitializer#onStartup(javax.servlet.ServletContext)
+		 * 				@see AbstractDispatcherServletInitializer#registerDispatcherServlet(ServletContext)
+		 */
 		if (this.webApplicationContext != null) {
 			// A context instance was injected at construction time -> use it
 			wac = this.webApplicationContext;
