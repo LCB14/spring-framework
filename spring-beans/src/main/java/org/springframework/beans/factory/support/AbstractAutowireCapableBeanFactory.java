@@ -624,8 +624,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			 * Spring 在getEarlyBeanReference方法中，第四次调用bean的后置处理器，判断是否需要AOP  -- four
 			 *
 			 * Spring 为什么要使用三级缓存来实现二级缓存就能解决的循环依赖问题？
-			 * Spring 需要三级缓存的目的是为了在没有循环依赖的情况下，延迟代理对象的创建，使 Bean 的创建符合 Spring 的设计原则。
-			 * 所以Spring在实例化bean后但尚未初始化之前往三级缓存中添加的是一个对bean实例包装的对象ObjectFactory，而不是bean代理对象。
+			 *
+			 * 	在普通的循环依赖的情况下，三级缓存没有任何作用，三级缓存实际上跟Spring中的AOP相关
+			 *  需要三级缓存的目的是为了在没有循环依赖的情况下，延迟代理对象的创建，使 Bean 的创建符合 Spring 的设计原则。
+			 *  只有真正发生循环依赖的时候，才去提前生成代理对象
+			 *  否则只会创建一个工厂并将其放入到三级缓存中，但是不会去通过这个工厂去真正创建对象
+			 *  如果没有循环依赖，只是三级缓存添加了一个代理A对象工厂（不会执行），
+			 *  A对象会在初始化最后一步生成代理对象，然后放入一级缓存，最后清空二三级缓存
 			 */
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
@@ -654,7 +659,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// 特殊判断, 为了解决AOP情况下的循环依赖
 		if (earlySingletonExposure) {
-			// 如果beanName对应的bean存在循环依赖，则此处取出来的beanName实例一般都是从二级缓存中获取的。（如果beanName还存在AOP操作，这里返回的就是代理对象。）
+			// 从二级缓存中获取代理后的bean
 			Object earlySingletonReference = getSingleton(beanName, false);
 			// earlySingletonReference只有在当前解析的bean存在循环依赖的情况下才会不为空
 			if (earlySingletonReference != null) {
@@ -1011,7 +1016,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				if (bp instanceof SmartInstantiationAwareBeanPostProcessor) {
 					SmartInstantiationAwareBeanPostProcessor ibp = (SmartInstantiationAwareBeanPostProcessor) bp;
 					/**
-					 * @see org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator#getEarlyBeanReference(Object, String)
+					 * 正实现了 getEarlyBeanReference() 这个方法的后置处理器只有一个，就是通过@EnableAspectJAutoProxy注解导入的
+					 * AnnotationAwareAspectJAutoProxyCreator
 					 */
 					exposedObject = ibp.getEarlyBeanReference(exposedObject, beanName);
 				}
@@ -1927,7 +1933,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		if (mbd == null || !mbd.isSynthetic()) {
-			// 在初始化后应用BeanPostProcessor的postProcessAfterInitialization方法，允许对bean实例进行包装
+			// 在初始化后应用BeanPostProcessor的postProcessAfterInitialization方法，允许对bean实例进行包装 -- aop生成代理对象的位置
 			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
 		}
 
@@ -1967,6 +1973,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	protected void invokeInitMethods(String beanName, final Object bean, @Nullable RootBeanDefinition mbd)
 			throws Throwable {
 
+		/**
+		 * 首先检查bean是否实现了InitializingBean接口，如果是的话则需要调用 afterPropertiesSet方法（初始化方法）
+		 * 再从RootBeanDefinition中获取initMethod自定义方法调用
+		 */
 		boolean isInitializingBean = (bean instanceof InitializingBean);
 		if (isInitializingBean && (mbd == null || !mbd.isExternallyManagedInitMethod("afterPropertiesSet"))) {
 			if (logger.isTraceEnabled()) {
