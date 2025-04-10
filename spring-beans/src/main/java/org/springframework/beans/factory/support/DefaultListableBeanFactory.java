@@ -837,6 +837,9 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 						}
 
 						if (isEagerInit) {
+							/**
+							 * @see AbstractBeanFactory#doGetBean(String, Class, Object[], boolean)
+							 */
 							getBean(beanName);
 						}
 					}

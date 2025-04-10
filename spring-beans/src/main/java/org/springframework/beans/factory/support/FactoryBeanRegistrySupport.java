@@ -101,29 +101,44 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 			synchronized (getSingletonMutex()) {
 				Object object = this.factoryBeanObjectCache.get(beanName);
 				if (object == null) {
+					// 缓存中无,这个方法的核心是调用了factoryBean的getObject
 					object = doGetObjectFromFactoryBean(factory, beanName);
 					// Only post-process and store if not put there already during getObject() call above
 					// (e.g. because of circular reference processing triggered by custom getBean calls)
+					// 得到之后,再尝试从缓存中获取
 					Object alreadyThere = this.factoryBeanObjectCache.get(beanName);
 					if (alreadyThere != null) {
+						// 如果此时缓存中有了,就直接取缓存中的值,避免循环依赖重复创建
 						object = alreadyThere;
 					} else {
+						// 如果缓存中没有,则先判断需不需要执行后处理器
 						if (shouldPostProcess) {
+							// 如果当前bean正在创建中,则不需要执行,
+							// 因为产生了循环依赖,所以才会进入这里,当前bean还没有创建完成
+							// 等到bean创建完成之后,还会再进行处理的.
 							if (isSingletonCurrentlyInCreation(beanName)) {
 								// Temporarily return non-post-processed object, not storing it yet..
 								return object;
 							}
+
+							// 把beanName加入到singletonsCurrentlyInCreation中
 							beforeSingletonCreation(beanName);
+
 							try {
+								// 执行后处理器
 								object = postProcessObjectFromFactoryBean(object, beanName);
 							} catch (Throwable ex) {
 								throw new BeanCreationException(beanName,
 										"Post-processing of FactoryBean's singleton object failed", ex);
 							} finally {
+								// 把beanName从singletonsCurrentlyInCreation中移除
+								// 即结束bean的加载状态
 								afterSingletonCreation(beanName);
 							}
 						}
+
 						if (containsSingleton(beanName)) {
+							// 添加缓存,如果是循环依赖的话,这里依旧没有加入缓存
 							this.factoryBeanObjectCache.put(beanName, object);
 						}
 					}
@@ -131,6 +146,7 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 				return object;
 			}
 		} else {
+			// 如果不是单例,直接调用factoryBean的getObject方法即可
 			Object object = doGetObjectFromFactoryBean(factory, beanName);
 			if (shouldPostProcess) {
 				try {

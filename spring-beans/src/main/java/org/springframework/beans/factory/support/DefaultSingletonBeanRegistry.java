@@ -81,7 +81,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 
 	/**
 	 * Cache of singleton factories: bean name to ObjectFactory.
-	 * 三级缓存 -- 缓存创建目标Bean对应的lambda表达式
+	 * 三级缓存 -- 缓存创建目标Bean对应的lambda表达式 - ObjectFactory
 	 *
 	 * 三级缓存put值的时机
 	 * @see DefaultSingletonBeanRegistry#addSingletonFactory(String, ObjectFactory)
@@ -269,7 +269,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 		// 查询一级缓存，获取目标 beanName 对应的 Bean 实例。
 		Object singletonObject = this.singletonObjects.get(beanName);
-		// isSingletonCurrentlyInCreation 方法判断未能从单例池中获取对应的bean的beanName当前是否处于创建中。
+		// isSingletonCurrentlyInCreation 方法判断未能从单例池中获取对应的bean的beanName当前是否处于创建中（出现了循环依赖）。
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			synchronized (this.singletonObjects) {
 				// 查询二级缓存，获取创建目标 beanName 对应的已完成实例化但尚未完成初始化的 Bean 实例。
