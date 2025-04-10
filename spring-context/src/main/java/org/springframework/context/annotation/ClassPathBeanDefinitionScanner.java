@@ -169,6 +169,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 		if (useDefaultFilters) {
 			registerDefaultFilters();
 		}
+
 		setEnvironment(environment);
 		setResourceLoader(resourceLoader);
 	}
@@ -283,23 +284,35 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 		Assert.notEmpty(basePackages, "At least one base package must be specified");
 		Set<BeanDefinitionHolder> beanDefinitions = new LinkedHashSet<>();
 		for (String basePackage : basePackages) {
-			// 扫描指定包路径下所有符合Spring规范的类并解析BeanDefinition
+			// 扫描得到beanDefinition，主要进行行excludeFilters、includeFilters判断和Conditional判断
 			Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
 			for (BeanDefinition candidate : candidates) {
+				// 解析scope注解信息
 				ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(candidate);
+				// 设置scope注解信息
 				candidate.setScope(scopeMetadata.getScopeName());
+
+				// 主要是解析Component有没有设置bean的名字，有则直接返回
+				// 没有则根据短名构造一个(如果写的名字第1、2个字符是大写则直接返回，否则直接将第一个字符转成小写返回)
 				String beanName = this.beanNameGenerator.generateBeanName(candidate, this.registry);
+
 				if (candidate instanceof AbstractBeanDefinition) {
+					// 主要是给BeanDefinition设置一些默认的值
 					postProcessBeanDefinition((AbstractBeanDefinition) candidate, beanName);
 				}
 				if (candidate instanceof AnnotatedBeanDefinition) {
+					// 获取类上的@Lazy、@Primary、@DependsOn、@Role、@Description相关信息并设置到定义信息中
 					AnnotationConfigUtils.processCommonDefinitionAnnotations((AnnotatedBeanDefinition) candidate);
 				}
+
+				// 检查Spring容器中是否已经存在该beanName,有的话会判断是否匹配，匹配则不会加入spring容器
+				// 不匹配则抛出异常，没有则直接加入spring容器
 				if (checkCandidate(beanName, candidate)) {
 					BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(candidate, beanName);
-					definitionHolder =
-							AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
+					definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
+
 					beanDefinitions.add(definitionHolder);
+
 					registerBeanDefinition(definitionHolder, this.registry);
 				}
 			}

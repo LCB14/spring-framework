@@ -207,6 +207,8 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	 */
 	@SuppressWarnings("unchecked")
 	protected void registerDefaultFilters() {
+		// 注册过滤器 添加 @Component
+		// @Controller @Service @Repository 也会被扫描
 		this.includeFilters.add(new AnnotationTypeFilter(Component.class));
 		ClassLoader cl = ClassPathScanningCandidateComponentProvider.class.getClassLoader();
 		try {
@@ -313,9 +315,19 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	 * @return a corresponding Set of autodetected bean definitions
 	 */
 	public Set<BeanDefinition> findCandidateComponents(String basePackage) {
+		/**
+		 *	解析是否有文件写的有component注解
+		 *  if()里面就是判断META-INF目录下面是否有写components文件
+		 *  （在该文件里面可以直接定义bean）然后在解析这个文件，其逻辑大致和下面一样
+		 */
 		if (this.componentsIndex != null && indexSupportsIncludeFilters()) {
 			return addCandidateComponentsFromIndex(this.componentsIndex, basePackage);
 		} else {
+			/**
+			 * 该方法主要是获得扫描路径下面的所有file对象（.class）
+			 * 然后读取注解信息，判断与excludeFilters、includeFilters是否匹配以及Conditional条件判断
+			 * 最后判断是否独立的非接口非抽象类的普通类，或者@Lookup注解的抽象类，最终返回BeanDefinition集合
+			 */
 			return scanCandidateComponents(basePackage);
 		}
 	}
@@ -418,8 +430,12 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	private Set<BeanDefinition> scanCandidateComponents(String basePackage) {
 		Set<BeanDefinition> candidates = new LinkedHashSet<>();
 		try {
+			// 获取basePackage下所有的文件资源
+			// classpath*:/**/*.class
 			String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
 					resolveBasePackage(basePackage) + '/' + this.resourcePattern;
+
+			// classpath文件下的所有file对象
 			Resource[] resources = getResourcePatternResolver().getResources(packageSearchPath);
 			boolean traceEnabled = logger.isTraceEnabled();
 			boolean debugEnabled = logger.isDebugEnabled();
@@ -429,15 +445,21 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 				}
 				if (resource.isReadable()) {
 					try {
+						// 元数据读取器，读取注解的信息，类的信息，接口抽象类,父类等
 						MetadataReader metadataReader = getMetadataReaderFactory().getMetadataReader(resource);
+						// 判断是不是一个bean
 						if (isCandidateComponent(metadataReader)) {
 							ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
+							// 把bean的属性设置进去,主要是名字
 							sbd.setResource(resource);
 							sbd.setSource(resource);
+
+							// 独立的非接口非抽象类的普通类，或者@Lookup注解的抽象类
 							if (isCandidateComponent(sbd)) {
 								if (debugEnabled) {
 									logger.debug("Identified candidate component class: " + resource);
 								}
+								// 添加到返回的符合扫描的候选bean集合中
 								candidates.add(sbd);
 							} else {
 								if (debugEnabled) {

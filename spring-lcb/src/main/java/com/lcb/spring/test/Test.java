@@ -13,6 +13,10 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public class Test {
 
+	/**
+	 * spring 源码分析参考
+	 * <@link https://blog.csdn.net/qq_35512802/article/details/131533905>
+	 */
 	public static void main(String[] args) {
 		AnnotationConfigApplicationContext annotationConfigApplicationContext =
 				new AnnotationConfigApplicationContext(AppConfig.class);
