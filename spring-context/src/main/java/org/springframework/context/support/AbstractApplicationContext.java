@@ -743,7 +743,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		 */
 		beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
 
-		// 如果某个 bean 依赖于以下几个接口的实现类，在自动装配的时候忽略它们，因为在 ApplicationContextAwareProcessor 后置处理器中已经完成了手动注入。
+		/**
+		 * 如果某个 bean 依赖于以下几个接口的实现类，在自动装配的时候忽略它们，因为在 ApplicationContextAwareProcessor 后置处理器中已经帮我们完成了注入。
+		 * @see ApplicationContextAwareProcessor#postProcessBeforeInitialization(Object, String)
+		 */
 		beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
 		beanFactory.ignoreDependencyInterface(EmbeddedValueResolverAware.class);
 		beanFactory.ignoreDependencyInterface(ResourceLoaderAware.class);

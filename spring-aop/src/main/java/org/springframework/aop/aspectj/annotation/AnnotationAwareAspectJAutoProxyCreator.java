@@ -22,7 +22,9 @@ import java.util.regex.Pattern;
 
 import org.springframework.aop.Advisor;
 import org.springframework.aop.aspectj.autoproxy.AspectJAwareAdvisorAutoProxyCreator;
+import org.springframework.aop.framework.autoproxy.AbstractAdvisorAutoProxyCreator;
 import org.springframework.aop.framework.autoproxy.BeanFactoryAdvisorRetrievalHelper;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.lang.Nullable;
@@ -94,6 +96,11 @@ public class AnnotationAwareAspectJAutoProxyCreator extends AspectJAwareAdvisorA
 		List<Advisor> advisors = super.findCandidateAdvisors();
 
 		// Build Advisors for all AspectJ aspects in the bean factory.
+		/**
+		 * aspectJAdvisorsBuilder 初始化位置
+		 * @see AbstractAdvisorAutoProxyCreator#setBeanFactory(BeanFactory)
+		 * @see AnnotationAwareAspectJAutoProxyCreator#initBeanFactory(ConfigurableListableBeanFactory)
+		 */
 		if (this.aspectJAdvisorsBuilder != null) {
 			// 获取通过@Aspect注解声明的切面信息
 			advisors.addAll(this.aspectJAdvisorsBuilder.buildAspectJAdvisors());

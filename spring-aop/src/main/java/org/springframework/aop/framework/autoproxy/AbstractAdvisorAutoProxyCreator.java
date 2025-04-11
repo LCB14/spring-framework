@@ -102,6 +102,7 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 		// 过滤和指定beanName匹配的切面信息
 		List<Advisor> eligibleAdvisors = findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName);
 
+		// 如果在该Bean上存在切面，创建ExposeInvocationInterceptor拦截器
 		extendAdvisors(eligibleAdvisors);
 
 		if (!eligibleAdvisors.isEmpty()) {
