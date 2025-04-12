@@ -366,8 +366,11 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			definition = new DefaultTransactionDefinition();
 		}
 
+		// 判断是否存在事务
+		// 如果之前获取到的连接不为空，并且连接上激活了事务，那么就为true
 		if (isExistingTransaction(transaction)) {
 			// Existing transaction found -> check propagation behavior to find out how to behave.
+			// 如果已经存在了事务，需要根据不同传播机制进行不同的处理
 			return handleExistingTransaction(definition, transaction, debugEnabled);
 		}
 
@@ -377,10 +380,16 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		}
 
 		// No existing transaction found -> check propagation behavior to find out how to proceed.
+		// 如果配置的事务的传播行为是mandatory，直接抛出异常
+		// 该传播行为的含义是：必须运行在一个事务中，如果当前没有事务正在发生，将抛出一个异常
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_MANDATORY) {
 			throw new IllegalTransactionStateException(
 					"No existing transaction found for transaction marked with propagation 'mandatory'");
-		} else if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRED ||
+		}
+		// 否则，如果配置的事务的传播行为是required或者requires_new或者nested
+		// 这几个传播行为的含义的共同点之一就是：如果当前不存在事务，就创建一个新事务运行
+		// 那么这里将开启一个新事物
+		else if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRED ||
 				definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW ||
 				definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
 			SuspendedResourcesHolder suspendedResources = suspend(null);
@@ -406,7 +415,10 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 				resume(null, suspendedResources);
 				throw ex;
 			}
-		} else {
+		}
+		// 否则，配置的事务的传播行为就是剩下的三种：supports或never或not_supported
+		// 这几个传播行为的含义的共同点之一就是：当前方法一定以非事务的方式运行
+		else {
 			// Create "empty" transaction: no actual transaction, but potentially synchronization.
 			if (definition.getIsolationLevel() != TransactionDefinition.ISOLATION_DEFAULT && logger.isWarnEnabled()) {
 				logger.warn("Custom isolation level specified but no actual transaction initiated; " +

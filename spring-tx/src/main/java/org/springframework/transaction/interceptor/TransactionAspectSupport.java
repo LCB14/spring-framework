@@ -298,7 +298,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		// 利用 @Transaction 注解信息创建事务管理器（负责事务的创建、提交、回滚等相关事务操作）
 		final PlatformTransactionManager tm = determineTransactionManager(txAttr);
 
-		// 生成事务名称
+		// 切点名称（类名+方法名）,会被作为事务的名称
 		final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);
 
 		// CallbackPreferringPlatformTransactionManager 继承了 PlatformTransactionManager
@@ -325,8 +325,10 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 				// 清除ThreadLocal中的事务信息
 				cleanupTransactionInfo(txInfo);
 			}
+
 			// 提交事务
 			commitTransactionAfterReturning(txInfo);
+
 			return retVal;
 		} else {
 			final ThrowableHolder throwableHolder = new ThrowableHolder();
